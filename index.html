@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>fiesta</title>
+<title>tools — fiesta</title>
 <style>
     * { box-sizing: border-box; }
-
     html, body {
         background: #050505;
         color: #d4d4d4;
@@ -18,11 +17,95 @@
         overflow-x: hidden;
     }
 
-    /* ── fixed overlay bits ───────────────────────── */
+    /* ── loader overlay ────────────────────────────── */
+    #loader {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        z-index: 999;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+        color: #ff2e63;
+        padding: 40px;
+    }
+    #loader.active { display: flex; }
+
+    #loader .spin {
+        font-size: 44px;
+        letter-spacing: 12px;
+        text-shadow: 0 0 24px rgba(255,46,99,0.8);
+        margin-bottom: 30px;
+        animation: rotateEye 1.2s linear infinite;
+    }
+    @keyframes rotateEye {
+        0%   { transform: rotate(0deg);   opacity: 1; }
+        50%  { opacity: 0.4; }
+        100% { transform: rotate(360deg); opacity: 1; }
+    }
+
+    #loader .status {
+        color: #8b0000;
+        font-size: 11px;
+        letter-spacing: 3px;
+        margin-bottom: 20px;
+    }
+
+    #loader .stream {
+        width: 100%;
+        max-width: 640px;
+        height: 200px;
+        overflow: hidden;
+        border: 1px solid #1a0000;
+        padding: 12px 16px;
+        background: #0a0000;
+        color: #c41e3a;
+        font-size: 11px;
+        line-height: 1.4;
+        white-space: pre;
+        position: relative;
+    }
+
+    #loader .stream::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 0%, transparent 60%, #000 100%);
+        pointer-events: none;
+    }
+
+    #loader .bar {
+        margin-top: 24px;
+        width: 100%;
+        max-width: 640px;
+        height: 2px;
+        background: #1a0000;
+        position: relative;
+    }
+    #loader .bar span {
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 0%;
+        background: #ff2e63;
+        box-shadow: 0 0 12px rgba(255,46,99,0.9);
+        transition: width 0.15s linear;
+    }
+
+    #loader .pct {
+        margin-top: 12px;
+        color: #8b0000;
+        font-size: 11px;
+        letter-spacing: 4px;
+    }
+
+    /* ── the rest of the page ──────────────────────── */
+    body.loaded { display: block; }
+
     #glow {
         position: fixed;
-        width: 420px;
-        height: 420px;
+        width: 420px; height: 420px;
         border-radius: 50%;
         pointer-events: none;
         z-index: 1;
@@ -35,7 +118,6 @@
         will-change: transform;
     }
 
-    /* corner crosshairs */
     .crosshair {
         position: fixed;
         width: 22px; height: 22px;
@@ -50,7 +132,6 @@
     .crosshair.bl { bottom: 12px; left: 12px; }
     .crosshair.br { bottom: 12px; right: 12px; }
 
-    /* hex watermark */
     .bg-nums {
         position: fixed; inset: 0;
         z-index: 0;
@@ -63,7 +144,6 @@
         padding: 32px;
     }
 
-    /* chain strips along the left/right edges */
     .chain {
         position: fixed;
         top: 0; bottom: 0;
@@ -78,16 +158,13 @@
         text-align: center;
         writing-mode: vertical-rl;
         letter-spacing: 8px;
-        user-select: none;
     }
     .chain.left  { left: 0;  border-right: 1px solid #1a0000; }
     .chain.right { right: 0; border-left: 1px solid #1a0000; }
 
-    /* ── the eyes ──────────────────────────────────── */
     .eyes {
         position: fixed;
-        top: 32px;
-        left: 50%;
+        top: 32px; left: 50%;
         transform: translateX(-50%);
         z-index: 3;
         font-size: 22px;
@@ -96,14 +173,10 @@
         text-shadow: 0 0 14px rgba(255,46,99,0.7);
         pointer-events: none;
         opacity: 0.75;
-        transition: opacity 0.3s, text-shadow 0.3s;
+        transition: opacity 0.3s;
     }
-    body.glowing .eyes {
-        opacity: 1;
-        text-shadow: 0 0 22px rgba(255,46,99,1);
-    }
+    body.glowing .eyes { opacity: 1; text-shadow: 0 0 22px rgba(255,46,99,1); }
 
-    /* ── layout ────────────────────────────────────── */
     .wrap {
         position: relative;
         z-index: 2;
@@ -112,161 +185,125 @@
         padding: 96px 56px 80px;
     }
 
-    /* ── header ────────────────────────────────────── */
-    header {
-        margin-bottom: 56px;
-        padding-bottom: 32px;
-        border-bottom: 1px solid #1a1a1a;
-    }
-
-    .kicker {
-        color: #6a6a6a;
-        font-size: 10px;
-        letter-spacing: 6px;
-        margin: 0 0 24px 0;
-    }
-
-    .jp-title {
-        color: #ff2e63;
-        font-size: 24px;
-        letter-spacing: 14px;
-        margin: 0 0 16px 0;
-        font-weight: 400;
-        text-shadow: 0 0 18px rgba(255, 46, 99, 0.4);
-    }
-
-    .wordmark {
-        font-size: 52px;
-        font-weight: 700;
-        color: #fff;
-        letter-spacing: -2px;
-        line-height: 1;
-        margin: 0;
-        font-family: 'SF Mono', Consolas, monospace;
-    }
-    .wordmark .slash { color: #8b0000; font-weight: 400; margin: 0 6px; }
-    .wordmark .accent { color: #ff2e63; }
-    .wordmark .cursor {
-        display: inline-block;
-        width: 20px; height: 42px;
-        background: #ff2e63;
-        margin-left: 10px;
-        vertical-align: -8px;
-        animation: blink 1.05s steps(2) infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    .lain-quote {
-        margin-top: 30px;
-        padding-left: 14px;
-        border-left: 3px solid #8b0000;
-        color: #9a9a9a;
-        font-size: 13px;
-        font-style: italic;
-        line-height: 1.6;
-        max-width: 460px;
-    }
-    .lain-quote .attr {
-        display: block;
-        margin-top: 6px;
-        color: #4a4a4a;
-        font-style: normal;
-        font-size: 10px;
-        letter-spacing: 3px;
-    }
-
-    /* ── section ───────────────────────────────────── */
-    section { margin-bottom: 48px; }
-
-    .label {
-        color: #ff2e63;
-        font-size: 10px;
-        letter-spacing: 5px;
-        margin: 0 0 18px 0;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 700;
-    }
-    .label::before { content: '⛓'; color: #8b0000; font-size: 14px; }
-    .label::after  {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: linear-gradient(to right, #8b0000 0%, #8b0000 4px, transparent 4px, transparent 8px);
-        background-size: 8px 1px;
-        opacity: 0.6;
-    }
-
-    /* ── tiles ─────────────────────────────────────── */
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-        gap: 0;
-        border: 1px solid #1a1a1a;
-    }
-
-    .tile {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        padding: 16px 18px;
-        background: #080808;
-        color: #d4d4d4;
+    .back {
+        color: #8b0000;
         text-decoration: none;
-        transition: none;
-        position: relative;
-        border-right: 1px solid #1a1a1a;
-        border-bottom: 1px solid #1a1a1a;
-    }
-
-    .tile:hover {
-        background: #150000;
-        color: #fff;
-    }
-    .tile:hover .t-name { color: #ff2e63; }
-    .tile:hover .t-num  { color: #ff2e63; }
-
-    .t-name {
-        font-size: 13px;
-        color: #e0e0e0;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-    }
-    .t-desc { font-size: 11px; color: #5a5a5a; }
-    .t-num  {
-        position: absolute;
-        top: 8px; right: 10px;
-        font-size: 10px;
-        color: #3a3a3a;
-        font-weight: 700;
-    }
-
-    /* ── footer ────────────────────────────────────── */
-    footer {
-        margin-top: 72px;
-        padding-top: 24px;
-        border-top: 1px solid #1a1a1a;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: #4a4a4a;
-        font-size: 10px;
+        font-size: 11px;
         letter-spacing: 3px;
+        display: inline-block;
+        margin-bottom: 40px;
     }
-    footer a { color: #6a6a6a; text-decoration: none; }
-    footer a:hover { color: #ff2e63; }
+    .back:hover { color: #ff2e63; }
+
+    h1 {
+        font-size: 32px;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: -1px;
+        margin: 0 0 40px 0;
+    }
+    h1::before { content: '⛓ '; color: #8b0000; font-weight: 400; }
+
+    /* ── tool blocks ───────────────────────────────── */
+    .tool {
+        margin-bottom: 32px;
+        border: 1px solid #1a1a1a;
+        background: #080808;
+        padding: 24px;
+    }
+
+    .tool h3 {
+        color: #ff2e63;
+        font-size: 12px;
+        letter-spacing: 4px;
+        font-weight: 700;
+        margin: 0 0 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .tool h3::before { content: '▸'; color: #8b0000; }
+
+    .row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+
+    input, select, textarea {
+        background: #000;
+        border: 1px solid #1f1f1f;
+        color: #e0e0e0;
+        font-family: inherit;
+        font-size: 12px;
+        padding: 10px 12px;
+        flex: 1;
+        min-width: 180px;
+        outline: none;
+        transition: none;
+    }
+    input:focus, textarea:focus, select:focus {
+        border-color: #8b0000;
+        background: #050000;
+    }
+
+    button {
+        background: #8b0000;
+        border: 1px solid #ff2e63;
+        color: #fff;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        padding: 10px 22px;
+        cursor: pointer;
+        transition: none;
+    }
+    button:hover { background: #ff2e63; color: #000; }
+    button:active { background: #c41e3a; }
+
+    pre.out {
+        background: #000;
+        border: 1px solid #1a1a1a;
+        border-left: 3px solid #8b0000;
+        padding: 14px 16px;
+        margin: 12px 0 0 0;
+        color: #d4d4d4;
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-all;
+        min-height: 22px;
+        overflow-x: auto;
+    }
+    pre.out .ok  { color: #ff2e63; }
+    pre.out .err { color: #c41e3a; }
+    pre.out .dim { color: #4a4a4a; }
+
+    .hint {
+        color: #4a4a4a;
+        font-size: 11px;
+        margin: -8px 0 16px 0;
+    }
 
     @media (max-width: 700px) {
         .wrap { padding: 60px 28px 60px; }
         .chain { display: none; }
         .eyes { top: 20px; font-size: 18px; letter-spacing: 14px; }
-        .wordmark { font-size: 38px; }
-        .jp-title { font-size: 18px; letter-spacing: 8px; }
+        h1 { font-size: 26px; }
     }
 </style>
 </head>
 <body>
+
+<!-- ─── loader ────────────────────────────────────── -->
+<div id="loader">
+    <div class="spin">◉</div>
+    <div class="status" id="loadStatus">INITIALIZING</div>
+    <div class="stream" id="loadStream"></div>
+    <div class="bar"><span id="loadBar"></span></div>
+    <div class="pct" id="loadPct">0%</div>
+</div>
 
 <div id="glow"></div>
 
@@ -282,129 +319,368 @@
 
 <div class="bg-nums" id="bgNums"></div>
 
-<div class="wrap">
+<div class="wrap" id="pageContent">
 
-    <header>
-        <p class="kicker">PRESENT DAY · PRESENT TIME</p>
-        <p class="jp-title">フ ィ エ ス タ</p>
-        <h1 class="wordmark">fiesta<span class="slash">/</span><span class="accent">osint</span><span class="cursor"></span></h1>
+    <a class="back" href="index.html">← 戻る</a>
 
-        <blockquote class="lain-quote">
-            "no matter where you are, everyone is always connected."
-            <span class="attr">— lain</span>
-        </blockquote>
-    </header>
+    <h1>fiesta / tools</h1>
 
-    <section>
-        <p class="label">TOOLS</p>
-        <div class="grid">
-            <a class="tile" href="tools.html#snowflake">
-                <span class="t-num">01</span>
-                <span class="t-name">snowflake</span>
-                <span class="t-desc">discord id → timestamp</span>
-            </a>
-            <a class="tile" href="tools.html#base64">
-                <span class="t-num">02</span>
-                <span class="t-name">base64</span>
-                <span class="t-desc">encode / decode</span>
-            </a>
-            <a class="tile" href="tools.html#hash">
-                <span class="t-num">03</span>
-                <span class="t-name">hash text</span>
-                <span class="t-desc">sha family</span>
-            </a>
-            <a class="tile" href="tools.html#pwd">
-                <span class="t-num">04</span>
-                <span class="t-name">password gen</span>
-                <span class="t-desc">crypto random</span>
-            </a>
+    <!-- SNOWFLAKE -->
+    <div class="tool" id="snowflake">
+        <h3>SNOWFLAKE</h3>
+        <div class="row">
+            <input id="sf-in" placeholder="discord snowflake id">
+            <button onclick="sfDecode()">DECODE</button>
         </div>
-    </section>
+        <pre class="out" id="sf-out"></pre>
+    </div>
 
-    <section>
-        <p class="label">NETWORK</p>
-        <div class="grid">
-            <a class="tile" href="tools.html#ip">
-                <span class="t-num">05</span>
-                <span class="t-name">ip lookup</span>
-                <span class="t-desc">geo · isp · asn</span>
-            </a>
-            <a class="tile" href="tools.html#dns">
-                <span class="t-num">06</span>
-                <span class="t-name">dns lookup</span>
-                <span class="t-desc">a · mx · txt</span>
-            </a>
+    <!-- BASE64 -->
+    <div class="tool" id="base64">
+        <h3>BASE64</h3>
+        <div class="row"><textarea id="b64-in" rows="3" placeholder="text or base64"></textarea></div>
+        <div class="row">
+            <button onclick="b64Encode()">ENCODE →</button>
+            <button onclick="b64Decode()">← DECODE</button>
+            <button onclick="document.getElementById('b64-out').textContent=''">CLEAR</button>
         </div>
-    </section>
+        <pre class="out" id="b64-out"></pre>
+    </div>
 
-    <section>
-        <p class="label">DISCORD</p>
-        <div class="grid">
-            <a class="tile" href="tools.html#token">
-                <span class="t-num">07</span>
-                <span class="t-name">token decode</span>
-                <span class="t-desc">static header parse</span>
-            </a>
-            <a class="tile" href="tools.html#webhook">
-                <span class="t-num">08</span>
-                <span class="t-name">webhook inspect</span>
-                <span class="t-desc">url → metadata</span>
-            </a>
+    <!-- HASH -->
+    <div class="tool" id="hash">
+        <h3>HASH TEXT</h3>
+        <div class="row">
+            <input id="hash-in" placeholder="text">
+            <button onclick="hashAll()">HASH</button>
         </div>
-    </section>
+        <pre class="out" id="hash-out"></pre>
+    </div>
 
-    <footer>
-        <span>@0_032</span>
-        <a href="https://github.com/tsundere59">github</a>
-    </footer>
+    <!-- PWD -->
+    <div class="tool" id="pwd">
+        <h3>PASSWORD GEN</h3>
+        <div class="row">
+            <input id="pwd-len" type="number" value="24" min="4" max="128" style="max-width:100px">
+            <button onclick="pwdGen()">GENERATE</button>
+        </div>
+        <pre class="out" id="pwd-out"></pre>
+    </div>
+
+    <!-- IP -->
+    <div class="tool" id="ip">
+        <h3>IP LOOKUP</h3>
+        <div class="row">
+            <input id="ip-in" placeholder="ip or hostname">
+            <button onclick="ipLookup()">LOOKUP</button>
+        </div>
+        <pre class="out" id="ip-out"></pre>
+    </div>
+
+    <!-- DNS -->
+    <div class="tool" id="dns">
+        <h3>DNS LOOKUP</h3>
+        <div class="row">
+            <input id="dns-in" placeholder="domain">
+            <select id="dns-type">
+                <option>A</option><option>AAAA</option>
+                <option>MX</option><option>NS</option><option>TXT</option>
+            </select>
+            <button onclick="dnsLookup()">RESOLVE</button>
+        </div>
+        <pre class="out" id="dns-out"></pre>
+    </div>
+
+    <!-- TOKEN -->
+    <div class="tool" id="token">
+        <h3>TOKEN DECODE</h3>
+        <div class="row">
+            <input id="tok-in" placeholder="discord token">
+            <button onclick="tokDecode()">DECODE</button>
+        </div>
+        <pre class="out" id="tok-out"></pre>
+    </div>
+
+    <!-- WEBHOOK -->
+    <div class="tool" id="webhook">
+        <h3>WEBHOOK INSPECT</h3>
+        <div class="row">
+            <input id="wh-in" placeholder="webhook url">
+            <button onclick="whInspect()">INSPECT</button>
+        </div>
+        <pre class="out" id="wh-out"></pre>
+    </div>
 
 </div>
 
 <script>
-    // glow
-    const glow = document.getElementById('glow');
-    let raf = null, tx = 0, ty = 0, cx = 0, cy = 0;
-    document.addEventListener('mousemove', e => {
-        tx = e.clientX; ty = e.clientY;
-        document.body.classList.add('glowing');
-        if (!raf) raf = requestAnimationFrame(loop);
+// ── loading screen ─────────────────────────────
+const LOADER = document.getElementById('loader');
+const LOADBAR = document.getElementById('loadBar');
+const LOADPCT = document.getElementById('loadPct');
+const LOADSTATUS = document.getElementById('loadStatus');
+const LOADSTREAM = document.getElementById('loadStream');
+
+const STATUSES = [
+    'INITIALIZING',
+    'ESTABLISHING CONNECTION',
+    'COMPILING MODULES',
+    'MOUNTING ENVIRONMENT',
+    'VERIFYING INTEGRITY',
+    'READY',
+];
+
+function runLoader(callback) {
+    LOADER.classList.add('active');
+    let pct = 0;
+    LOADSTREAM.textContent = '';
+    LOADSTATUS.textContent = STATUSES[0];
+
+    const statusInterval = setInterval(() => {
+        const idx = Math.min(Math.floor(pct / 18), STATUSES.length - 1);
+        LOADSTATUS.textContent = STATUSES[idx];
+    }, 100);
+
+    const streamInterval = setInterval(() => {
+        const line = '[' + new Date().toISOString().slice(11,23) + ']  '
+            + Math.random().toString(16).slice(2,10) + '  '
+            + Math.random().toString(16).slice(2,10) + '  '
+            + ['LOAD', 'EXEC', 'SYNC', 'OK', 'MEM'][Math.floor(Math.random()*5)];
+        LOADSTREAM.textContent += line + '\n';
+        if (LOADSTREAM.textContent.split('\n').length > 20) {
+            LOADSTREAM.textContent = LOADSTREAM.textContent.split('\n').slice(-15).join('\n');
+        }
+    }, 60);
+
+    const tick = setInterval(() => {
+        pct += Math.random() * 12 + 4;
+        if (pct >= 100) {
+            pct = 100;
+            clearInterval(tick);
+            clearInterval(statusInterval);
+            clearInterval(streamInterval);
+            LOADBAR.style.width = '100%';
+            LOADPCT.textContent = '100%';
+            LOADSTATUS.textContent = 'READY';
+            setTimeout(() => {
+                LOADER.classList.remove('active');
+                if (callback) callback();
+            }, 420);
+        } else {
+            LOADBAR.style.width = pct + '%';
+            LOADPCT.textContent = Math.floor(pct) + '%';
+        }
+    }, 90);
+}
+
+// run loader on first visit + on every internal tool click that goes to a hash
+if (!sessionStorage.getItem('fiesta_loaded')) {
+    document.getElementById('pageContent').style.opacity = '0';
+    runLoader(() => {
+        sessionStorage.setItem('fiesta_loaded', '1');
+        document.getElementById('pageContent').style.opacity = '1';
+        scrollToHash();
     });
-    document.addEventListener('mouseleave', () => glow.style.opacity = '0');
-    document.addEventListener('mouseenter', () => glow.style.opacity = '1');
-    function loop() {
-        cx += (tx-cx)*0.18; cy += (ty-cy)*0.18;
-        glow.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
-        if (Math.abs(tx-cx) > 0.5 || Math.abs(ty-cy) > 0.5) raf = requestAnimationFrame(loop);
-        else raf = null;
-    }
+}
 
-    // hex bg
-    const bg = document.getElementById('bgNums');
-    let nums = '';
-    const cols = Math.floor(window.innerWidth / 16);
-    const rows = Math.floor(window.innerHeight / 22);
-    for (let y = 0; y < rows; y++) {
-        let line = '';
-        for (let x = 0; x < cols; x++) line += Math.random().toString(16).slice(2,6).padEnd(4,' ');
-        nums += line + '\n';
+function scrollToHash() {
+    if (location.hash) {
+        const el = document.getElementById(location.hash.slice(1));
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
-    bg.textContent = nums;
-    setInterval(() => { bg.textContent = Math.random().toString(16).slice(2,6) + nums.slice(4); }, 350);
+}
 
-    // chains
-    const chainGlyphs = '⛓';
-    const fill = (el, count) => {
-        let s = '';
-        for (let i = 0; i < count; i++) s += chainGlyphs + '\n';
-        el.textContent = s;
-    };
-    const resizeChains = () => {
-        const n = Math.floor(window.innerHeight / 28);
-        fill(document.getElementById('chainL'), n);
-        fill(document.getElementById('chainR'), n);
-    };
-    resizeChains();
-    window.addEventListener('resize', resizeChains);
+// ── helpers ────────────────────────────────────
+function out(id, html) { document.getElementById(id).innerHTML = html; }
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function ok(s) { return '<span class="ok">[+] </span>' + esc(s); }
+function err(s) { return '<span class="err">[-] </span>' + esc(s); }
+
+// ── snowflake ──────────────────────────────────
+const DISCORD_EPOCH = 1420070400000n;
+function sfDecode() {
+    const v = document.getElementById('sf-in').value.trim();
+    if (!v || !/^\d+$/.test(v)) return out('sf-out', err('not a numeric snowflake'));
+    try {
+        const id = BigInt(v);
+        const ts = Number((id >> 22n) + DISCORD_EPOCH);
+        const d = new Date(ts);
+        const worker = Number((id & 0x3E0000n) >> 17n);
+        const proc   = Number((id & 0x1F000n) >> 12n);
+        const inc    = Number(id & 0xFFFn);
+        out('sf-out',
+            ok('timestamp   ' + d.toISOString()) + '\n' +
+            ok('utc         ' + d.toUTCString()) + '\n' +
+            ok('worker id   ' + worker) + '\n' +
+            ok('process id  ' + proc) + '\n' +
+            ok('increment   ' + inc)
+        );
+    } catch (e) { out('sf-out', err(e.message)); }
+}
+
+// ── base64 ─────────────────────────────────────
+function b64Encode() {
+    const t = document.getElementById('b64-in').value;
+    try { out('b64-out', ok(btoa(unescape(encodeURIComponent(t))))); }
+    catch (e) { out('b64-out', err(e.message)); }
+}
+function b64Decode() {
+    const t = document.getElementById('b64-in').value.trim();
+    try { out('b64-out', ok(decodeURIComponent(escape(atob(t))))); }
+    catch { out('b64-out', err('invalid base64')); }
+}
+
+// ── hash ───────────────────────────────────────
+async function hashAll() {
+    const t = document.getElementById('hash-in').value;
+    if (!t) return out('hash-out', err('enter text'));
+    const buf = new TextEncoder().encode(t);
+    const algs = ['SHA-1','SHA-256','SHA-384','SHA-512'];
+    let acc = '';
+    for (const a of algs) {
+        const h = await crypto.subtle.digest(a, buf);
+        const hex = Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
+        acc += ok(a.toLowerCase().padEnd(10) + hex) + '\n';
+    }
+    out('hash-out', acc);
+}
+
+// ── pwd ────────────────────────────────────────
+function pwdGen() {
+    const len = Math.max(4, Math.min(128, parseInt(document.getElementById('pwd-len').value) || 24));
+    const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*-_=+';
+    const a = new Uint32Array(len);
+    crypto.getRandomValues(a);
+    let p = '';
+    for (let i = 0; i < len; i++) p += pool[a[i] % pool.length];
+    out('pwd-out', ok(p));
+}
+
+// ── ip ─────────────────────────────────────────
+async function ipLookup() {
+    const v = document.getElementById('ip-in').value.trim();
+    if (!v) return out('ip-out', err('enter ip or host'));
+    out('ip-out', '<span class="dim">querying…</span>');
+    try {
+        const r = await fetch('http://ip-api.com/json/' + encodeURIComponent(v) + '?fields=66846719');
+        const j = await r.json();
+        if (j.status === 'fail') return out('ip-out', err(j.message || 'lookup failed'));
+        const rows = [
+            ['ip', j.query], ['country', j.country + ' (' + j.countryCode + ')'],
+            ['region', j.regionName], ['city', j.city], ['zip', j.zip],
+            ['coords', j.lat + ', ' + j.lon], ['timezone', j.timezone],
+            ['isp', j.isp], ['org', j.org || '-'], ['as', j.as],
+            ['proxy', j.proxy ? 'yes' : 'no'], ['hosting', j.hosting ? 'yes' : 'no'],
+            ['mobile', j.mobile ? 'yes' : 'no'],
+        ];
+        out('ip-out', rows.map(([k,v]) => ok(k.padEnd(10) + ' ' + v)).join('\n'));
+    } catch (e) { out('ip-out', err('request failed — ' + e.message)); }
+}
+
+// ── dns ────────────────────────────────────────
+async function dnsLookup() {
+    const domain = document.getElementById('dns-in').value.trim();
+    const type   = document.getElementById('dns-type').value;
+    if (!domain) return out('dns-out', err('enter a domain'));
+    out('dns-out', '<span class="dim">resolving…</span>');
+    try {
+        const r = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=${type}`,
+                              { headers: { 'accept': 'application/dns-json' } });
+        const j = await r.json();
+        if (!j.Answer || !j.Answer.length) return out('dns-out', err('no records'));
+        out('dns-out', j.Answer.map(a => ok(`${a.type.toString().padEnd(4)} ${a.data}`)).join('\n'));
+    } catch (e) { out('dns-out', err('request failed — ' + e.message)); }
+}
+
+// ── token ──────────────────────────────────────
+function tokDecode() {
+    const t = document.getElementById('tok-in').value.trim();
+    if (!t || !t.includes('.')) return out('tok-out', err('not a valid token'));
+    const parts = t.split('.');
+    try {
+        const uid = atob(parts[0] + '==');
+        let created = 'unknown';
+        try {
+            const tsBytes = atob(parts[1] + '==');
+            let n = 0n;
+            for (const c of tsBytes) n = (n << 8n) | BigInt(c.charCodeAt(0));
+            created = new Date((Number(n) + 1293840000) * 1000).toISOString();
+        } catch {}
+        out('tok-out',
+            ok('user id       ' + uid) + '\n' +
+            ok('created approx ' + created) + '\n' +
+            ok('hmac present  ' + (parts.length === 3))
+        );
+    } catch { out('tok-out', err('decode failed')); }
+}
+
+// ── webhook ────────────────────────────────────
+async function whInspect() {
+    const u = document.getElementById('wh-in').value.trim();
+    if (!u) return out('wh-out', err('paste a webhook url'));
+    out('wh-out', '<span class="dim">probing…</span>');
+    try {
+        const r = await fetch(u);
+        if (!r.ok) return out('wh-out', err('status ' + r.status));
+        const j = await r.json();
+        const rows = [
+            ['id', j.id], ['name', j.name], ['type', j.type],
+            ['channel', j.channel_id], ['guild', j.guild_id],
+            ['token', j.token ? 'present' : 'hidden'],
+        ];
+        if (j.user) rows.push(['creator', j.user.username + (j.user.discriminator ? '#' + j.user.discriminator : '')]);
+        out('wh-out', rows.map(([k,v]) => ok(String(k).padEnd(10) + ' ' + v)).join('\n'));
+    } catch (e) { out('wh-out', err('request failed — ' + e.message)); }
+}
+
+// ── glow, chains, hex, bg ──────────────────────
+const glow = document.getElementById('glow');
+let raf = null, tx = 0, ty = 0, cx = 0, cy = 0;
+document.addEventListener('mousemove', e => {
+    tx = e.clientX; ty = e.clientY;
+    document.body.classList.add('glowing');
+    if (!raf) raf = requestAnimationFrame(loop);
+});
+document.addEventListener('mouseleave', () => glow.style.opacity = '0');
+document.addEventListener('mouseenter', () => glow.style.opacity = '1');
+function loop() {
+    cx += (tx-cx)*0.18; cy += (ty-cy)*0.18;
+    glow.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+    if (Math.abs(tx-cx) > 0.5 || Math.abs(ty-cy) > 0.5) raf = requestAnimationFrame(loop);
+    else raf = null;
+}
+
+const chainGlyphs = '⛓';
+const fillChain = (el, count) => { let s = ''; for (let i = 0; i < count; i++) s += chainGlyphs + '\n'; el.textContent = s; };
+const resizeChains = () => {
+    const n = Math.floor(window.innerHeight / 28);
+    fillChain(document.getElementById('chainL'), n);
+    fillChain(document.getElementById('chainR'), n);
+};
+resizeChains();
+window.addEventListener('resize', resizeChains);
+
+const bg = document.getElementById('bgNums');
+let nums = '';
+const cols = Math.floor(window.innerWidth / 16);
+const rows = Math.floor(window.innerHeight / 22);
+for (let y = 0; y < rows; y++) {
+    let line = '';
+    for (let x = 0; x < cols; x++) line += Math.random().toString(16).slice(2,6).padEnd(4,' ');
+    nums += line + '\n';
+}
+bg.textContent = nums;
+setInterval(() => { bg.textContent = Math.random().toString(16).slice(2,6) + nums.slice(4); }, 350);
+
+// intercept internal tool clicks on index — run loader before navigate
+document.querySelectorAll('a[href^="tools.html"]').forEach(a => {
+    a.addEventListener('click', e => {
+        e.preventDefault();
+        sessionStorage.setItem('fiesta_loaded', '1');
+        const href = a.getAttribute('href');
+        runLoader(() => { location.href = href; });
+    });
+});
 </script>
 
 </body>
