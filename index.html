@@ -14,9 +14,27 @@
         line-height: 1.7;
         margin: 0;
         min-height: 100vh;
+        overflow-x: hidden;
     }
 
-    /* background art */
+    /* ── cursor glow ─────────────────────────────────── */
+    #glow {
+        position: fixed;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1;
+        background: radial-gradient(circle,
+            rgba(196, 30, 58, 0.14) 0%,
+            rgba(196, 30, 58, 0.06) 30%,
+            transparent 65%);
+        transform: translate(-50%, -50%);
+        transition: opacity 0.3s;
+        will-change: transform;
+    }
+
+    /* ── background art ──────────────────────────────── */
     .bg-art {
         position: fixed;
         inset: 0;
@@ -30,16 +48,23 @@
         opacity: 0.22;
         user-select: none;
         mix-blend-mode: screen;
+        transition: opacity 0.4s ease;
     }
-    .bg-art .a { top: 4%;    left: -3%;  width: 380px; }
-    .bg-art .b { top: 45%;   right: -4%; width: 420px; }
-    .bg-art .c { bottom: -8%; left: 20%; width: 360px; opacity: 0.14; }
-    .bg-art .d { top: 12%;   right: 22%; width: 240px; opacity: 0.16; }
+    .bg-art .a { top: 3%;    left: -4%;  width: 380px; }
+    .bg-art .b { top: 42%;   right: -5%; width: 420px; }
+    .bg-art .c { bottom: -10%; left: 18%; width: 360px; opacity: 0.14; }
+    .bg-art .d { top: 10%;   right: 20%; width: 240px; opacity: 0.16; }
 
+    /* art brightens slightly as cursor passes */
+    body.glowing .bg-art img { opacity: 0.28; }
+    body.glowing .bg-art .c { opacity: 0.18; }
+    body.glowing .bg-art .d { opacity: 0.2; }
+
+    /* ── content ─────────────────────────────────────── */
     .wrap {
         position: relative;
-        z-index: 1;
-        max-width: 720px;
+        z-index: 2;
+        max-width: 780px;
         margin: 0 auto;
         padding: 48px 32px 80px;
     }
@@ -55,7 +80,6 @@
         color: #d4d4d4;
         margin: 0;
         font-weight: normal;
-        letter-spacing: 0;
     }
     .brand .prompt { color: #6a6a6a; margin-right: 8px; }
     .brand .name   { color: #ff2e63; font-weight: bold; }
@@ -78,53 +102,59 @@
     .meta a { color: #6a6a6a; text-decoration: none; }
     .meta a:hover { color: #ff2e63; }
 
-    section { margin-bottom: 40px; }
+    section { margin-bottom: 44px; }
 
     .label {
         color: #8b0000;
         font-size: 11px;
-        margin: 0 0 14px 0;
-        text-transform: lowercase;
+        margin: 0 0 16px 0;
     }
     .label::before { content: '// '; color: #3a3a3a; }
 
-    .list { list-style: none; padding: 0; margin: 0; }
+    /* ── tool buttons ────────────────────────────────── */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 12px;
+    }
 
-    .list li {
+    .tile {
         display: flex;
-        align-items: baseline;
-        padding: 6px 0;
-        border-bottom: 1px dashed #1a1a1a;
-    }
-    .list li:last-child { border-bottom: none; }
-
-    .list .n {
-        color: #3a3a3a;
-        width: 32px;
-        flex-shrink: 0;
-        font-size: 12px;
-    }
-
-    .list a {
+        flex-direction: column;
+        gap: 4px;
+        padding: 16px 18px;
+        background: #111;
+        border: 1px solid #232323;
         color: #d4d4d4;
         text-decoration: none;
-        flex: 1;
-        transition: color 0.1s;
-    }
-    .list a:hover { color: #ff2e63; }
-    .list a:hover .desc { color: #8b0000; }
-
-    .list .desc {
-        color: #4a4a4a;
-        font-size: 12px;
-        margin-left: 16px;
-        transition: color 0.1s;
+        transition: all 0.15s ease;
+        position: relative;
     }
 
-    .list .tag {
-        color: #3a3a3a;
+    .tile:hover {
+        border-color: #c41e3a;
+        background: #150a0c;
+    }
+
+    .tile:hover .t-name { color: #ff2e63; }
+
+    .t-name {
+        font-size: 13px;
+        color: #d4d4d4;
+        transition: color 0.15s;
+    }
+
+    .t-desc {
         font-size: 11px;
-        margin-left: 16px;
+        color: #4a4a4a;
+    }
+
+    .t-num {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        font-size: 10px;
+        color: #2a2a2a;
     }
 
     footer {
@@ -136,9 +166,18 @@
     }
     footer a { color: #4a4a4a; text-decoration: none; }
     footer a:hover { color: #ff2e63; }
+
+    @media (max-width: 600px) {
+        .wrap { padding: 32px 20px 60px; }
+        #glow { display: none; }
+        .bg-art .a, .bg-art .b { opacity: 0.12; }
+        .bg-art .c, .bg-art .d { opacity: 0.08; }
+    }
 </style>
 </head>
 <body>
+
+<div id="glow"></div>
 
 <div class="bg-art">
     <img class="a" src="art/1.png" alt="">
@@ -156,28 +195,60 @@
 
     <section>
         <p class="label">tools</p>
-        <ul class="list">
-            <li><span class="n">01</span><a href="tools.html#snowflake">snowflake decoder<span class="desc">discord id → timestamp</span></a></li>
-            <li><span class="n">02</span><a href="tools.html#base64">base64<span class="desc">encode / decode</span></a></li>
-            <li><span class="n">03</span><a href="tools.html#hash">hash text<span class="desc">sha-1 / 256 / 384 / 512</span></a></li>
-            <li><span class="n">04</span><a href="tools.html#pwd">password gen<span class="desc">crypto random</span></a></li>
-        </ul>
+        <div class="grid">
+            <a class="tile" href="tools.html#snowflake">
+                <span class="t-num">01</span>
+                <span class="t-name">snowflake</span>
+                <span class="t-desc">discord id → timestamp</span>
+            </a>
+            <a class="tile" href="tools.html#base64">
+                <span class="t-num">02</span>
+                <span class="t-name">base64</span>
+                <span class="t-desc">encode / decode</span>
+            </a>
+            <a class="tile" href="tools.html#hash">
+                <span class="t-num">03</span>
+                <span class="t-name">hash text</span>
+                <span class="t-desc">sha family</span>
+            </a>
+            <a class="tile" href="tools.html#pwd">
+                <span class="t-num">04</span>
+                <span class="t-name">password gen</span>
+                <span class="t-desc">crypto random</span>
+            </a>
+        </div>
     </section>
 
     <section>
         <p class="label">network</p>
-        <ul class="list">
-            <li><span class="n">05</span><a href="tools.html#ip">ip lookup<span class="desc">geo · isp · asn</span></a></li>
-            <li><span class="n">06</span><a href="tools.html#dns">dns lookup<span class="desc">a / aaaa / mx / ns / txt</span></a></li>
-        </ul>
+        <div class="grid">
+            <a class="tile" href="tools.html#ip">
+                <span class="t-num">05</span>
+                <span class="t-name">ip lookup</span>
+                <span class="t-desc">geo · isp · asn</span>
+            </a>
+            <a class="tile" href="tools.html#dns">
+                <span class="t-num">06</span>
+                <span class="t-name">dns lookup</span>
+                <span class="t-desc">a / mx / txt</span>
+            </a>
+        </div>
     </section>
 
     <section>
         <p class="label">discord</p>
-        <ul class="list">
-            <li><span class="n">07</span><a href="tools.html#token">token decode<span class="desc">static header parse</span></a></li>
-            <li><span class="n">08</span><a href="tools.html#webhook">webhook inspect<span class="desc">url → metadata</span></a></li>
-        </ul>
+        <div class="grid">
+            <a class="tile" href="tools.html#token">
+                <span class="t-num">07</span>
+                <span class="t-name">token decode</span>
+                <span class="t-desc">static header parse</span>
+            </a>
+            <a class="tile" href="tools.html#webhook">
+                <span class="t-num">08</span>
+                <span class="t-name">webhook inspect</span>
+                <span class="t-desc">url → metadata</span>
+            </a>
+        </div>
     </section>
 
     <footer>
@@ -185,6 +256,42 @@
     </footer>
 
 </div>
+
+<script>
+    // cursor glow follows pointer
+    const glow = document.getElementById('glow');
+    let raf = null;
+    let tx = 0, ty = 0;
+    let cx = 0, cy = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        tx = e.clientX;
+        ty = e.clientY;
+        document.body.classList.add('glowing');
+        if (!raf) raf = requestAnimationFrame(loop);
+    });
+
+    document.addEventListener('mouseleave', () => {
+        glow.style.opacity = '0';
+        document.body.classList.remove('glowing');
+    });
+
+    document.addEventListener('mouseenter', () => {
+        glow.style.opacity = '1';
+    });
+
+    function loop() {
+        // smooth follow — 0.15 is the lerp factor (lower = laggier)
+        cx += (tx - cx) * 0.15;
+        cy += (ty - cy) * 0.15;
+        glow.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+        if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) {
+            raf = requestAnimationFrame(loop);
+        } else {
+            raf = null;
+        }
+    }
+</script>
 
 </body>
 </html>
