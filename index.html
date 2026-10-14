@@ -5,109 +5,118 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>fiesta</title>
 <style>
+    * { box-sizing: border-box; }
+
     html, body {
-        background: #0a0a0a;
+        background: #050505;
         color: #d4d4d4;
         font-family: 'SF Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
         font-size: 13px;
-        line-height: 1.7;
+        line-height: 1.55;
         margin: 0;
         min-height: 100vh;
         overflow-x: hidden;
     }
 
-    /* ── cursor glow ────────────────────────────────── */
+    /* ── fixed overlay bits ───────────────────────── */
     #glow {
         position: fixed;
-        width: 500px;
-        height: 500px;
+        width: 420px;
+        height: 420px;
         border-radius: 50%;
         pointer-events: none;
         z-index: 1;
         background: radial-gradient(circle,
-            rgba(196, 30, 58, 0.13) 0%,
-            rgba(196, 30, 58, 0.05) 32%,
-            transparent 68%);
-        transform: translate(-50%, -50%);
-        transition: opacity 0.3s;
+            rgba(220, 20, 60, 0.14) 0%,
+            rgba(220, 20, 60, 0.04) 40%,
+            transparent 70%);
+        transform: translate(-50%,-50%);
+        transition: opacity 0.2s;
         will-change: transform;
     }
 
-    /* ── lain figure — top right, block chars only ──── */
-    .lain {
+    /* corner crosshairs */
+    .crosshair {
         position: fixed;
-        top: 60px;
-        right: 40px;
-        z-index: 0;
+        width: 22px; height: 22px;
+        z-index: 3;
         pointer-events: none;
-        user-select: none;
-        opacity: 0.18;
-        transition: opacity 0.5s ease;
-    }
-
-    .lain pre {
-        margin: 0;
-        font-family: 'SF Mono', Consolas, monospace;
-        font-size: 5px;
-        line-height: 1;
-        white-space: pre;
-        color: #c41e3a;
-        letter-spacing: -0.5px;
-    }
-
-    body.glowing .lain { opacity: 0.3; }
-
-    /* ── vertical japanese column ───────────────────── */
-    .jp-column {
-        position: fixed;
-        top: 50%;
-        right: 48px;
-        transform: translateY(-50%);
-        z-index: 0;
-        pointer-events: none;
-        user-select: none;
-        writing-mode: vertical-rl;
-        text-orientation: upright;
-        font-size: 13px;
-        letter-spacing: 26px;
         color: #8b0000;
-        opacity: 0.55;
-        transition: opacity 0.4s;
+        font-size: 14px;
+        opacity: 0.6;
     }
-    .jp-column .ch  { display: block; margin: 20px 0; text-shadow: 0 0 12px rgba(139, 0, 0, 0.5); }
-    .jp-column .dim { color: #3a3a3a; opacity: 0.8; }
-    body.glowing .jp-column { opacity: 0.85; }
+    .crosshair.tl { top: 12px; left: 12px; }
+    .crosshair.tr { top: 12px; right: 12px; }
+    .crosshair.bl { bottom: 12px; left: 12px; }
+    .crosshair.br { bottom: 12px; right: 12px; }
 
-    /* ── hex watermark ──────────────────────────────── */
+    /* hex watermark */
     .bg-nums {
-        position: fixed;
-        inset: 0;
+        position: fixed; inset: 0;
         z-index: 0;
         pointer-events: none;
-        user-select: none;
         overflow: hidden;
         opacity: 0.05;
-        font-size: 10px;
-        line-height: 1.6;
+        font-size: 10px; line-height: 1.5;
         color: #c41e3a;
         white-space: pre;
-        padding: 40px;
-        letter-spacing: 1px;
+        padding: 32px;
     }
 
-    /* ── layout ─────────────────────────────────────── */
+    /* chain strips along the left/right edges */
+    .chain {
+        position: fixed;
+        top: 0; bottom: 0;
+        width: 28px;
+        z-index: 2;
+        pointer-events: none;
+        font-size: 20px;
+        line-height: 28px;
+        color: #8b0000;
+        opacity: 0.35;
+        overflow: hidden;
+        text-align: center;
+        writing-mode: vertical-rl;
+        letter-spacing: 8px;
+        user-select: none;
+    }
+    .chain.left  { left: 0;  border-right: 1px solid #1a0000; }
+    .chain.right { right: 0; border-left: 1px solid #1a0000; }
+
+    /* ── the eyes ──────────────────────────────────── */
+    .eyes {
+        position: fixed;
+        top: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+        font-size: 22px;
+        color: #ff2e63;
+        letter-spacing: 22px;
+        text-shadow: 0 0 14px rgba(255,46,99,0.7);
+        pointer-events: none;
+        opacity: 0.75;
+        transition: opacity 0.3s, text-shadow 0.3s;
+    }
+    body.glowing .eyes {
+        opacity: 1;
+        text-shadow: 0 0 22px rgba(255,46,99,1);
+    }
+
+    /* ── layout ────────────────────────────────────── */
     .wrap {
         position: relative;
         z-index: 2;
-        max-width: 720px;
+        max-width: 760px;
         margin: 0 auto;
-        padding: 64px 40px 100px;
+        padding: 96px 56px 80px;
     }
 
+    /* ── header ────────────────────────────────────── */
     header {
-        padding-bottom: 40px;
-        border-bottom: 1px solid #1c1c1c;
-        margin-bottom: 48px;
+        margin-bottom: 56px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid #1a1a1a;
     }
 
     .kicker {
@@ -115,32 +124,31 @@
         font-size: 10px;
         letter-spacing: 6px;
         margin: 0 0 24px 0;
-        text-transform: uppercase;
     }
 
     .jp-title {
         color: #ff2e63;
-        font-size: 26px;
-        letter-spacing: 16px;
-        margin: 0 0 20px 0;
+        font-size: 24px;
+        letter-spacing: 14px;
+        margin: 0 0 16px 0;
         font-weight: 400;
-        text-shadow: 0 0 20px rgba(255, 46, 99, 0.35);
+        text-shadow: 0 0 18px rgba(255, 46, 99, 0.4);
     }
 
     .wordmark {
-        font-size: 56px;
+        font-size: 52px;
         font-weight: 700;
-        color: #d4d4d4;
+        color: #fff;
         letter-spacing: -2px;
         line-height: 1;
         margin: 0;
+        font-family: 'SF Mono', Consolas, monospace;
     }
-    .wordmark .slash  { color: #8b0000; font-weight: 400; margin: 0 4px; }
+    .wordmark .slash { color: #8b0000; font-weight: 400; margin: 0 6px; }
     .wordmark .accent { color: #ff2e63; }
     .wordmark .cursor {
         display: inline-block;
-        width: 22px;
-        height: 44px;
+        width: 20px; height: 42px;
         background: #ff2e63;
         margin-left: 10px;
         vertical-align: -8px;
@@ -148,102 +156,113 @@
     }
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* ── lain quote ─────────────────────────────────── */
     .lain-quote {
-        margin-top: 32px;
-        padding-left: 16px;
-        border-left: 2px solid #8b0000;
-        color: #5a5a5a;
-        font-size: 12px;
+        margin-top: 30px;
+        padding-left: 14px;
+        border-left: 3px solid #8b0000;
+        color: #9a9a9a;
+        font-size: 13px;
         font-style: italic;
         line-height: 1.6;
-        max-width: 420px;
+        max-width: 460px;
     }
     .lain-quote .attr {
         display: block;
         margin-top: 6px;
-        color: #3a3a3a;
+        color: #4a4a4a;
         font-style: normal;
         font-size: 10px;
-        letter-spacing: 2px;
+        letter-spacing: 3px;
     }
 
-    section { margin-bottom: 52px; }
+    /* ── section ───────────────────────────────────── */
+    section { margin-bottom: 48px; }
 
     .label {
-        color: #8b0000;
+        color: #ff2e63;
         font-size: 10px;
-        letter-spacing: 4px;
-        margin: 0 0 20px 0;
-        text-transform: uppercase;
+        letter-spacing: 5px;
+        margin: 0 0 18px 0;
         display: flex;
         align-items: center;
         gap: 12px;
+        font-weight: 700;
     }
-    .label::before { content: '//'; color: #2a2a2a; }
-    .label::after  { content: ''; flex: 1; height: 1px; background: #1c1c1c; }
+    .label::before { content: '⛓'; color: #8b0000; font-size: 14px; }
+    .label::after  {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, #8b0000 0%, #8b0000 4px, transparent 4px, transparent 8px);
+        background-size: 8px 1px;
+        opacity: 0.6;
+    }
 
+    /* ── tiles ─────────────────────────────────────── */
     .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 0;
+        border: 1px solid #1a1a1a;
     }
 
     .tile {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 4px;
         padding: 16px 18px;
-        background: #0e0e0e;
-        border: 1px solid #1c1c1c;
+        background: #080808;
         color: #d4d4d4;
         text-decoration: none;
-        transition: all 0.15s ease;
+        transition: none;
         position: relative;
+        border-right: 1px solid #1a1a1a;
+        border-bottom: 1px solid #1a1a1a;
     }
 
-    .tile::before {
-        content: '';
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 2px;
-        background: #8b0000;
-        opacity: 0;
-        transition: opacity 0.15s;
+    .tile:hover {
+        background: #150000;
+        color: #fff;
     }
-
-    .tile:hover { border-color: #2e2e2e; background: #131313; }
-    .tile:hover::before { opacity: 1; }
     .tile:hover .t-name { color: #ff2e63; }
+    .tile:hover .t-num  { color: #ff2e63; }
 
-    .t-name { font-size: 13px; color: #d4d4d4; transition: color 0.15s; letter-spacing: 0.5px; }
-    .t-desc { font-size: 11px; color: #4a4a4a; line-height: 1.5; }
-    .t-num  { position: absolute; top: 8px; right: 10px; font-size: 9px; color: #2a2a2a; letter-spacing: 1px; }
+    .t-name {
+        font-size: 13px;
+        color: #e0e0e0;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .t-desc { font-size: 11px; color: #5a5a5a; }
+    .t-num  {
+        position: absolute;
+        top: 8px; right: 10px;
+        font-size: 10px;
+        color: #3a3a3a;
+        font-weight: 700;
+    }
 
+    /* ── footer ────────────────────────────────────── */
     footer {
-        margin-top: 80px;
+        margin-top: 72px;
         padding-top: 24px;
-        border-top: 1px solid #1c1c1c;
+        border-top: 1px solid #1a1a1a;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        color: #3a3a3a;
+        color: #4a4a4a;
         font-size: 10px;
-        letter-spacing: 2px;
+        letter-spacing: 3px;
     }
-    footer a { color: #4a4a4a; text-decoration: none; }
+    footer a { color: #6a6a6a; text-decoration: none; }
     footer a:hover { color: #ff2e63; }
 
-    @media (max-width: 900px) {
-        .lain { right: 20px; opacity: 0.12; }
-        .lain pre { font-size: 3.5px; }
-        .jp-column { right: 20px; font-size: 11px; letter-spacing: 20px; opacity: 0.35; }
-    }
-    @media (max-width: 600px) {
-        .wrap { padding: 40px 20px 60px; }
-        #glow, .lain, .jp-column, .bg-nums { display: none; }
-        .wordmark { font-size: 40px; }
-        .jp-title { font-size: 20px; letter-spacing: 10px; }
+    @media (max-width: 700px) {
+        .wrap { padding: 60px 28px 60px; }
+        .chain { display: none; }
+        .eyes { top: 20px; font-size: 18px; letter-spacing: 14px; }
+        .wordmark { font-size: 38px; }
+        .jp-title { font-size: 18px; letter-spacing: 8px; }
     }
 </style>
 </head>
@@ -251,54 +270,22 @@
 
 <div id="glow"></div>
 
-<!-- lain, block chars only -->
-<div class="lain">
-<pre>
-                ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-            ▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓
-          ▓▓▒▒▒▒░░░░░░░░░░░░░░▒▒▒▒▓▓
-        ▓▓▒▒░░░░░░░░░░░░░░░░░░░░▒▒▓▓
-       ▓▒▒░░░░░░░░░░░░░░░░░░░░░░░░▒▓
-      ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
-     ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░▓
-    ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▓
-   ▓▒░░░░░███░░░░░░░░░░░░░░███░░░░░░▒▓
-   ▓▒░░░██████░░░░░░░░░░░░██████░░░░▒▓
-   ▓▒░░████████░░░░░░░░░░████████░░░▒▓
-   ▓▒░░█▓▓▓▓▓▓█░░░░░░░░░░█▓▓▓▓▓▓█░░░▒▓
-   ▓▒░░█▓░░░▓▓█░░░░░░░░░░█▓░░░▓▓█░░░▒▓
-   ▓▒░░█▓░░░▓▓█░░░░░░░░░░█▓░░░▓▓█░░░▒▓
-   ▓▒░░████████░░░░░░░░░░████████░░░▒▓
-   ▓▒░░░██████░░░░░░░░░░░░██████░░░░▒▓
-    ▓▒░░░███░░░░░░░░░░░░░░░░███░░░░░▒▓
-    ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
-     ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
-     ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
-      ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
-       ▓▒▒░░░░░░░░░░░░░░░░░░░░░░▒▒▓
-        ▓▓▒▒░░░░░░░░░░░░░░░░░░▒▒▓▓
-          ▓▓▓▒▒▒░░░░░░░░░░▒▒▒▓▓▓
-             ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-                ▓▓▓▓▓▓▓▓▓▓▓▓
-</pre>
-</div>
+<div class="crosshair tl">+</div>
+<div class="crosshair tr">+</div>
+<div class="crosshair bl">+</div>
+<div class="crosshair br">+</div>
 
-<!-- vertical japanese -->
-<div class="jp-column">
-    <span class="ch dim">現</span>
-    <span class="ch">在</span>
-    <span class="ch dim">日</span>
-    <span class="ch">本</span>
-    <span class="ch dim">時</span>
-    <span class="ch">間</span>
-</div>
+<div class="chain left"  id="chainL"></div>
+<div class="chain right" id="chainR"></div>
+
+<div class="eyes">◉ ◉</div>
 
 <div class="bg-nums" id="bgNums"></div>
 
 <div class="wrap">
 
     <header>
-        <p class="kicker">present day · present time</p>
+        <p class="kicker">PRESENT DAY · PRESENT TIME</p>
         <p class="jp-title">フ ィ エ ス タ</p>
         <h1 class="wordmark">fiesta<span class="slash">/</span><span class="accent">osint</span><span class="cursor"></span></h1>
 
@@ -309,7 +296,7 @@
     </header>
 
     <section>
-        <p class="label">tools</p>
+        <p class="label">TOOLS</p>
         <div class="grid">
             <a class="tile" href="tools.html#snowflake">
                 <span class="t-num">01</span>
@@ -324,7 +311,7 @@
             <a class="tile" href="tools.html#hash">
                 <span class="t-num">03</span>
                 <span class="t-name">hash text</span>
-                <span class="t-desc">sha-1 · 256 · 384 · 512</span>
+                <span class="t-desc">sha family</span>
             </a>
             <a class="tile" href="tools.html#pwd">
                 <span class="t-num">04</span>
@@ -335,7 +322,7 @@
     </section>
 
     <section>
-        <p class="label">network</p>
+        <p class="label">NETWORK</p>
         <div class="grid">
             <a class="tile" href="tools.html#ip">
                 <span class="t-num">05</span>
@@ -345,13 +332,13 @@
             <a class="tile" href="tools.html#dns">
                 <span class="t-num">06</span>
                 <span class="t-name">dns lookup</span>
-                <span class="t-desc">a · aaaa · mx · txt</span>
+                <span class="t-desc">a · mx · txt</span>
             </a>
         </div>
     </section>
 
     <section>
-        <p class="label">discord</p>
+        <p class="label">DISCORD</p>
         <div class="grid">
             <a class="tile" href="tools.html#token">
                 <span class="t-num">07</span>
@@ -374,41 +361,50 @@
 </div>
 
 <script>
+    // glow
     const glow = document.getElementById('glow');
     let raf = null, tx = 0, ty = 0, cx = 0, cy = 0;
-
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', e => {
         tx = e.clientX; ty = e.clientY;
         document.body.classList.add('glowing');
         if (!raf) raf = requestAnimationFrame(loop);
     });
-    document.addEventListener('mouseleave', () => {
-        glow.style.opacity = '0';
-        document.body.classList.remove('glowing');
-    });
-    document.addEventListener('mouseenter', () => { glow.style.opacity = '1'; });
-
+    document.addEventListener('mouseleave', () => glow.style.opacity = '0');
+    document.addEventListener('mouseenter', () => glow.style.opacity = '1');
     function loop() {
-        cx += (tx - cx) * 0.15;
-        cy += (ty - cy) * 0.15;
+        cx += (tx-cx)*0.18; cy += (ty-cy)*0.18;
         glow.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
         if (Math.abs(tx-cx) > 0.5 || Math.abs(ty-cy) > 0.5) raf = requestAnimationFrame(loop);
         else raf = null;
     }
 
+    // hex bg
     const bg = document.getElementById('bgNums');
     let nums = '';
-    const cols = Math.floor(window.innerWidth / 18);
-    const rows = Math.floor(window.innerHeight / 24);
+    const cols = Math.floor(window.innerWidth / 16);
+    const rows = Math.floor(window.innerHeight / 22);
     for (let y = 0; y < rows; y++) {
         let line = '';
-        for (let x = 0; x < cols; x++) line += Math.random().toString(16).slice(2, 6).padEnd(4, ' ');
+        for (let x = 0; x < cols; x++) line += Math.random().toString(16).slice(2,6).padEnd(4,' ');
         nums += line + '\n';
     }
     bg.textContent = nums;
-    setInterval(() => {
-        bg.textContent = Math.random().toString(16).slice(2, 6) + nums.slice(4);
-    }, 400);
+    setInterval(() => { bg.textContent = Math.random().toString(16).slice(2,6) + nums.slice(4); }, 350);
+
+    // chains
+    const chainGlyphs = '⛓';
+    const fill = (el, count) => {
+        let s = '';
+        for (let i = 0; i < count; i++) s += chainGlyphs + '\n';
+        el.textContent = s;
+    };
+    const resizeChains = () => {
+        const n = Math.floor(window.innerHeight / 28);
+        fill(document.getElementById('chainL'), n);
+        fill(document.getElementById('chainR'), n);
+    };
+    resizeChains();
+    window.addEventListener('resize', resizeChains);
 </script>
 
 </body>
