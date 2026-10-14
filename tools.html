@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>tools · @0_032</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    .tool {
+        margin-top: 40px;
+        padding: 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+    }
+    .tool h3 {
+        color: var(--red);
+        font-weight: normal;
+        font-size: 14px;
+        margin-bottom: 16px;
+        letter-spacing: 0.5px;
+    }
+    .row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    input, select, textarea {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--fg);
+        font-family: inherit;
+        font-size: 13px;
+        padding: 8px 12px;
+        flex: 1;
+        min-width: 200px;
+        outline: none;
+    }
+    input:focus, textarea:focus {
+        border-color: var(--red);
+    }
+    button {
+        background: var(--red-deep);
+        border: 1px solid var(--red);
+        color: var(--fg);
+        font-family: inherit;
+        font-size: 13px;
+        padding: 8px 20px;
+        cursor: pointer;
+        transition: all 0.15s;
+        letter-spacing: 0.5px;
+    }
+    button:hover {
+        background: var(--red);
+        color: var(--bg);
+    }
+    button:active { transform: translateY(1px); }
+    pre.out {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        padding: 14px;
+        margin-top: 12px;
+        color: var(--fg);
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-all;
+        min-height: 20px;
+        overflow-x: auto;
+    }
+    .out .ok  { color: var(--pink); }
+    .out .err { color: var(--red-bright); }
+    .out .dim { color: var(--dim); }
+    a.back {
+        color: var(--dim);
+        text-decoration: none;
+        font-size: 12px;
+    }
+    a.back:hover { color: var(--red-bright); }
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div class="noise"></div>
+
+<main>
+    <p><a class="back" href="index.html">← index</a></p>
+    <h2 style="margin-top:32px">// 道具 · tools</h2>
+    <p class="hint">runs entirely in your browser. no data sent anywhere except where you tell it to.</p>
+
+    <!-- SNOWFLAKE -->
+    <div class="tool" id="snowflake">
+        <h3>雪片 · snowflake decoder</h3>
+        <div class="row">
+            <input id="sf-in" placeholder="discord snowflake id (e.g. 1545463848130056263)">
+            <button onclick="sfDecode()">decode</button>
+        </div>
+        <pre class="out" id="sf-out"></pre>
+    </div>
+
+    <!-- BASE64 -->
+    <div class="tool" id="base64">
+        <h3>符号化 · base64</h3>
+        <div class="row">
+            <textarea id="b64-in" rows="3" placeholder="text or base64"></textarea>
+        </div>
+        <div class="row">
+            <button onclick="b64Encode()">encode →</button>
+            <button onclick="b64Decode()">← decode</button>
+            <button onclick="document.getElementById('b64-out').textContent=''">clear</button>
+        </div>
+        <pre class="out" id="b64-out"></pre>
+    </div>
+
+    <!-- HASH -->
+    <div class="tool" id="hash">
+        <h3>散列 · hash text</h3>
+        <div class="row">
+            <input id="hash-in" placeholder="text">
+            <button onclick="hashAll()">hash</button>
+        </div>
+        <pre class="out" id="hash-out"></pre>
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="tool" id="pwd">
+        <h3>暗号 · password generator</h3>
+        <div class="row">
+            <input id="pwd-len" type="number" value="24" min="4" max="128" style="max-width:100px">
+            <button onclick="pwdGen()">generate</button>
+        </div>
+        <pre class="out" id="pwd-out"></pre>
+    </div>
+
+    <!-- IP LOOKUP -->
+    <div class="tool" id="ip">
+        <h3>住所 · ip lookup</h3>
+        <div class="row">
+            <input id="ip-in" placeholder="ip or hostname (e.g. 1.1.1.1)">
+            <button onclick="ipLookup()">lookup</button>
+        </div>
+        <pre class="out" id="ip-out"></pre>
+    </div>
+
+    <!-- DNS -->
+    <div class="tool" id="dns">
+        <h3>名前解決 · dns lookup</h3>
+        <div class="row">
+            <input id="dns-in" placeholder="domain (e.g. discord.com)">
+            <select id="dns-type">
+                <option>A</option><option>AAAA</option>
+                <option>MX</option><option>NS</option>
+                <option>TXT</option><option>CNAME</option>
+            </select>
+            <button onclick="dnsLookup()">resolve</button>
+        </div>
+        <pre class="out" id="dns-out"></pre>
+    </div>
+
+    <!-- TOKEN DECODE -->
+    <div class="tool" id="token">
+        <h3>証票 · token decode (static)</h3>
+        <p class="hint" style="margin-bottom:12px">decodes the header of a discord token without contacting any server.</p>
+        <div class="row">
+            <input id="tok-in" placeholder="discord token">
+            <button onclick="tokDecode()">decode</button>
+        </div>
+        <pre class="out" id="tok-out"></pre>
+    </div>
+
+    <!-- WEBHOOK INSPECT -->
+    <div class="tool" id="webhook">
+        <h3>送信 · webhook inspect</h3>
+        <div class="row">
+            <input id="wh-in" placeholder="webhook url">
+            <button onclick="whInspect()">inspect</button>
+        </div>
+        <pre class="out" id="wh-out"></pre>
+    </div>
+
+</main>
+
+<footer>
+    <p class="dim">present day. present time.</p>
+</footer>
+
+<script>
+// helpers
+function out(id, html) { document.getElementById(id).innerHTML = html; }
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function ok(s) { return '<span class="ok">[+] </span>' + esc(s); }
+function err(s) { return '<span class="err">[-] </span>' + esc(s); }
+
+// ── snowflake
+const DISCORD_EPOCH = 1420070400000n;
+function sfDecode() {
+    const v = document.getElementById('sf-in').value.trim();
+    if (!v || !/^\d+$/.test(v)) return out('sf-out', err('not a numeric snowflake'));
+    try {
+        const id = BigInt(v);
+        const ts = Number((id >> 22n) + DISCORD_EPOCH);
+        const d = new Date(ts);
+        const worker = Number((id & 0x3E0000n) >> 17n);
+        const proc   = Number((id & 0x1F000n) >> 12n);
+        const inc    = Number(id & 0xFFFn);
+        out('sf-out',
+            ok('timestamp   ' + d.toISOString()) + '\n' +
+            ok('created     ' + d.toUTCString()) + '\n' +
+            ok('worker id   ' + worker) + '\n' +
+            ok('process id  ' + proc) + '\n' +
+            ok('increment   ' + inc)
+        );
+    } catch (e) { out('sf-out', err(e.message)); }
+}
+
+// ── base64
+function b64Encode() {
+    const t = document.getElementById('b64-in').value;
+    try { out('b64-out', ok(btoa(unescape(encodeURIComponent(t))))); }
+    catch (e) { out('b64-out', err(e.message)); }
+}
+function b64Decode() {
+    const t = document.getElementById('b64-in').value.trim();
+    try { out('b64-out', ok(decodeURIComponent(escape(atob(t))))); }
+    catch (e) { out('b64-out', err('invalid base64')); }
+}
+
+// ── hash
+async function hashAll() {
+    const t = document.getElementById('hash-in').value;
+    if (!t) return out('hash-out', err('enter text'));
+    const buf = new TextEncoder().encode(t);
+    const algs = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
+    let acc = '';
+    for (const a of algs) {
+        const h = await crypto.subtle.digest(a, buf);
+        const hex = Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
+        acc += ok(a.toLowerCase().padEnd(10) + hex) + '\n';
+    }
+    out('hash-out', acc);
+}
+
+// ── password
+function pwdGen() {
+    const len = Math.max(4, Math.min(128, parseInt(document.getElementById('pwd-len').value) || 24));
+    const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*-_=+';
+    const a = new Uint32Array(len);
+    crypto.getRandomValues(a);
+    let p = '';
+    for (let i = 0; i < len; i++) p += pool[a[i] % pool.length];
+    out('pwd-out', ok(p));
+}
+
+// ── ip lookup
+async function ipLookup() {
+    const v = document.getElementById('ip-in').value.trim();
+    if (!v) return out('ip-out', err('enter ip or host'));
+    out('ip-out', '<span class="dim">querying…</span>');
+    try {
+        const r = await fetch('http://ip-api.com/json/' + encodeURIComponent(v) + '?fields=66846719');
+        const j = await r.json();
+        if (j.status === 'fail') return out('ip-out', err(j.message || 'lookup failed'));
+        const rows = [
+            ['ip',       j.query],
+            ['country',  j.country + ' (' + j.countryCode + ')'],
+            ['region',   j.regionName],
+            ['city',     j.city],
+            ['zip',      j.zip],
+            ['coords',   j.lat + ', ' + j.lon],
+            ['timezone', j.timezone],
+            ['isp',      j.isp],
+            ['org',      j.org || '-'],
+            ['as',       j.as],
+            ['proxy',    j.proxy ? 'yes' : 'no'],
+            ['hosting',  j.hosting ? 'yes' : 'no'],
+            ['mobile',   j.mobile ? 'yes' : 'no'],
+        ];
+        out('ip-out', rows.map(([k, v]) => ok(k.padEnd(10) + ' ' + v)).join('\n'));
+    } catch (e) { out('ip-out', err('request failed — ' + e.message)); }
+}
+
+// ── dns (cloudflare DoH — no cors issues)
+async function dnsLookup() {
+    const domain = document.getElementById('dns-in').value.trim();
+    const type   = document.getElementById('dns-type').value;
+    if (!domain) return out('dns-out', err('enter a domain'));
+    out('dns-out', '<span class="dim">resolving…</span>');
+    try {
+        const r = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=${type}`,
+                              { headers: { 'accept': 'application/dns-json' } });
+        const j = await r.json();
+        if (!j.Answer || !j.Answer.length) return out('dns-out', err('no records'));
+        out('dns-out', j.Answer.map(a => ok(`${a.type.toString().padEnd(4)} ${a.data}`)).join('\n'));
+    } catch (e) { out('dns-out', err('request failed — ' + e.message)); }
+}
+
+// ── token decode (static)
+function tokDecode() {
+    const t = document.getElementById('tok-in').value.trim();
+    if (!t || !t.includes('.')) return out('tok-out', err('not a valid token'));
+    const parts = t.split('.');
+    try {
+        const uid = atob(parts[0] + '==');
+        let created = 'unknown';
+        try {
+            const tsBytes = atob(parts[1] + '==');
+            let n = 0n;
+            for (const c of tsBytes) n = (n << 8n) | BigInt(c.charCodeAt(0));
+            const ms = Number(n) + 1293840000;
+            created = new Date(ms * 1000).toISOString();
+        } catch(e) {}
+        out('tok-out',
+            ok('user id       ' + uid) + '\n' +
+            ok('created approx ' + created) + '\n' +
+            ok('hmac present  ' + (parts.length === 3))
+        );
+    } catch (e) { out('tok-out', err('decode failed')); }
+}
+
+// ── webhook inspect
+async function whInspect() {
+    const u = document.getElementById('wh-in').value.trim();
+    if (!u) return out('wh-out', err('paste a webhook url'));
+    out('wh-out', '<span class="dim">probing…</span>');
+    try {
+        const r = await fetch(u);
+        if (!r.ok) return out('wh-out', err('status ' + r.status));
+        const j = await r.json();
+        const rows = [
+            ['id',         j.id],
+            ['name',       j.name],
+            ['type',       j.type],
+            ['channel id', j.channel_id],
+            ['guild id',   j.guild_id],
+            ['token',      j.token ? 'present' : 'hidden'],
+        ];
+        if (j.user) {
+            rows.push(['creator', j.user.username + (j.user.discriminator ? '#' + j.user.discriminator : '')]);
+        }
+        out('wh-out', rows.map(([k,v]) => ok(String(k).padEnd(12) + ' ' + v)).join('\n'));
+    } catch (e) { out('wh-out', err('request failed — ' + e.message)); }
+}
+
+// hash + anchor on load
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('year')?.textContent;
+});
+</script>
+</body>
+</html>
