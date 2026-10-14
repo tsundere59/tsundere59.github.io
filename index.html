@@ -59,7 +59,6 @@
         user-select: text !important;
     }
 
-    /* ─── cursor ─── */
     #cursor {
         position: fixed;
         top: 0; left: 0;
@@ -72,7 +71,6 @@
         will-change: transform;
     }
 
-    /* ─── eyes ─── */
     .eye {
         width: 26px;
         height: 16px;
@@ -171,8 +169,6 @@
         transition: opacity 0.4s ease;
     }
     #intro.gone { opacity: 0; pointer-events: none; }
-
-    /* the glass — a vertical divider the hand hits */
     #intro .glass {
         position: absolute;
         inset: 0;
@@ -181,8 +177,6 @@
             #000;
         z-index: 1;
     }
-
-    /* the hand — svg element, slides up from bottom */
     #intro .hand-wrap {
         position: absolute;
         left: 50%;
@@ -196,15 +190,12 @@
     }
     #intro .hand-wrap.rising { bottom: -60px; }
     #intro .hand-wrap.impacted { filter: blur(0); transition: filter 0.1s ease; }
-
     #intro .hand {
         width: 100%;
         height: 100%;
         display: block;
         filter: drop-shadow(0 0 22px rgba(255,46,99,0.18));
     }
-
-    /* the impact flash */
     #intro .flash {
         position: absolute;
         inset: 0;
@@ -213,15 +204,11 @@
         z-index: 4;
         mix-blend-mode: screen;
     }
-    #intro .flash.fire {
-        animation: impactFlash 0.22s ease-out;
-    }
+    #intro .flash.fire { animation: impactFlash 0.22s ease-out; }
     @keyframes impactFlash {
         0%   { opacity: 0.9; }
         100% { opacity: 0; }
     }
-
-    /* the crack — svg of thin white lines */
     #intro .crack {
         position: absolute;
         inset: 0;
@@ -230,11 +217,7 @@
         transition: opacity 0.2s ease;
     }
     #intro .crack.show { opacity: 1; }
-    #intro .crack svg {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
+    #intro .crack svg { width: 100%; height: 100%; display: block; }
     #intro .crack line {
         stroke: #fff;
         stroke-width: 0.35;
@@ -259,8 +242,6 @@
         0%   { stroke-dashoffset: 200; }
         100% { stroke-dashoffset: 0; }
     }
-
-    /* impact shake applied to the whole viewport */
     body.impact { animation: impactShake 0.22s ease-out; }
     @keyframes impactShake {
         0%   { transform: translate(0, 0); }
@@ -272,8 +253,6 @@
         90%  { transform: translate(1px, 2px); }
         100% { transform: translate(0, 0); }
     }
-
-    /* ── shatter: bands that fall away ── */
     #shatter {
         position: fixed;
         inset: 0;
@@ -300,10 +279,11 @@
             repeating-linear-gradient(160deg,
                 transparent 0px, transparent 40px,
                 rgba(255,255,255,0.05) 40px, rgba(255,255,255,0.05) 41px);
-        opacity: 1;
     }
 
-    /* ─── main ─── */
+    /* ══════════════════════════════════════════════════════
+       ANALOG MAIN
+       ══════════════════════════════════════════════════════ */
     #main {
         opacity: 0;
         transform: translateY(40px);
@@ -692,7 +672,6 @@
         animation: voidIn 3s ease forwards;
     }
     @keyframes voidIn { to { opacity: 1; } }
-
     .unclaimed-page {
         min-height: 100vh;
         display: flex;
@@ -704,7 +683,6 @@
     }
     .unclaimed-page .u-line { color: #d4d4d4; font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 2px; margin-bottom: 24px; }
     .unclaimed-page .u-sub { color: #6a6560; font-size: 11px; letter-spacing: 3px; }
-
     .locate-page {
         min-height: 100vh;
         display: flex;
@@ -716,12 +694,10 @@
     .locate-page .l-title { color: #ff2e63; font-size: 22px; letter-spacing: 6px; margin-bottom: 24px; font-family: 'Courier New', monospace; }
     .locate-page .l-line { color: #b8b0a8; font-size: 13px; letter-spacing: 2px; margin-bottom: 8px; font-family: 'Courier New', monospace; }
     .locate-page .l-time { color: #ff2e63; }
-
     .them-page { min-height: 100vh; padding: 60px 40px; font-family: 'Courier New', monospace; background: #050506; }
     .them-page .file { color: #b8b0a8; font-size: 13px; line-height: 2; letter-spacing: 1px; }
     .them-page .file .dim { color: #4a4442; }
     .them-page .file .red { color: #8b0000; }
-
     .gb-page { min-height: 100vh; background: #050506; padding: 80px 40px; font-family: 'Courier New', monospace; }
     .gb-page .gb-title { color: #ff2e63; font-size: 28px; letter-spacing: 4px; margin-bottom: 8px; }
     .gb-page .gb-sub { color: #6a6560; font-size: 11px; letter-spacing: 3px; margin-bottom: 40px; }
@@ -759,7 +735,6 @@
         cursor: none;
     }
     .gb-page .sign-form button:hover { background: #ff2e63; color: #050506; }
-
     .center-nav {
         text-align: center;
         padding: 40px 0;
@@ -770,9 +745,7 @@
     }
     .center-nav a { color: #8b0000; text-decoration: none; cursor: none; margin: 0 12px; }
     .center-nav a:hover { color: #ff2e63; }
-
     ::selection { background: #ff2e63; color: #000; }
-
     .p404 {
         min-height: 100vh;
         display: flex;
@@ -786,7 +759,6 @@
     .p404 .n { color: #ff2e63; font-size: 88px; letter-spacing: -4px; margin: 0; }
     .p404 .l1 { color: #b8b0a8; margin-top: 16px; font-size: 13px; letter-spacing: 3px; }
     .p404 .l2 { color: #6a6560; margin-top: 8px; font-size: 11px; letter-spacing: 4px; font-style: italic; }
-
     .sound-toggle {
         position: fixed;
         bottom: 16px; right: 20px;
@@ -800,7 +772,6 @@
     }
     .sound-toggle:hover { color: #ff2e63; opacity: 1; }
     .sound-toggle.on { color: #ff2e63; }
-
     .visit-note {
         position: fixed;
         bottom: 16px; left: 20px;
@@ -812,7 +783,6 @@
         opacity: 0.5;
         pointer-events: none;
     }
-
     .trap {
         position: fixed;
         inset: 0;
@@ -846,7 +816,6 @@
         transition: transform 0.3s ease;
     }
     .trap .box .btn:hover { background: linear-gradient(180deg, #ffffb0 0%, #ffe060 50%, #ffb000 100%); }
-
     .fade-black {
         position: fixed;
         inset: 0;
@@ -858,6 +827,465 @@
     }
     .fade-black.active { opacity: 1; pointer-events: auto; }
 
+    /* ══════════════════════════════════════════════════════
+       ANGRY MODE — after returning from wired
+       ══════════════════════════════════════════════════════ */
+    body.angry {
+        background: #0a0000;
+    }
+    body.angry .wordmark .brand {
+        color: #ff0000;
+        text-shadow: 2px 2px 0 #8b0000, -1px -1px 0 #3a0000;
+    }
+    body.angry .wordmark .accent { color: #ff4040; }
+    body.angry .wordmark .slash { color: #6a0000; }
+    body.angry .wordmark .cursor { background: #ff0000; box-shadow: 0 0 22px rgba(255,0,0,0.9); }
+    body.angry .quote { color: #c98080; }
+    body.angry .quote .prefix { color: #ff0000; }
+    body.angry .quote .attr { color: #6a1010; }
+    body.angry .label { color: #ff0000; }
+    body.angry .label .jp { color: #6a1010; }
+    body.angry .t-name { color: #c98080; }
+    body.angry .t-desc { color: #6a1010; }
+    body.angry .t-num { color: #4a0000; }
+    body.angry .t-jp { color: #4a0000; }
+    body.angry .tile { border-bottom-color: #2a0000; }
+    body.angry .tile:hover { background: rgba(255,0,0,0.08); }
+    body.angry .tile:hover .t-name { color: #ff0000; text-shadow: 0 0 12px rgba(255,0,0,0.9); }
+    body.angry .scan { height: 5px; filter: blur(1.5px); }
+    body.angry .bg-nums { opacity: 0.1; color: #ff0000; }
+    body.angry #cursor { background: #ff0000; box-shadow: 0 0 20px rgba(255,0,0,1), 0 0 40px rgba(255,0,0,0.6); }
+    body.angry .trail { background: #8b0000; box-shadow: 0 0 14px rgba(139,0,0,1); transition-duration: 1.5s; }
+    body.angry .corner,
+    body.angry .clock,
+    body.angry .hb,
+    body.angry .countdown,
+    body.angry .visit-note { color: #6a1010; }
+    body.angry .eye { background: #0a0000; box-shadow: 0 0 12px rgba(255,0,0,0.6), inset 0 0 6px rgba(255,0,0,0.2); }
+    body.angry .eye .iris { background: radial-gradient(circle at 35% 35%, #ff0000 0%, #8b0000 70%, #3a0000 100%); box-shadow: 0 0 8px rgba(255,0,0,1); }
+    body.angry .eye .pupil { background: #fff; width: 3px; height: 3px; }
+    body.angry .eye-flash::before { background: radial-gradient(circle at 35% 35%, #ff0000 0%, #8b0000 70%, #3a0000 100%); }
+    body.angry .eye-flash::after { background: #fff; width: 6px; height: 6px; }
+
+    /* flashing angry text */
+    .angry-text {
+        position: fixed;
+        color: #ff0000;
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-shadow: 0 0 8px rgba(255,0,0,0.7);
+        pointer-events: none;
+        z-index: 9600;
+        opacity: 0;
+        user-select: none;
+    }
+    .angry-text.show {
+        animation: angryFlash 1.2s ease-in-out forwards;
+    }
+    @keyframes angryFlash {
+        0%   { opacity: 0; }
+        10%  { opacity: 1; }
+        75%  { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       WIRED DESKTOP — windows-98 style, analog palette
+       ══════════════════════════════════════════════════════ */
+    #wired {
+        position: fixed;
+        inset: 0;
+        z-index: 5000;
+        background: #0a0000;
+        display: none;
+        overflow: hidden;
+        font-family: 'MS Sans Serif', 'Tahoma', Arial, sans-serif;
+        font-size: 11px;
+        color: #d4a0a0;
+        cursor: none;
+    }
+    #wired.active { display: block; }
+
+    #wired .w-desktop {
+        position: absolute;
+        inset: 0 0 30px 0;
+        overflow: hidden;
+    }
+
+    #wired .w-icon {
+        position: absolute;
+        width: 76px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: none;
+        user-select: none;
+        padding: 4px;
+    }
+    #wired .w-icon:hover { background: rgba(255,0,0,0.12); outline: 1px dotted #8b0000; }
+    #wired .w-icon .w-icon-img {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #1a0505;
+        border: 1px solid #3a0000;
+        color: #ff2e63;
+        font-size: 20px;
+        font-family: 'Courier New', monospace;
+    }
+    #wired .w-icon .w-icon-label {
+        color: #d4a0a0;
+        font-size: 11px;
+        text-align: center;
+        text-shadow: 1px 1px 0 #000;
+        word-break: break-word;
+    }
+
+    /* ═══ window chrome ═══ */
+    #wired .w-window {
+        position: absolute;
+        background: #1a0808;
+        border: 2px outset #3a1010;
+        box-shadow: 2px 2px 0 #000, 4px 4px 0 rgba(0,0,0,0.5);
+        min-width: 400px;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+    }
+    #wired .w-titlebar {
+        background: linear-gradient(90deg, #4a0000 0%, #8b0000 100%);
+        color: #fff;
+        padding: 3px 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: bold;
+        font-size: 11px;
+        user-select: none;
+        height: 22px;
+        border-bottom: 1px solid #000;
+    }
+    #wired .w-titlebar.inactive {
+        background: #2a0808;
+        color: #6a3030;
+    }
+    #wired .w-titlebar .w-tb-icon {
+        width: 14px;
+        height: 14px;
+        background: #ff2e63;
+        color: #000;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Courier New', monospace;
+    }
+    #wired .w-titlebar .w-tb-title {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #wired .w-tb-btn {
+        width: 16px;
+        height: 14px;
+        background: #1a0808;
+        border: 1px outset #3a1010;
+        color: #d4a0a0;
+        font-size: 9px;
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: none;
+        line-height: 1;
+    }
+    #wired .w-tb-btn:hover { background: #4a0000; }
+    #wired .w-tb-btn.close:hover { background: #ff2e63; color: #000; }
+
+    #wired .w-menubar {
+        background: #1a0808;
+        border-bottom: 1px solid #3a1010;
+        padding: 2px 4px;
+        display: flex;
+        gap: 2px;
+        font-size: 11px;
+    }
+    #wired .w-menubar span {
+        padding: 2px 8px;
+        cursor: none;
+        color: #d4a0a0;
+    }
+    #wired .w-menubar span:hover { background: #4a0000; color: #fff; }
+
+    #wired .w-body {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+    }
+    #wired .w-tree {
+        width: 180px;
+        background: #0f0505;
+        border-right: 1px solid #2a0808;
+        padding: 8px;
+        overflow-y: auto;
+        font-size: 11px;
+    }
+    #wired .w-tree .w-node {
+        padding: 3px 6px;
+        cursor: none;
+        color: #d4a0a0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #wired .w-node:hover { background: #2a0808; }
+    #wired .w-node.active { background: #4a0000; color: #fff; }
+    #wired .w-node::before { content: '▶ '; color: #6a1010; font-size: 8px; }
+
+    #wired .w-files {
+        flex: 1;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 88px);
+        grid-auto-rows: 88px;
+        gap: 8px;
+        align-content: start;
+        overflow-y: auto;
+        background: #0a0303;
+    }
+    #wired .w-file {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 6px;
+        cursor: none;
+        user-select: none;
+        border: 1px solid transparent;
+        text-align: center;
+    }
+    #wired .w-file:hover { background: #1a0808; border: 1px dotted #8b0000; }
+    #wired .w-file.selected { background: #4a0000; border: 1px dotted #ff2e63; }
+    #wired .w-file .w-file-img {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #1a0505;
+        border: 1px solid #3a0000;
+        color: #ff2e63;
+        font-size: 18px;
+        font-family: 'Courier New', monospace;
+    }
+    #wired .w-file.folder .w-file-img { background: #2a1005; color: #ffb060; }
+    #wired .w-file .w-file-name {
+        color: #d4a0a0;
+        font-size: 10px;
+        word-break: break-all;
+        line-height: 1.2;
+    }
+
+    #wired .w-statusbar {
+        height: 22px;
+        background: #1a0808;
+        border-top: 1px solid #3a1010;
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        font-size: 10px;
+        color: #8b6060;
+        gap: 8px;
+    }
+    #wired .w-statusbar .w-status-cell {
+        border: 1px inset #2a0808;
+        padding: 1px 6px;
+    }
+
+    /* ═══ taskbar ═══ */
+    #wired .w-taskbar {
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 30px;
+        background: #1a0808;
+        border-top: 2px outset #3a1010;
+        display: flex;
+        align-items: center;
+        padding: 0 4px;
+        gap: 4px;
+        z-index: 10;
+    }
+    #wired .w-start {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: #2a0808;
+        border: 2px outset #3a1010;
+        color: #ff2e63;
+        font-weight: bold;
+        font-size: 11px;
+        cursor: none;
+    }
+    #wired .w-start:hover { background: #4a0000; }
+    #wired .w-start-icon {
+        width: 14px; height: 14px;
+        background: #ff2e63;
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+    }
+    #wired .w-tasks {
+        flex: 1;
+        display: flex;
+        gap: 3px;
+        overflow: hidden;
+    }
+    #wired .w-task {
+        padding: 4px 10px;
+        background: #0f0505;
+        border: 2px outset #2a0808;
+        color: #d4a0a0;
+        font-size: 11px;
+        cursor: none;
+        max-width: 160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #wired .w-task.active { border-style: inset; background: #4a0000; color: #fff; }
+    #wired .w-task:hover { background: #2a0808; }
+
+    #wired .w-tray {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 12px;
+        border-left: 2px inset #2a0808;
+        height: 22px;
+        color: #d4a0a0;
+        font-size: 11px;
+    }
+    #wired .w-tray-clock {
+        font-family: 'Courier New', monospace;
+        color: #ff2e63;
+    }
+
+    /* start menu */
+    #wired .w-start-menu {
+        position: absolute;
+        left: 4px;
+        bottom: 34px;
+        width: 220px;
+        background: #1a0808;
+        border: 2px outset #3a1010;
+        padding: 4px;
+        display: none;
+        z-index: 20;
+    }
+    #wired .w-start-menu.active { display: block; }
+    #wired .w-start-menu .w-sm-header {
+        background: linear-gradient(90deg, #4a0000 0%, #8b0000 100%);
+        color: #fff;
+        padding: 6px 10px;
+        font-weight: bold;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+    #wired .w-start-menu .w-sm-item {
+        padding: 6px 12px;
+        color: #d4a0a0;
+        cursor: none;
+        font-size: 11px;
+    }
+    #wired .w-start-menu .w-sm-item:hover { background: #4a0000; color: #fff; }
+    #wired .w-start-menu .w-sm-sep {
+        height: 1px;
+        background: #2a0808;
+        margin: 4px 0;
+    }
+
+    /* text file window */
+    #wired .w-text-body {
+        padding: 12px 16px;
+        color: #d4a0a0;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        overflow-y: auto;
+        flex: 1;
+        background: #0f0505;
+    }
+
+    /* tool window body */
+    #wired .w-tool-body {
+        padding: 14px;
+        overflow-y: auto;
+        flex: 1;
+        background: #0f0505;
+    }
+    #wired .w-tool-body label {
+        display: block;
+        color: #d4a0a0;
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+    #wired .w-tool-body input[type="text"], #wired .w-tool-body select {
+        width: 100%;
+        background: #000;
+        border: 2px inset #2a0808;
+        color: #d4a0a0;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        padding: 4px 6px;
+        outline: none;
+        margin-bottom: 10px;
+    }
+    #wired .w-tool-body input:focus { border-color: #ff2e63; }
+    #wired .w-tool-body button {
+        background: #2a0808;
+        border: 2px outset #3a1010;
+        color: #d4a0a0;
+        font-family: 'MS Sans Serif', Arial, sans-serif;
+        font-size: 11px;
+        padding: 5px 14px;
+        cursor: none;
+        font-weight: bold;
+        margin-right: 6px;
+    }
+    #wired .w-tool-body button:hover { background: #4a0000; color: #fff; }
+    #wired .w-tool-body button:active { border-style: inset; }
+    #wired .w-tool-body .w-out {
+        background: #000;
+        border: 2px inset #2a0808;
+        padding: 10px;
+        margin-top: 10px;
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        color: #d4a0a0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        min-height: 30px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    #wired .w-out .ok { color: #ff2e63; }
+    #wired .w-out .miss { color: #6a1010; }
+
+    /* ═══ angry overlay fixed ═══ */
+    body.angry-wired { background: #000; }
+
     @media (max-width: 700px) {
         .wrap { padding: 100px 24px 60px; }
         .corner { display: none; }
@@ -866,6 +1294,8 @@
         .wordmark .cursor { height: 30px; width: 14px; margin-left: 8px; }
         #intro .hand-wrap { width: 260px; height: 380px; bottom: -380px; }
         #intro .hand-wrap.rising { bottom: -40px; }
+        #wired .w-window { min-width: 320px; }
+        #wired .w-tree { width: 140px; }
     }
 </style>
 </head>
@@ -873,12 +1303,8 @@
 
 <div id="cursor"></div>
 
-<!-- ══════════════════════════════════════════════════
-     INTRO — the hand
-     ══════════════════════════════════════════════════ -->
 <div id="intro">
     <div class="glass"></div>
-
     <div class="hand-wrap" id="handWrap">
         <svg class="hand" viewBox="0 0 380 520" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -901,77 +1327,39 @@
                     <feGaussianBlur stdDeviation="1.4"/>
                 </filter>
             </defs>
-
-            <!-- ── palm & fingers silhouette ── -->
-            <!-- index finger -->
-            <path d="M112,180 C112,120 118,80 122,55 C126,32 138,26 148,32 C158,38 162,58 158,86 L150,180 Z"
-                  fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
-            <!-- middle finger -->
-            <path d="M158,175 C158,110 162,60 166,32 C170,8 184,4 194,12 C204,20 206,50 200,90 L188,175 Z"
-                  fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
-            <!-- ring finger -->
-            <path d="M192,178 C194,118 200,74 206,52 C212,30 226,28 234,36 C242,44 240,74 232,116 L218,180 Z"
-                  fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
-            <!-- pinky -->
-            <path d="M222,186 C226,140 234,110 242,94 C250,78 262,78 268,88 C274,98 270,124 260,160 L248,196 Z"
-                  fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
-            <!-- thumb (out to the left, wider) -->
-            <path d="M112,186 C88,186 60,198 42,218 C26,236 22,258 30,272 C38,286 56,288 74,278 C90,268 106,244 116,222 Z"
-                  fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
-            <!-- palm body (bottom, blends into wrist) -->
-            <path d="M104,180
-                     C104,220 100,260 104,300
-                     C108,340 130,368 160,372
-                     C190,376 220,360 240,330
-                     C258,302 262,260 254,220
-                     L248,180
-                     Z"
-                  fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
-
-            <!-- ── fingertip glow (backlight through the fingers) ── -->
+            <path d="M112,180 C112,120 118,80 122,55 C126,32 138,26 148,32 C158,38 162,58 158,86 L150,180 Z" fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
+            <path d="M158,175 C158,110 162,60 166,32 C170,8 184,4 194,12 C204,20 206,50 200,90 L188,175 Z" fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
+            <path d="M192,178 C194,118 200,74 206,52 C212,30 226,28 234,36 C242,44 240,74 232,116 L218,180 Z" fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
+            <path d="M222,186 C226,140 234,110 242,94 C250,78 262,78 268,88 C274,98 270,124 260,160 L248,196 Z" fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
+            <path d="M112,186 C88,186 60,198 42,218 C26,236 22,258 30,272 C38,286 56,288 74,278 C90,268 106,244 116,222 Z" fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
+            <path d="M104,180 C104,220 100,260 104,300 C108,340 130,368 160,372 C190,376 220,360 240,330 C258,302 262,260 254,220 L248,180 Z" fill="url(#palmGrad)" stroke="#000" stroke-width="1"/>
             <ellipse cx="124" cy="62"  rx="14" ry="16" fill="url(#tipGlow)"/>
             <ellipse cx="178" cy="38"  rx="14" ry="16" fill="url(#tipGlow)"/>
             <ellipse cx="220" cy="58"  rx="14" ry="16" fill="url(#tipGlow)"/>
             <ellipse cx="256" cy="100" rx="12" ry="13" fill="url(#tipGlow)"/>
             <ellipse cx="40"  cy="248" rx="14" ry="12" fill="url(#tipGlow)"/>
-
-            <!-- ── nails (small dark ovals inset into fingertips) ── -->
             <ellipse cx="126" cy="68"  rx="5" ry="7" fill="#000" opacity="0.7"/>
             <ellipse cx="180" cy="44"  rx="5" ry="7" fill="#000" opacity="0.7"/>
             <ellipse cx="222" cy="64"  rx="5" ry="7" fill="#000" opacity="0.7"/>
             <ellipse cx="258" cy="106" rx="4" ry="6" fill="#000" opacity="0.7"/>
             <ellipse cx="42"  cy="248" rx="6" ry="5" fill="#000" opacity="0.7"/>
-
-            <!-- ── knuckle creases ── -->
             <g stroke="#000" stroke-width="0.8" fill="none" opacity="0.6" filter="url(#softBlur)">
                 <path d="M116,140 Q130,145 152,140"/>
                 <path d="M162,130 Q178,135 198,130"/>
                 <path d="M198,148 Q212,152 234,146"/>
                 <path d="M226,166 Q240,170 258,164"/>
             </g>
-
-            <!-- ── palm creases ── -->
             <g stroke="#000" stroke-width="0.9" fill="none" opacity="0.5" filter="url(#softBlur)">
-                <!-- heart line -->
                 <path d="M116,240 Q160,232 240,255"/>
-                <!-- head line -->
                 <path d="M112,272 Q160,278 244,290"/>
-                <!-- life line -->
                 <path d="M120,290 Q140,330 170,360"/>
             </g>
-
-            <!-- ── impact glow — where the palm presses hardest ── -->
             <ellipse cx="180" cy="240" rx="90" ry="70" fill="url(#impactGlow)"/>
         </svg>
     </div>
-
-    <!-- impact flash -->
     <div class="flash" id="flash"></div>
-
-    <!-- the crack -->
     <div class="crack" id="crack">
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- splinters radiating from impact point (50,55) -->
             <line x1="50" y1="55" x2="30" y2="18"/>
             <line x1="50" y1="55" x2="52" y2="10"/>
             <line x1="50" y1="55" x2="74" y2="20"/>
@@ -983,7 +1371,6 @@
             <line x1="50" y1="55" x2="6"  y2="66"/>
             <line x1="50" y1="55" x2="10" y2="40"/>
             <line x1="50" y1="55" x2="26" y2="30"/>
-            <!-- smaller secondary cracks -->
             <line x1="38" y1="36" x2="28" y2="22"/>
             <line x1="62" y1="30" x2="70" y2="14"/>
             <line x1="70" y1="62" x2="84" y2="72"/>
@@ -992,7 +1379,6 @@
     </div>
 </div>
 
-<!-- shatter overlay (replaces old collapse) -->
 <div id="shatter"></div>
 
 <span class="sound-toggle" id="soundToggle" title="toggle sound">[ ♪ ]</span>
@@ -1024,6 +1410,36 @@
 </div>
 
 <div class="hidden-msg" id="hiddenMsg"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     WIRED DESKTOP
+     ══════════════════════════════════════════════════════ -->
+<div id="wired">
+    <div class="w-desktop" id="wDesktop"></div>
+
+    <div class="w-taskbar">
+        <div class="w-start" id="wStart">
+            <span class="w-start-icon">▶</span>
+            <span>Start</span>
+        </div>
+        <div class="w-tasks" id="wTasks"></div>
+        <div class="w-tray">
+            <span id="wTraySound">🔇</span>
+            <span class="w-tray-clock" id="wTrayClock">3:14 AM</span>
+        </div>
+    </div>
+
+    <div class="w-start-menu" id="wStartMenu">
+        <div class="w-sm-header">analog 98</div>
+        <div class="w-sm-item" data-action="programs">Programs</div>
+        <div class="w-sm-item" data-action="docs">Documents</div>
+        <div class="w-sm-item" data-action="settings">Settings</div>
+        <div class="w-sm-item" data-action="find">Find</div>
+        <div class="w-sm-item" data-action="help">Help</div>
+        <div class="w-sm-sep"></div>
+        <div class="w-sm-item" data-action="shutdown">Shut Down...</div>
+    </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -1078,7 +1494,9 @@ function spawnEyes(follow) {
     pair.style.transform = `translate(-50%,-50%) rotate(${rot}deg)`;
     document.body.appendChild(pair);
     requestAnimationFrame(() => pair.classList.add('show'));
-    if (Math.random() < 0.067) setTimeout(() => pair.classList.add('blink'), 200);
+    const isAngry = document.body.classList.contains('angry');
+    const blinkChance = isAngry ? 0.33 : 0.067;
+    if (Math.random() < blinkChance) setTimeout(() => pair.classList.add('blink'), 200);
     const life = follow ? 2200 + Math.random() * 2000 : 120 + Math.random() * 220;
     setTimeout(() => {
         pair.classList.remove('show');
@@ -1086,11 +1504,15 @@ function spawnEyes(follow) {
     }, life);
 }
 function scheduleEyes() {
-    const delay = 4000 + Math.random() * 8000;
+    const isAngry = document.body.classList.contains('angry');
+    const delay = isAngry
+        ? 1000 + Math.random() * 2000
+        : 4000 + Math.random() * 8000;
     setTimeout(() => {
-        const follow = Math.random() < 0.3;
+        const followChance = isAngry ? 0.9 : 0.3;
+        const follow = Math.random() < followChance;
         spawnEyes(follow);
-        if (Math.random() < 0.3) setTimeout(() => spawnEyes(false), 180);
+        if (isAngry && Math.random() < 0.5) setTimeout(() => spawnEyes(false), 180);
         scheduleEyes();
     }, delay);
 }
@@ -1110,7 +1532,8 @@ function flashEye(x, y) {
 let lastTrail = 0;
 document.addEventListener('mousemove', e => {
     const now = Date.now();
-    if (now - lastTrail < 70) return;
+    const gap = document.body.classList.contains('angry') ? 90 : 70;
+    if (now - lastTrail < gap) return;
     lastTrail = now;
     const dot = document.createElement('div');
     dot.className = 'trail';
@@ -1147,6 +1570,12 @@ buildBg();
 window.addEventListener('resize', buildBg);
 
 setInterval(() => {
+    if (document.body.classList.contains('angry')) {
+        const sentence = 'you went in';
+        const hex = sentence.split('').map(c => c.charCodeAt(0).toString(16)).join(' ');
+        bg.textContent = (hex + '   ').repeat(80);
+        return;
+    }
     const words = ['stay', 'help', 'wait', 'you', 'ok', 'here', 'smile', 'wake up', 'them', '032'];
     if (Math.random() < 0.18) {
         const word = words[Math.floor(Math.random() * words.length)];
@@ -1160,6 +1589,7 @@ setInterval(() => {
 
 setInterval(() => {
     if (document.hidden) return;
+    if (document.body.classList.contains('angry')) return;
     const sentence = 'they missed you';
     const hex = sentence.split('').map(c => c.charCodeAt(0).toString(16)).join(' ');
     bg.textContent = (hex + '   ').repeat(80);
@@ -1318,6 +1748,10 @@ function updateHiddenText(view) {
 // ═══════════════════════════════════════════════════════════
 const visitNoteEl = document.getElementById('visitNote');
 function updateVisitNote() {
+    if (localStorage.getItem('dd_went_in')) {
+        visitNoteEl.textContent = 'you went in. i saw you.';
+        return;
+    }
     const n = S.visits;
     let msg = '';
     if (n === 2) msg = 'you came back.';
@@ -1412,7 +1846,7 @@ soundToggle.addEventListener('click', () => {
 setInterval(() => { if (S.soundOn && Math.random() < 0.5) whisper(); }, 45000);
 
 // ═══════════════════════════════════════════════════════════
-// INTRO — the hand
+// INTRO
 // ═══════════════════════════════════════════════════════════
 const INTRO = document.getElementById('intro');
 const HAND  = document.getElementById('handWrap');
@@ -1421,48 +1855,33 @@ const CRACK = document.getElementById('crack');
 const SHATTER = document.getElementById('shatter');
 const MAIN = document.getElementById('main');
 const VIEW = document.getElementById('view');
+const WIRED = document.getElementById('wired');
+const WDESKTOP = document.getElementById('wDesktop');
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 async function runIntro() {
-    // session guard
     if (sessionStorage.getItem('dd_intro_seen')) {
         INTRO.remove();
         MAIN.classList.add('show');
         startReveal(true);
         return;
     }
-
-    // 1. hold black for 1.4s
     await sleep(1400);
-
-    // 2. hand rises from bottom (1.15s transition)
     HAND.classList.add('rising');
     await sleep(1150);
-
-    // brief pause at rest, hand hovering
     await sleep(280);
-
-    // 3. IMPACT
     if (S.soundOn) impactThump();
     document.body.classList.add('impact');
     setTimeout(() => document.body.classList.remove('impact'), 240);
-
     FLASH.classList.add('fire');
     setTimeout(() => FLASH.classList.remove('fire'), 240);
-
     HAND.classList.add('impacted');
     await sleep(60);
     CRACK.classList.add('show');
-
-    // 4. crack holds — the hand presses against the glass
     await sleep(1050);
-
-    // 5. shatter — the whole thing breaks and falls
     INTRO.classList.add('gone');
     await sleep(380);
-
-    // spawn bands
     SHATTER.classList.add('active');
     SHATTER.innerHTML = '';
     const bandCount = 24;
@@ -1480,8 +1899,6 @@ async function runIntro() {
         bands.push(band);
     }
     await sleep(80);
-
-    // drop each band
     bands.forEach(band => {
         const delay = parseInt(band.dataset.delay);
         const drift = parseInt(band.dataset.drift);
@@ -1492,17 +1909,65 @@ async function runIntro() {
             band.style.opacity = '0';
         }, delay);
     });
-
     await sleep(1400);
-
-    // clean up
     SHATTER.classList.remove('active');
     SHATTER.innerHTML = '';
     INTRO.remove();
-
     MAIN.classList.add('show');
     startReveal(false);
     sessionStorage.setItem('dd_intro_seen', '1');
+}
+
+// ═══════════════════════════════════════════════════════════
+// ANGRY MODE
+// ═══════════════════════════════════════════════════════════
+const ANGRY_PHRASES = [
+    'you went in', 'i saw you', 'you came back', 'don\'t do that again',
+    'i was watching', 'where did you go', 'it\'s not the same here',
+    'you changed something', 'i felt that', 'say something',
+    'why did you', 'you shouldn\'t have', 'nothing is the same',
+    'i\'m still here', 'you left me', 'don\'t look at them', 'stop', 'you did this',
+];
+let angryPhraseIdx = 0;
+function spawnAngryText() {
+    if (!document.body.classList.contains('angry')) return;
+    const el = document.createElement('div');
+    el.className = 'angry-text';
+    const phrase = ANGRY_PHRASES[angryPhraseIdx % ANGRY_PHRASES.length];
+    angryPhraseIdx++;
+    el.textContent = phrase;
+    const x = 10 + Math.random() * 80;
+    const y = 15 + Math.random() * 70;
+    el.style.left = x + '%';
+    el.style.top  = y + '%';
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => el.remove(), 1400);
+}
+function scheduleAngryText() {
+    if (!document.body.classList.contains('angry')) {
+        setTimeout(scheduleAngryText, 3000);
+        return;
+    }
+    const delay = 4000 + Math.random() * 5000;
+    setTimeout(() => {
+        spawnAngryText();
+        scheduleAngryText();
+    }, delay);
+}
+function enableAngryMode() {
+    document.body.classList.add('angry');
+    // reset countdown to 14 min
+    cdSeconds = 14 * 60;
+    // schedule the flashing text
+    setTimeout(spawnAngryText, 3000);
+    scheduleAngryText();
+    // freeze locate view if it opens — freeze happens via startLocateLoop override
+}
+
+// If angry mode was already set from a previous session, enable it now
+if (localStorage.getItem('dd_went_in')) {
+    setTimeout(enableAngryMode, 3000);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1632,18 +2097,13 @@ function homeHTML() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// TOOLS — every tool works, every output subtly wrong
+// TOOLS — unchanged, all working
 // ═══════════════════════════════════════════════════════════
 function scramble(s, chance) {
     if (Math.random() > chance) return s;
     const swaps = {
-        'o': '0', 'O': '0',
-        'l': '1', 'I': '1',
-        'e': '3', 'E': '3',
-        'a': '@', 'A': '@',
-        's': '5', 'S': '5',
-        'g': '9', 'G': '9',
-        't': '7', 'T': '7',
+        'o': '0', 'O': '0', 'l': '1', 'I': '1', 'e': '3', 'E': '3',
+        'a': '@', 'A': '@', 's': '5', 'S': '5', 'g': '9', 'G': '9', 't': '7', 'T': '7',
     };
     const chars = s.split('');
     const indices = [];
@@ -1758,13 +2218,9 @@ function tryTool(evt, kind) {
     btn.style.filter = 'brightness(0.6)';
     setTimeout(() => { btn.style.filter = ''; }, 120);
 
-    // ── SNOWFLAKE ──
     if (kind === 'sf') {
         const v = document.getElementById('sf-in').value.trim();
-        if (!v || !/^\d+$/.test(v)) {
-            out.innerHTML = '<span class="miss">[!] enter a numeric snowflake</span>';
-            return;
-        }
+        if (!v || !/^\d+$/.test(v)) { out.innerHTML = '<span class="miss">[!] enter a numeric snowflake</span>'; return; }
         const id = BigInt(v);
         const ts = Number((id >> 22n) + 1420070400000n);
         const d  = new Date(ts);
@@ -1785,7 +2241,6 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // ── BASE64 ──
     if (kind === 'b64') {
         const v = document.getElementById('b64-in').value.trim();
         if (!v) { out.innerHTML = '<span class="miss">[!] enter text</span>'; return; }
@@ -1807,7 +2262,6 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // ── HASH ──
     if (kind === 'hash') {
         const v = document.getElementById('hash-in').value;
         if (!v) { out.innerHTML = '<span class="miss">[!] enter text</span>'; return; }
@@ -1828,7 +2282,6 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // ── PASSWORD ──
     if (kind === 'pwd') {
         const len = Math.max(4, Math.min(128, parseInt(document.getElementById('pwd-len').value) || 24));
         const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*-_=+';
@@ -1844,7 +2297,6 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // ── IP ──
     if (kind === 'ip') {
         const v = document.getElementById('ip-in').value.trim();
         out.innerHTML = '<span class="dim">querying…</span>';
@@ -1876,7 +2328,6 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // ── DNS ──
     if (kind === 'dns') {
         const domain = document.getElementById('dns-in').value.trim();
         const type   = document.getElementById('dns-type').value;
@@ -1902,7 +2353,6 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // ── TOKEN ──
     if (kind === 'tok') {
         const t = document.getElementById('tok-in').value.trim();
         if (!t || !t.includes('.')) { out.innerHTML = '<span class="miss">[!] not a valid token format</span>'; return; }
@@ -1926,7 +2376,6 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // ── WEBHOOK ──
     if (kind === 'wh') {
         const u = document.getElementById('wh-in').value.trim();
         if (!u) { out.innerHTML = '<span class="miss">[!] paste a webhook url</span>'; return; }
@@ -1940,11 +2389,8 @@ function tryTool(evt, kind) {
                     chanId = chanId.slice(0, -1) + ((last + 1) % 10);
                 }
                 const rows = [
-                    ['id', j.id],
-                    ['name', j.name],
-                    ['type', j.type],
-                    ['channel', chanId],
-                    ['guild', j.guild_id || '?'],
+                    ['id', j.id], ['name', j.name], ['type', j.type],
+                    ['channel', chanId], ['guild', j.guild_id || '?'],
                     ['token', j.token ? 'present' : 'hidden'],
                 ];
                 if (j.user) rows.push(['creator', j.user.username + (j.user.discriminator ? '#' + j.user.discriminator : '')]);
@@ -1954,7 +2400,6 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // ── LOOKUP ──
     if (kind === 'lookup') {
         out.innerHTML = '<span class="miss">[!] not yet.</span>';
         return;
@@ -1987,12 +2432,10 @@ const HISTORICAL_ENTRIES = [
     { handle: 'unknown',date: '2012-12-21', body: "nothing happened. i waited all day. nothing." },
     { handle: 'them',   date: '2023-08-04', body: "you're reading this and i'm not here anymore." },
 ];
-
 function todayEntry() {
     const d = new Date().toISOString().slice(0, 10);
     return { handle: '', date: d, body: "came by earlier. you weren't here.", today: true };
 }
-
 function guestbookHTML() {
     const entries = [...HISTORICAL_ENTRIES, todayEntry()];
     let userEntries = [];
@@ -2027,13 +2470,14 @@ function guestbookHTML() {
             <div class="center-nav"><a href="#home">← back</a></div>
         </div>`;
 }
-
 window.signGuestbook = function(evt) {
     const name = document.getElementById('gb-name').value.trim();
     const body = document.getElementById('gb-body').value.trim() || '...';
     let userEntries = [];
     try { userEntries = JSON.parse(localStorage.getItem('dd_guestbook') || '[]'); } catch {}
-    userEntries.push({ handle: name, date: new Date().toISOString().slice(0, 10), body });
+    const date = localStorage.getItem('dd_went_in') ? '2003-04-11' : new Date().toISOString().slice(0, 10);
+    const handle = localStorage.getItem('dd_went_in') ? '[you]' : name;
+    userEntries.push({ handle, date, body });
     localStorage.setItem('dd_guestbook', JSON.stringify(userEntries));
     localStorage.setItem('dd_gb_last_sign', String(Date.now()));
     document.getElementById('gb-body').value = '';
@@ -2081,10 +2525,15 @@ function locateHTML() {
     `;
 }
 let locateInterval = null;
+let locateFrozen = null;
 function startLocateLoop() {
     if (locateInterval) clearInterval(locateInterval);
     const el = document.getElementById('locTime');
     if (!el) return;
+    if (localStorage.getItem('dd_went_in') && locateFrozen) {
+        el.textContent = locateFrozen;
+        return;
+    }
     const update = () => {
         const d = new Date();
         el.textContent = d.toLocaleTimeString() + ' · ' + d.toLocaleDateString();
@@ -2140,12 +2589,20 @@ const QUOTES = [
     ['they missed you.', '— them'],
     ['032 was here.', '— 032'],
 ];
+const ANGRY_QUOTES = [
+    ['you went in.', '— it'],
+    ['i saw you.', '— it'],
+    ['you came back.', '— it'],
+    ['don\'t do that again.', '— it'],
+];
 let qi = 0;
 function showQuote() {
     const qText = document.getElementById('quoteText');
     const qAttr = document.getElementById('quoteAttr');
     if (!qText) return;
-    const [text, attr] = QUOTES[qi];
+    const angry = document.body.classList.contains('angry');
+    const pool = angry ? ANGRY_QUOTES : QUOTES;
+    const [text, attr] = pool[qi % pool.length];
     qText.innerHTML = '';
     const words = text.split(' ');
     words.forEach((w, i) => {
@@ -2156,7 +2613,7 @@ function showQuote() {
         qText.appendChild(span);
     });
     qAttr.textContent = attr;
-    qi = (qi + 1) % QUOTES.length;
+    qi++;
 }
 setInterval(() => {
     const ql = document.getElementById('quoteLine');
@@ -2184,37 +2641,15 @@ document.getElementById('trapNo1').addEventListener('click', closeTrap);
 document.getElementById('trapNo2').addEventListener('click', closeTrap);
 
 // ═══════════════════════════════════════════════════════════
-// FADE BLACK
-// ═══════════════════════════════════════════════════════════
-const fadeBlack = document.getElementById('fadeBlack');
-
-// ═══════════════════════════════════════════════════════════
-// WIRED MODE
-// ═══════════════════════════════════════════════════════════
-const wiredToggle = document.getElementById('wiredToggle');
-wiredToggle.addEventListener('click', () => {
-    document.body.classList.toggle('wired');
-    const n = parseInt(localStorage.getItem('dd_wired_count') || '0', 10) + 1;
-    localStorage.setItem('dd_wired_count', String(n));
-    if (n === 1) wiredToggle.textContent = '◉ 0032';
-    else if (n === 5) wiredToggle.textContent = '◉ wired';
-    else if (n === 15) wiredToggle.textContent = '◉ you found it';
-    else if (n >= 30) wiredToggle.textContent = '◉ stop';
-});
-(function restoreWired() {
-    const n = parseInt(localStorage.getItem('dd_wired_count') || '0', 10);
-    if (n === 1) wiredToggle.textContent = '◉ 0032';
-    else if (n === 5) wiredToggle.textContent = '◉ wired';
-    else if (n === 15) wiredToggle.textContent = '◉ you found it';
-    else if (n >= 30) wiredToggle.textContent = '◉ stop';
-})();
-
-// ═══════════════════════════════════════════════════════════
-// FAKE LOGIN on 2nd locate visit
+// FAKE LOGIN on 2nd locate visit (only if not angry)
 // ═══════════════════════════════════════════════════════════
 let locateVisits = 0;
 const _origStartLocate = startLocateLoop;
 window.startLocateLoop = function() {
+    if (document.body.classList.contains('angry')) {
+        _origStartLocate();
+        return;
+    }
     locateVisits++;
     if (locateVisits > 1) {
         setTimeout(() => {
@@ -2299,8 +2734,516 @@ document.addEventListener('keydown', e => {
 });
 
 // ═══════════════════════════════════════════════════════════
-// ROUTER EVENTS
+// WIRED DESKTOP SYSTEM
 // ═══════════════════════════════════════════════════════════
+let wiredOpen = false;
+let wiredZ = 100;
+const wiredWindows = [];
+
+function wiredToggleMode() {
+    wiredOpen = !wiredOpen;
+    if (wiredOpen) {
+        WIRED.classList.add('active');
+        MAIN.style.display = 'none';
+        document.body.classList.add('angry-wired');
+        // freeze the analog clock where it is
+        if (!locateFrozen) locateFrozen = clockEl.textContent;
+        renderWiredDesktop();
+    } else {
+        WIRED.classList.remove('active');
+        MAIN.style.display = '';
+        document.body.classList.remove('angry-wired');
+        localStorage.setItem('dd_went_in', '1');
+        enableAngryMode();
+    }
+}
+
+// w-icons on the desktop
+const WIRED_ICONS = [
+    { id: 'mycomputer', label: 'My Computer', icon: '▣', action: 'open-mycomputer' },
+    { id: 'recycle',    label: 'Recycle Bin', icon: '⌸', action: 'open-recycle' },
+    { id: 'tools',      label: 'tools',       icon: '▶', action: 'open-tools-folder' },
+    { id: 'readme',     label: 'readme.txt',  icon: '≡', action: 'open-readme' },
+    { id: 'analog',     label: 'analog.exe',  icon: '◉', action: 'return-analog' },
+];
+
+function renderWiredDesktop() {
+    WDESKTOP.innerHTML = '';
+    // place icons vertically down the left side
+    let y = 20;
+    WIRED_ICONS.forEach(ic => {
+        const el = document.createElement('div');
+        el.className = 'w-icon';
+        el.style.left = '20px';
+        el.style.top  = y + 'px';
+        el.innerHTML = `
+            <div class="w-icon-img">${ic.icon}</div>
+            <div class="w-icon-label">${ic.label}</div>
+        `;
+        el.addEventListener('dblclick', () => handleWiredAction(ic.action));
+        el.addEventListener('click', () => handleWiredAction(ic.action));
+        WDESKTOP.appendChild(el);
+        y += 86;
+    });
+
+    // open My Computer explorer by default
+    setTimeout(() => openExplorerWindow('C:\\'), 100);
+}
+
+function handleWiredAction(action) {
+    if (action === 'return-analog') {
+        wiredToggleMode();
+        return;
+    }
+    if (action === 'open-tools-folder') {
+        openExplorerWindow('C:\\tools');
+        return;
+    }
+    if (action === 'open-readme') {
+        openReadmeWindow();
+        return;
+    }
+    if (action === 'open-mycomputer') {
+        openExplorerWindow('C:\\');
+        return;
+    }
+    if (action === 'open-recycle') {
+        openExplorerWindow('C:\\Recycle Bin');
+        return;
+    }
+}
+
+// WINDOW SYSTEM
+function createWindow(title, iconChar, bodyHTML, width, height) {
+    const win = document.createElement('div');
+    win.className = 'w-window';
+    const id = 'w' + Date.now() + Math.floor(Math.random() * 1000);
+    win.id = id;
+    win.style.width  = width + 'px';
+    win.style.height = height + 'px';
+    const offset = wiredWindows.length * 20;
+    win.style.left = (60 + offset) + 'px';
+    win.style.top  = (40 + offset) + 'px';
+    win.style.zIndex = ++wiredZ;
+
+    win.innerHTML = `
+        <div class="w-titlebar">
+            <span class="w-tb-icon">${iconChar}</span>
+            <span class="w-tb-title">${title}</span>
+            <span class="w-tb-btn minimize" title="minimize">_</span>
+            <span class="w-tb-btn maximize" title="maximize">□</span>
+            <span class="w-tb-btn close" title="close">✕</span>
+        </div>
+        <div class="w-body">${bodyHTML}</div>
+    `;
+    WDESKTOP.appendChild(win);
+    wiredWindows.push(win);
+
+    // dragging
+    const titlebar = win.querySelector('.w-titlebar');
+    let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+    titlebar.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('w-tb-btn')) return;
+        dragging = true;
+        sx = e.clientX; sy = e.clientY;
+        ox = parseInt(win.style.left) || 0;
+        oy = parseInt(win.style.top) || 0;
+        win.style.zIndex = ++wiredZ;
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        win.style.left = (ox + e.clientX - sx) + 'px';
+        win.style.top  = (oy + e.clientY - sy) + 'px';
+    });
+    document.addEventListener('mouseup', () => { dragging = false; });
+
+    // window buttons
+    win.querySelector('.w-tb-btn.close').addEventListener('click', () => {
+        win.remove();
+        const i = wiredWindows.indexOf(win);
+        if (i > -1) wiredWindows.splice(i, 1);
+    });
+    win.querySelector('.w-tb-btn.minimize').addEventListener('click', () => {
+        win.style.display = 'none';
+    });
+    win.querySelector('.w-tb-btn.maximize').addEventListener('click', () => {
+        if (win.dataset.max === '1') {
+            win.style.width = win.dataset.ow;
+            win.style.height = win.dataset.oh;
+            win.style.left = win.dataset.ol;
+            win.style.top = win.dataset.ot;
+            win.dataset.max = '0';
+        } else {
+            win.dataset.ow = win.style.width;
+            win.dataset.oh = win.style.height;
+            win.dataset.ol = win.style.left;
+            win.dataset.ot = win.style.top;
+            win.style.width  = (window.innerWidth - 40) + 'px';
+            win.style.height = (window.innerHeight - 60) + 'px';
+            win.style.left = '20px';
+            win.style.top  = '20px';
+            win.dataset.max = '1';
+        }
+    });
+
+    // focus on click
+    win.addEventListener('mousedown', () => { win.style.zIndex = ++wiredZ; });
+
+    return win;
+}
+
+// EXPLORER
+function openExplorerWindow(path) {
+    const bodyHTML = `
+        <div class="w-menubar">
+            <span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Favorites</span><span>Help</span>
+        </div>
+        <div class="w-body">
+            <div class="w-tree" id="wTree"></div>
+            <div class="w-files" id="wFiles"></div>
+        </div>
+        <div class="w-statusbar">
+            <span class="w-status-cell" id="wStatusLeft">${path}</span>
+            <span class="w-status-cell" id="wStatusRight">0 object(s)</span>
+        </div>
+    `;
+    const win = createWindow(path + ' - Explorer', '▶', bodyHTML, 620, 420);
+    const tree = win.querySelector('#wTree');
+    const files = win.querySelector('#wFiles');
+
+    // tree
+    const treeNodes = [
+        { label: '▣ Desktop', path: 'C:\\Desktop' },
+        { label: '▣ My Computer', path: 'C:\\' },
+        { label: '  ▣ 3½ Floppy (A:)', path: 'A:\\' },
+        { label: '  ▣ Local Disk (C:)', path: 'C:\\', active: true },
+        { label: '  ▣ CD Drive (D:)', path: 'D:\\' },
+    ];
+    treeNodes.forEach(n => {
+        const el = document.createElement('div');
+        el.className = 'w-node' + (n.active ? ' active' : '');
+        el.textContent = n.label;
+        el.addEventListener('click', () => {
+            tree.querySelectorAll('.w-node').forEach(x => x.classList.remove('active'));
+            el.classList.add('active');
+            openExplorerFolder(n.path, files, win);
+        });
+        tree.appendChild(el);
+    });
+
+    openExplorerFolder(path, files, win);
+}
+
+const FOLDERS = {
+    'C:\\': [
+        { name: 'tools',        type: 'folder', size: '',       date: '04/11/2003 03:14 AM' },
+        { name: 'My Documents', type: 'folder', size: '',       date: '04/11/2003 03:14 AM' },
+        { name: 'Program Files',type: 'folder', size: '',       date: '11/14/1998 12:00 AM' },
+        { name: 'readme.txt',   type: 'file',   size: '2 KB',   date: '04/11/2003 03:14 AM', action: 'open-readme' },
+        { name: 'autoexec.bat', type: 'file',   size: '0 KB',   date: '11/14/1998 12:00 AM', action: 'open-autoexec' },
+        { name: 'analog.exe',   type: 'file',   size: '16 KB',  date: '04/11/2003 03:14 AM', action: 'return-analog' },
+    ],
+    'C:\\tools': [
+        { name: 'snowflake.exe', type: 'file', size: '14 KB', date: '04/11/2003 03:14 AM', tool: 'sf' },
+        { name: 'base64.exe',    type: 'file', size: '9 KB',  date: '04/11/2003 03:14 AM', tool: 'b64' },
+        { name: 'hash.exe',      type: 'file', size: '22 KB', date: '04/11/2003 03:14 AM', tool: 'hash' },
+        { name: 'password.exe',  type: 'file', size: '6 KB',  date: '04/11/2003 03:14 AM', tool: 'pwd' },
+        { name: 'ip.exe',        type: 'file', size: '18 KB', date: '04/11/2003 03:14 AM', tool: 'ip' },
+        { name: 'dns.exe',       type: 'file', size: '20 KB', date: '04/11/2003 03:14 AM', tool: 'dns' },
+        { name: 'token.exe',     type: 'file', size: '11 KB', date: '04/11/2003 03:14 AM', tool: 'tok' },
+        { name: 'webhook.exe',   type: 'file', size: '15 KB', date: '04/11/2003 03:14 AM', tool: 'wh' },
+    ],
+    'C:\\My Documents': [
+        { name: "don't.txt", type: 'file', size: '1 KB', date: '04/11/2003 03:14 AM', action: 'open-dont' },
+    ],
+    'C:\\Program Files': [],
+    'C:\\Recycle Bin': [],
+};
+
+function openExplorerFolder(path, filesEl, win) {
+    filesEl.innerHTML = '';
+    const items = FOLDERS[path] || [];
+    items.forEach(it => {
+        const el = document.createElement('div');
+        el.className = 'w-file' + (it.type === 'folder' ? ' folder' : '');
+        el.innerHTML = `
+            <div class="w-file-img">${it.type === 'folder' ? '▣' : '▤'}</div>
+            <div class="w-file-name">${it.name}</div>
+        `;
+        el.addEventListener('click', () => {
+            filesEl.querySelectorAll('.w-file').forEach(x => x.classList.remove('selected'));
+            el.classList.add('selected');
+        });
+        el.addEventListener('dblclick', () => {
+            if (it.type === 'folder') {
+                openExplorerFolder(path + '\\' + it.name, filesEl, win);
+            } else if (it.tool) {
+                openToolWindow(it.tool, it.name);
+            } else if (it.action === 'return-analog') {
+                wiredToggleMode();
+            } else if (it.action === 'open-readme') {
+                openReadmeWindow();
+            } else if (it.action === 'open-autoexec') {
+                openTextWindow('autoexec.bat', 'notepad is not installed.');
+            } else if (it.action === 'open-dont') {
+                openTextWindow("don't.txt", 'don\'t.');
+            }
+        });
+        filesEl.appendChild(el);
+    });
+    const status = win.querySelector('#wStatusLeft');
+    const statusR = win.querySelector('#wStatusRight');
+    if (status) status.textContent = path;
+    if (statusR) statusR.textContent = items.length + ' object(s)';
+}
+
+function openReadmeWindow() {
+    openTextWindow('readme.txt',
+`analog v1.0
+present day. present time.
+
+if you are reading this, you went in.
+you shouldn't have. the door was open but that
+doesn't mean it was for you.
+
+the tools still work. the tools always work.
+that's not the problem.
+
+the problem is you came back.
+
+close this window. don't touch anything else.
+especially don't look at the .log file.`);
+}
+
+function openTextWindow(title, content) {
+    const bodyHTML = `
+        <div class="w-menubar"><span>File</span><span>Edit</span><span>Search</span><span>Help</span></div>
+        <div class="w-text-body">${content.replace(/</g, '&lt;')}</div>
+    `;
+    createWindow(title + ' - Notepad', '≡', bodyHTML, 480, 340);
+}
+
+// TOOL WINDOW
+const TOOL_META = {
+    sf:    { name: 'snowflake', placeholder: 'discord id',         label: 'discord id' },
+    b64:   { name: 'base64',    placeholder: 'text',               label: 'text' },
+    hash:  { name: 'hash',      placeholder: 'text',               label: 'text' },
+    pwd:   { name: 'password',  placeholder: '24',                 label: 'length' },
+    ip:    { name: 'ip',        placeholder: 'ip or hostname',     label: 'ip' },
+    dns:   { name: 'dns',       placeholder: 'domain',             label: 'domain' },
+    tok:   { name: 'token',     placeholder: 'discord token',      label: 'token' },
+    wh:    { name: 'webhook',   placeholder: 'webhook url',        label: 'url' },
+};
+
+function openToolWindow(kind, filename) {
+    const meta = TOOL_META[kind];
+    if (!meta) return;
+    const bodyHTML = `
+        <div class="w-menubar"><span>File</span><span>Run</span><span>Help</span></div>
+        <div class="w-tool-body">
+            <label>${meta.label}:</label>
+            <input type="text" id="wt-input-${kind}" placeholder="${meta.placeholder}">
+            <button data-tool="${kind}">RUN</button>
+            <div class="w-out" id="wt-out-${kind}"></div>
+        </div>
+    `;
+    const win = createWindow(filename + ' - ' + meta.name, '▶', bodyHTML, 440, 340);
+    const btn = win.querySelector('button[data-tool]');
+    const inp = win.querySelector('input');
+    const out = win.querySelector('.w-out');
+    btn.addEventListener('click', () => runWiredTool(kind, inp.value.trim(), out));
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') btn.click(); });
+}
+
+async function runWiredTool(kind, value, out) {
+    if (S.soundOn) heartbeatThump();
+    const ok  = (s) => '<span class="ok">[+] </span>' + s.replace(/</g, '&lt;');
+    const miss = (s) => '<span class="miss">[!] </span>' + s.replace(/</g, '&lt;');
+
+    if (kind === 'sf') {
+        if (!value || !/^\d+$/.test(value)) return out.innerHTML = miss('enter a numeric snowflake');
+        const id = BigInt(value);
+        const ts = Number((id >> 22n) + 1420070400000n);
+        const d = new Date(ts);
+        let iso = d.toISOString();
+        if (Math.random() < 0.4) {
+            const last = iso[iso.length - 1];
+            const swapped = last === 'Z' ? 'z' : last === 'z' ? 'Z' : last;
+            iso = iso.slice(0, -1) + swapped;
+        }
+        out.innerHTML =
+            ok('timestamp   ' + iso) + '\n' +
+            ok('utc         ' + punctuate(d.toUTCString())) + '\n' +
+            ok('worker id   ' + (Number((id & 0x3E0000n) >> 17n) + (Math.random() < 0.3 ? 1 : 0))) + '\n' +
+            ok('process id  ' + (Number((id & 0x1F000n) >> 12n) + (Math.random() < 0.3 ? 1 : 0))) + '\n' +
+            ok('increment   ' + (Number(id & 0xFFFn) + (Math.random() < 0.3 ? 1 : 0)));
+        return;
+    }
+    if (kind === 'b64') {
+        if (!value) return out.innerHTML = miss('enter text');
+        try {
+            const isB64 = /^[A-Za-z0-9+/=]+$/.test(value) && value.length % 4 === 0 && value.length > 4;
+            if (isB64) {
+                let decoded;
+                try { decoded = decodeURIComponent(escape(atob(value))); }
+                catch { decoded = atob(value); }
+                out.innerHTML = ok(scramble(decoded, 0.4));
+            } else {
+                let enc = btoa(unescape(encodeURIComponent(value)));
+                if (Math.random() < 0.3 && enc.endsWith('=')) enc = enc.slice(0, -1);
+                else enc = scramble(enc, 0.35);
+                out.innerHTML = ok(enc);
+            }
+        } catch { out.innerHTML = miss('could not parse input'); }
+        return;
+    }
+    if (kind === 'hash') {
+        if (!value) return out.innerHTML = miss('enter text');
+        const buf = new TextEncoder().encode(value);
+        let html = '';
+        for (const [label, alg] of [['sha1','SHA-1'],['sha256','SHA-256'],['sha384','SHA-384'],['sha512','SHA-512']]) {
+            const h = await crypto.subtle.digest(alg, buf);
+            let hex = Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
+            const i = Math.floor(Math.random() * hex.length);
+            const swap = {'a':'b','b':'a','c':'d','d':'c','e':'f','f':'e','1':'2','2':'1','3':'4','4':'3','5':'6','6':'5','7':'8','8':'7','9':'0','0':'9'}[hex[i]] || hex[i];
+            hex = hex.slice(0, i) + swap + hex.slice(i + 1);
+            html += ok(label.padEnd(8) + ' ' + hex) + '\n';
+        }
+        out.innerHTML = html.trim();
+        return;
+    }
+    if (kind === 'pwd') {
+        const len = Math.max(4, Math.min(128, parseInt(value) || 24));
+        const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*-_=+';
+        const a = new Uint32Array(len);
+        crypto.getRandomValues(a);
+        let p = '';
+        for (let i = 0; i < len; i++) p += pool[a[i] % pool.length];
+        if (Math.random() < 0.35 && p.length > 6) {
+            const i = Math.floor(Math.random() * (p.length - 1));
+            p = p.slice(0, i) + p[i] + p.slice(i);
+        }
+        out.innerHTML = ok(p);
+        return;
+    }
+    if (kind === 'ip') {
+        out.innerHTML = '<span class="miss">querying…</span>';
+        const endpoint = value ? 'http://ip-api.com/json/' + encodeURIComponent(value) + '?fields=66846719' : 'http://ip-api.com/json/?fields=66846719';
+        try {
+            const j = await (await fetch(endpoint)).json();
+            if (j.status === 'fail') return out.innerHTML = miss(j.message || 'lookup failed');
+            let city = j.city || '?';
+            if (Math.random() < 0.3 && city.length > 3) {
+                const i = Math.floor(Math.random() * city.length);
+                city = city.slice(0, i) + city[i] + city.slice(i);
+            }
+            let country = j.country || '?';
+            if (Math.random() < 0.25) country = punctuate(country);
+            out.innerHTML =
+                ok('ip          ' + j.query) + '\n' +
+                ok('country     ' + country) + '\n' +
+                ok('region      ' + (j.regionName || '?')) + '\n' +
+                ok('city        ' + city) + '\n' +
+                ok('zip         ' + (j.zip || '?')) + '\n' +
+                ok('coords      ' + j.lat + ', ' + j.lon) + '\n' +
+                ok('timezone    ' + (j.timezone || '?')) + '\n' +
+                ok('isp         ' + (j.isp || '?')) + '\n' +
+                ok('org         ' + (j.org || '-')) + '\n' +
+                ok('as          ' + (j.as || '?'));
+        } catch { out.innerHTML = miss('request failed'); }
+        return;
+    }
+    if (kind === 'dns') {
+        if (!value) return out.innerHTML = miss('enter a domain');
+        out.innerHTML = '<span class="miss">resolving…</span>';
+        try {
+            const j = await (await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(value)}&type=A`, { headers: { 'accept': 'application/dns-json' } })).json();
+            if (!j.Answer || !j.Answer.length) return out.innerHTML = miss('no records');
+            const answers = [...j.Answer];
+            if (answers.length > 1 && Math.random() < 0.3) {
+                if (Math.random() < 0.5) answers.splice(Math.floor(Math.random() * answers.length), 1);
+                else answers.push({ ...answers[Math.floor(Math.random() * answers.length)] });
+            }
+            out.innerHTML = answers.map(a => {
+                let data = a.data;
+                if (Math.random() < 0.3) data = scramble(data, 1);
+                return ok(String(a.type).padEnd(4) + ' ' + data);
+            }).join('\n');
+        } catch { out.innerHTML = miss('request failed'); }
+        return;
+    }
+    if (kind === 'tok') {
+        if (!value || !value.includes('.')) return out.innerHTML = miss('not a valid token format');
+        const parts = value.split('.');
+        try {
+            const uid = atob(parts[0] + '==');
+            let created = 'unknown';
+            try {
+                const tsBytes = atob(parts[1] + '==');
+                let n = 0n;
+                for (const c of tsBytes) n = (n << 8n) | BigInt(c.charCodeAt(0));
+                created = new Date((Number(n) + 1293840000) * 1000).toISOString();
+            } catch {}
+            const hmacPresent = parts.length === 3;
+            const hmacShown = Math.random() < 0.3 ? !hmacPresent : hmacPresent;
+            out.innerHTML =
+                ok('user id       ' + uid) + '\n' +
+                ok('created approx ' + created) + '\n' +
+                ok('hmac present  ' + hmacShown);
+        } catch { out.innerHTML = miss('decode failed'); }
+        return;
+    }
+    if (kind === 'wh') {
+        if (!value) return out.innerHTML = miss('paste a webhook url');
+        out.innerHTML = '<span class="miss">probing…</span>';
+        try {
+            const r = await fetch(value);
+            if (!r.ok) throw new Error('status ' + r.status);
+            const j = await r.json();
+            let chanId = j.channel_id || '?';
+            if (Math.random() < 0.3 && chanId.length > 3) {
+                const last = parseInt(chanId[chanId.length - 1], 10);
+                chanId = chanId.slice(0, -1) + ((last + 1) % 10);
+            }
+            const rows = [
+                ['id', j.id], ['name', j.name], ['type', j.type],
+                ['channel', chanId], ['guild', j.guild_id || '?'],
+                ['token', j.token ? 'present' : 'hidden'],
+            ];
+            if (j.user) rows.push(['creator', j.user.username + (j.user.discriminator ? '#' + j.user.discriminator : '')]);
+            out.innerHTML = rows.map(([k, v]) => ok(String(k).padEnd(10) + ' ' + v)).join('\n');
+        } catch (e) { out.innerHTML = miss(e.message); }
+        return;
+    }
+}
+
+// wired toggle button (already exists on the analog landing)
+const wiredToggle = document.getElementById('wiredToggle');
+wiredToggle.addEventListener('click', () => {
+    wiredToggleMode();
+});
+
+// start menu
+const wStart = document.getElementById('wStart');
+const wStartMenu = document.getElementById('wStartMenu');
+wStart.addEventListener('click', () => {
+    wStartMenu.classList.toggle('active');
+});
+document.addEventListener('click', (e) => {
+    if (!wStart.contains(e.target) && !wStartMenu.contains(e.target)) {
+        wStartMenu.classList.remove('active');
+    }
+});
+
+// tray clock
+const wTrayClock = document.getElementById('wTrayClock');
+function tickTrayClock() {
+    wTrayClock.textContent = '3:14 AM';
+}
+tickTrayClock();
+
+// router events
 window.addEventListener('hashchange', () => {
     const v = currentView();
     updateHiddenText(v);
@@ -2310,9 +3253,7 @@ window.addEventListener('hashchange', () => {
     if (v === 'tools')  setTimeout(openTrap, 45000);
 });
 
-// ═══════════════════════════════════════════════════════════
-// DETERRENTS
-// ═══════════════════════════════════════════════════════════
+// deterrents
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('dragstart',  e => e.preventDefault());
 document.addEventListener('keydown', e => {
@@ -2323,9 +3264,7 @@ document.addEventListener('keydown', e => {
     if (e.ctrlKey && (k === 'u' || k === 's')) { e.preventDefault(); return false; }
 }, true);
 
-// ═══════════════════════════════════════════════════════════
 // GO
-// ═══════════════════════════════════════════════════════════
 runIntro();
 scheduleEyes();
 </script>
