@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   doomsday — wired mode
+   analog — wired mode
    dormant until body has .wired class.
    base styling lives inline in index.html.
    ═══════════════════════════════════════════════════════════ */
@@ -19,6 +19,7 @@ body.wired::after {
     opacity: 0.35 !important;
 }
 
+/* ─── corners go hot ─── */
 body.wired .corner {
     color: #ff2e63 !important;
     opacity: 0.95;
@@ -45,6 +46,7 @@ body.wired .hb.disc {
     50%      { opacity: 1; }
 }
 
+/* ─── scan line brighter ─── */
 body.wired .scan {
     background: linear-gradient(to right,
         transparent 0%,
@@ -56,16 +58,19 @@ body.wired .scan {
     filter: blur(1px);
 }
 
+/* ─── hex watermark glows ─── */
 body.wired .bg-nums {
     opacity: 0.15 !important;
     color: #ff2e63 !important;
 }
 
+/* ─── wire in background ─── */
 body.wired .wire {
     background: #ff2e63 !important;
     opacity: 0.65 !important;
 }
 
+/* ─── wordmark goes full red ─── */
 body.wired .wordmark .brand {
     color: #ff2e63 !important;
     text-shadow: 2px 2px 0 #ffb3c1, -1px -1px 0 #8b0000;
@@ -81,6 +86,7 @@ body.wired .wordmark .cursor {
     box-shadow: 0 0 22px rgba(255,46,99,0.9) !important;
 }
 
+/* ─── quotes go red ─── */
 body.wired .quote {
     color: #ffb3c1 !important;
 }
@@ -91,6 +97,7 @@ body.wired .quote .attr {
     color: #8b0000 !important;
 }
 
+/* ─── section labels ─── */
 body.wired .label {
     color: #ffb3c1 !important;
 }
@@ -101,6 +108,7 @@ body.wired .label::after {
     background: #2a0a12 !important;
 }
 
+/* ─── tiles bleed red ─── */
 body.wired .tile {
     border-bottom-color: #2a0a12 !important;
     color: #ffb3c1 !important;
@@ -131,21 +139,23 @@ body.wired .tile:hover .t-jp {
     color: #ff2e63 !important;
 }
 
+/* ─── footer ─── */
 body.wired footer {
     border-top-color: #2a0a12 !important;
     color: #8b0000 !important;
 }
 
+/* ─── cursor + trail ─── */
 body.wired #cursor {
     background: #fff !important;
     box-shadow: 0 0 20px #ff2e63, 0 0 40px rgba(255,46,99,0.6) !important;
 }
-
 body.wired .trail {
     background: #ff2e63 !important;
     box-shadow: 0 0 16px rgba(255,46,99,1), 0 0 32px rgba(255,46,99,0.5) !important;
 }
 
+/* ─── eyes get brighter in wired ─── */
 body.wired .eye {
     background: #f5d0d8 !important;
     box-shadow: 0 0 12px rgba(255,46,99,0.5), inset 0 0 6px rgba(255,46,99,0.3) !important;
@@ -164,6 +174,7 @@ body.wired .eye-flash::before {
     background: radial-gradient(circle at 35% 35%, #fff 0%, #ff2e63 60%, #8b0000 100%) !important;
 }
 
+/* ─── guestbook ─── */
 body.wired .gb-page {
     background: #000 !important;
 }
@@ -178,6 +189,7 @@ body.wired .gb-page .entry .e-handle {
     color: #ff2e63 !important;
 }
 
+/* ─── 2003 portal inverts in wired ─── */
 body.wired .portal {
     filter: invert(1) hue-rotate(180deg);
 }
@@ -188,6 +200,7 @@ body.wired .portal button {
     filter: invert(1) hue-rotate(180deg);
 }
 
+/* ─── void ─── */
 body.wired .void-page {
     background: #000 !important;
 }
@@ -196,14 +209,17 @@ body.wired .void-page .void-text {
     text-shadow: 0 0 24px rgba(255,46,99,0.8);
 }
 
+/* ─── unclaimed goes mono-red ─── */
 body.wired .unclaimed-page {
     filter: grayscale(100%) sepia(100%) hue-rotate(-20deg) saturate(8) !important;
 }
 
+/* ─── locate ─── */
 body.wired .locate-page .l-title {
     text-shadow: 0 0 20px rgba(255,46,99,0.9);
 }
 
+/* ─── them/ ─── */
 body.wired .them-page {
     background: #000 !important;
 }
@@ -212,6 +228,7 @@ body.wired .them-page .file .red {
     text-shadow: 0 0 8px rgba(255,46,99,0.6);
 }
 
+/* ─── 404 ─── */
 body.wired .p404 .n {
     text-shadow: 0 0 24px rgba(255,46,99,0.9);
 }
