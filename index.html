@@ -16,10 +16,10 @@
         margin: 0;
         min-height: 100vh;
         overflow-x: hidden;
-        cursor: crosshair;
+        cursor: none;
     }
 
-    /* VHS grain overlay — always on */
+    /* VHS grain overlay */
     body::before {
         content: '';
         position: fixed;
@@ -37,7 +37,7 @@
         100% { transform: translate(2px, -2px); }
     }
 
-    /* subtle chromatic aberration overlay */
+    /* chromatic aberration */
     body::after {
         content: '';
         position: fixed;
@@ -55,6 +55,59 @@
     @keyframes chroma {
         0%, 100% { opacity: 0.05; }
         50%      { opacity: 0.12; }
+    }
+
+    /* ── custom cursor ───────────────────────────── */
+    #cursor {
+        position: fixed;
+        top: 0; left: 0;
+        width: 10px;
+        height: 10px;
+        background: #ff2e63;
+        box-shadow: 0 0 8px rgba(255, 46, 99, 0.9),
+                    0 0 16px rgba(255, 46, 99, 0.4);
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+        will-change: transform;
+        mix-blend-mode: normal;
+    }
+
+    /* ── random eyes ─────────────────────────────── */
+    .eye {
+        position: fixed;
+        width: 22px;
+        height: 12px;
+        background: #000;
+        border-radius: 50%;
+        z-index: 9500;
+        pointer-events: none;
+        box-shadow: 0 0 6px rgba(0,0,0,0.9),
+                    inset 0 0 4px rgba(20,20,20,0.8);
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.6);
+        transition: opacity 0.12s ease, transform 0.12s ease;
+    }
+    .eye.show {
+        opacity: 0.92;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    /* pair of eyes = two of these side by side */
+    .eye-pair {
+        position: fixed;
+        z-index: 9500;
+        pointer-events: none;
+        display: flex;
+        gap: 16px;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.1s ease;
+    }
+    .eye-pair.show { opacity: 0.95; }
+    .eye-pair .eye {
+        position: static;
+        opacity: 1;
+        transform: none;
     }
 
     /* ── boot ───────────────────────────────────── */
@@ -108,7 +161,6 @@
         background: #050506;
     }
     #collapse.active { display: block; }
-
     .band {
         position: absolute;
         top: 0;
@@ -129,7 +181,6 @@
         transition: opacity 1.6s ease, transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* weirdcore scanline — thick, gummy, out of place */
     .scan {
         position: fixed;
         left: 0; right: 0;
@@ -152,7 +203,7 @@
         100% { top: 100vh; opacity: 0; }
     }
 
-    /* cursor trail — softer, pastel pink */
+    /* trail */
     .trail {
         position: fixed;
         background: #ffb3c1;
@@ -165,7 +216,7 @@
         will-change: transform, opacity;
     }
 
-    /* hex watermark — pastel pink instead of red */
+    /* hex watermark */
     .bg-nums {
         position: fixed; inset: 0;
         z-index: 0;
@@ -179,7 +230,7 @@
         font-family: 'Courier New', monospace;
     }
 
-    /* corner markers — arial, don't match anything */
+    /* corners */
     .corner {
         position: fixed;
         z-index: 50;
@@ -208,31 +259,7 @@
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    /* chains — softer pastel */
-    .chain {
-        position: fixed;
-        top: 0; bottom: 0;
-        width: 40px;
-        z-index: 1;
-        pointer-events: none;
-        overflow: hidden;
-        font-family: 'Courier New', monospace;
-        font-size: 11px;
-        line-height: 14px;
-        text-align: center;
-    }
-    .chain.left  { left: 0;  border-right: 1px solid #0f0a0d; }
-    .chain.right { right: 0; border-left: 1px solid #0f0a0d; }
-    .chain pre {
-        margin: 0;
-        color: #8b8580;
-        opacity: 0.55;
-        animation: drift 26s linear infinite;
-    }
-    @keyframes drift {
-        0%   { transform: translateY(0); }
-        100% { transform: translateY(-50%); }
-    }
+    /* NOTE: chains removed — that was the "black box" framing */
 
     /* ── layout ─────────────────────────────────── */
     .wrap {
@@ -241,11 +268,11 @@
         max-width: 720px;
         margin: 0 auto;
         padding: 128px 56px 80px;
+        background: transparent;
     }
 
     header { margin-bottom: 80px; }
 
-    /* weirdcore wordmark — two different fonts fighting */
     .wordmark {
         font-size: 68px;
         font-weight: 700;
@@ -265,8 +292,8 @@
     }
     .wordmark .brand {
         font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
-        color: #e8e4df;
-        text-shadow: 2px 2px 0 #ffb3c1, -1px -1px 0 #ff2e63;
+        color: #ff2e63;
+        text-shadow: 2px 2px 0 #ffb3c1, -1px -1px 0 #8b0000;
     }
     .wordmark .slash  {
         color: #8b8580;
@@ -291,7 +318,6 @@
         box-shadow: 0 0 14px rgba(255, 179, 193, 0.6);
     }
 
-    /* quote — italic serif, out of place */
     .quote {
         margin-top: 44px;
         font-size: 14px;
@@ -305,16 +331,9 @@
     .quote.show { opacity: 1; }
     .quote .prefix { color: #ff2e63; margin-right: 10px; font-style: normal; }
     .quote .attr   { color: #6a6560; margin-left: 12px; font-size: 11px; font-style: normal; }
-    .quote .word {
-        display: inline-block;
-        opacity: 0;
-        animation: wordIn 0.5s forwards;
-    }
-    @keyframes wordIn {
-        to { opacity: 1; }
-    }
+    .quote .word { display: inline-block; opacity: 0; animation: wordIn 0.5s forwards; }
+    @keyframes wordIn { to { opacity: 1; } }
 
-    /* sections */
     section { margin-bottom: 60px; }
 
     .label {
@@ -344,7 +363,6 @@
         transform: translateY(-4px);
     }
 
-    /* tiles */
     .grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -386,23 +404,14 @@
         font-weight: 700;
         font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
     }
-    .t-desc {
-        font-size: 11px;
-        color: #8b8580;
-        font-family: 'Courier New', monospace;
-    }
-    .t-jp   {
-        font-size: 12px;
-        color: #6a6560;
-        letter-spacing: 2px;
-    }
+    .t-desc { font-size: 11px; color: #8b8580; font-family: 'Courier New', monospace; }
+    .t-jp   { font-size: 12px; color: #6a6560; letter-spacing: 2px; }
 
     .tile:hover { background: rgba(255, 179, 193, 0.05); }
     .tile:hover .t-name { color: #ffb3c1; text-shadow: 0 0 8px rgba(255, 179, 193, 0.5); }
     .tile:hover .t-desc { color: #b8b0a8; }
     .tile:hover .t-jp   { color: #ff2e63; }
 
-    /* footer */
     footer {
         margin-top: 100px;
         padding-top: 24px;
@@ -421,7 +430,7 @@
 
     @media (max-width: 700px) {
         .wrap { padding: 80px 24px 60px; }
-        .chain, .corner { display: none; }
+        .corner { display: none; }
         .wordmark { font-size: 42px; }
         .wordmark .cursor { height: 32px; width: 14px; margin-left: 8px; }
         #boot { padding: 24px 20px; font-size: 11px; }
@@ -430,6 +439,7 @@
 </head>
 <body>
 
+<div id="cursor"></div>
 <div id="boot"></div>
 <div id="collapse"></div>
 
@@ -442,68 +452,6 @@
 <span class="corner tr">doomsday</span>
 <span class="corner bl" id="clock">00:00:00</span>
 <span class="corner br">@0_032 on discord</span>
-
-<div class="chain left">
-<pre>o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o</pre>
-</div>
-
-<div class="chain right">
-<pre>o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o</pre>
-</div>
 
 <div class="wrap">
 
@@ -556,6 +504,65 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 
 <script>
 // ═══════════════════════════════════════════════
+// CUSTOM CURSOR
+// ═══════════════════════════════════════════════
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+});
+
+// ═══════════════════════════════════════════════
+// RANDOM EYES
+// flashes a pair of black eyes at a random
+// position every few seconds. no pupil, no
+// expression. just watching.
+// ═══════════════════════════════════════════════
+function spawnEyes() {
+    const pair = document.createElement('div');
+    pair.className = 'eye-pair';
+    const eye1 = document.createElement('div');
+    eye1.className = 'eye';
+    const eye2 = document.createElement('div');
+    eye2.className = 'eye';
+    pair.appendChild(eye1);
+    pair.appendChild(eye2);
+
+    // random position, keeping eyes away from very edges
+    const padding = 60;
+    const x = padding + Math.random() * (window.innerWidth  - padding * 2);
+    const y = padding + Math.random() * (window.innerHeight - padding * 2);
+    pair.style.left = x + 'px';
+    pair.style.top  = y + 'px';
+
+    // random slight rotation for unease
+    const rot = (Math.random() * 20 - 10).toFixed(1);
+    pair.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+
+    document.body.appendChild(pair);
+
+    requestAnimationFrame(() => pair.classList.add('show'));
+
+    // visible for 90-250ms, then gone
+    const life = 90 + Math.random() * 160;
+    setTimeout(() => {
+        pair.classList.remove('show');
+        setTimeout(() => pair.remove(), 200);
+    }, life);
+}
+
+// eyes on a randomized schedule — 4 to 12 seconds apart
+function scheduleEyes() {
+    const delay = 4000 + Math.random() * 8000;
+    setTimeout(() => {
+        spawnEyes();
+        // occasionally spawn 2 in quick succession
+        if (Math.random() < 0.3) setTimeout(spawnEyes, 180);
+        scheduleEyes();
+    }, delay);
+}
+scheduleEyes();
+
+// ═══════════════════════════════════════════════
 // BOOT
 // ═══════════════════════════════════════════════
 const BOOT = document.getElementById('boot');
@@ -591,9 +598,9 @@ async function typeLine(text, color) {
 }
 
 async function runBoot() {
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor';
-    BOOT.appendChild(cursor);
+    const cur = document.createElement('span');
+    cur.className = 'cursor';
+    BOOT.appendChild(cur);
 
     await sleep(500);
     BOOT.innerHTML = '';
@@ -617,21 +624,16 @@ async function runBoot() {
 }
 
 // ═══════════════════════════════════════════════
-// COLLAPSE — slow, visible, three phases
+// COLLAPSE
 // ═══════════════════════════════════════════════
 function collapseBoot(onComplete) {
-    // ── PHASE 1: the text falls apart ──────────────
-    // (boot lines shatter and drift down over 1.6s)
     BOOT.classList.add('collapsing');
 
-    // ── PHASE 2: after 1.2s, the whole boot screen splits
-    // into vertical bands and falls away ──────────
     setTimeout(() => {
         const collapse = document.getElementById('collapse');
         collapse.classList.add('active');
         collapse.innerHTML = '';
 
-        // white/pink flash first — a single bright moment
         collapse.style.background = '#ffb3c1';
         setTimeout(() => { collapse.style.background = '#050506'; }, 70);
 
@@ -649,11 +651,9 @@ function collapseBoot(onComplete) {
             bands.push(band);
         }
 
-        // fade the boot layer as bands drop
         BOOT.style.transition = 'opacity 0.9s ease';
         BOOT.style.opacity = '0';
 
-        // drop the bands with per-band delay
         setTimeout(() => {
             bands.forEach(band => {
                 const delay = parseInt(band.dataset.delay);
@@ -666,7 +666,6 @@ function collapseBoot(onComplete) {
             });
         }, 80);
 
-        // after bands are gone, reveal
         setTimeout(() => {
             collapse.classList.remove('active');
             collapse.innerHTML = '';
@@ -709,7 +708,7 @@ function startReveal() {
 }
 
 // ═══════════════════════════════════════════════
-// QUOTES — switched to weirdcore-feeling lines
+// QUOTES
 // ═══════════════════════════════════════════════
 const QUOTES = [
     ['you shouldn\'t be here.', '— nobody'],
