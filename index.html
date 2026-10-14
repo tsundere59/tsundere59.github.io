@@ -33,7 +33,31 @@
         will-change: transform;
     }
 
-    /* ── decorative japanese column on the right ────── */
+    /* ── lain figure — top right, block chars only ──── */
+    .lain {
+        position: fixed;
+        top: 60px;
+        right: 40px;
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+        opacity: 0.18;
+        transition: opacity 0.5s ease;
+    }
+
+    .lain pre {
+        margin: 0;
+        font-family: 'SF Mono', Consolas, monospace;
+        font-size: 5px;
+        line-height: 1;
+        white-space: pre;
+        color: #c41e3a;
+        letter-spacing: -0.5px;
+    }
+
+    body.glowing .lain { opacity: 0.3; }
+
+    /* ── vertical japanese column ───────────────────── */
     .jp-column {
         position: fixed;
         top: 50%;
@@ -44,22 +68,17 @@
         user-select: none;
         writing-mode: vertical-rl;
         text-orientation: upright;
-        font-size: 14px;
-        letter-spacing: 28px;
+        font-size: 13px;
+        letter-spacing: 26px;
         color: #8b0000;
         opacity: 0.55;
         transition: opacity 0.4s;
     }
-    .jp-column .ch {
-        display: block;
-        margin: 24px 0;
-        text-shadow: 0 0 12px rgba(139, 0, 0, 0.5);
-    }
+    .jp-column .ch  { display: block; margin: 20px 0; text-shadow: 0 0 12px rgba(139, 0, 0, 0.5); }
     .jp-column .dim { color: #3a3a3a; opacity: 0.8; }
-
     body.glowing .jp-column { opacity: 0.85; }
 
-    /* ── background numbers watermark ───────────────── */
+    /* ── hex watermark ──────────────────────────────── */
     .bg-nums {
         position: fixed;
         inset: 0;
@@ -67,8 +86,8 @@
         pointer-events: none;
         user-select: none;
         overflow: hidden;
-        opacity: 0.06;
-        font-size: 11px;
+        opacity: 0.05;
+        font-size: 10px;
         line-height: 1.6;
         color: #c41e3a;
         white-space: pre;
@@ -85,7 +104,6 @@
         padding: 64px 40px 100px;
     }
 
-    /* ── header block ───────────────────────────────── */
     header {
         padding-bottom: 40px;
         border-bottom: 1px solid #1c1c1c;
@@ -102,8 +120,8 @@
 
     .jp-title {
         color: #ff2e63;
-        font-size: 28px;
-        letter-spacing: 18px;
+        font-size: 26px;
+        letter-spacing: 16px;
         margin: 0 0 20px 0;
         font-weight: 400;
         text-shadow: 0 0 20px rgba(255, 46, 99, 0.35);
@@ -117,14 +135,8 @@
         line-height: 1;
         margin: 0;
     }
-
-    .wordmark .slash {
-        color: #8b0000;
-        font-weight: 400;
-        margin: 0 4px;
-    }
+    .wordmark .slash  { color: #8b0000; font-weight: 400; margin: 0 4px; }
     .wordmark .accent { color: #ff2e63; }
-
     .wordmark .cursor {
         display: inline-block;
         width: 22px;
@@ -136,20 +148,26 @@
     }
     @keyframes blink { 50% { opacity: 0; } }
 
-    .blurb {
+    /* ── lain quote ─────────────────────────────────── */
+    .lain-quote {
+        margin-top: 32px;
+        padding-left: 16px;
+        border-left: 2px solid #8b0000;
         color: #5a5a5a;
         font-size: 12px;
-        margin-top: 22px;
-        max-width: 480px;
-        line-height: 1.7;
+        font-style: italic;
+        line-height: 1.6;
+        max-width: 420px;
     }
-
-    .blurb em {
-        color: #8b0000;
+    .lain-quote .attr {
+        display: block;
+        margin-top: 6px;
+        color: #3a3a3a;
         font-style: normal;
+        font-size: 10px;
+        letter-spacing: 2px;
     }
 
-    /* ── sections ───────────────────────────────────── */
     section { margin-bottom: 52px; }
 
     .label {
@@ -163,14 +181,8 @@
         gap: 12px;
     }
     .label::before { content: '//'; color: #2a2a2a; }
-    .label::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: #1c1c1c;
-    }
+    .label::after  { content: ''; flex: 1; height: 1px; background: #1c1c1c; }
 
-    /* ── tiles ──────────────────────────────────────── */
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -200,34 +212,14 @@
         transition: opacity 0.15s;
     }
 
-    .tile:hover {
-        border-color: #2e2e2e;
-        background: #131313;
-    }
+    .tile:hover { border-color: #2e2e2e; background: #131313; }
     .tile:hover::before { opacity: 1; }
     .tile:hover .t-name { color: #ff2e63; }
 
-    .t-name {
-        font-size: 13px;
-        color: #d4d4d4;
-        transition: color 0.15s;
-        letter-spacing: 0.5px;
-    }
-    .t-desc {
-        font-size: 11px;
-        color: #4a4a4a;
-        line-height: 1.5;
-    }
-    .t-num {
-        position: absolute;
-        top: 8px;
-        right: 10px;
-        font-size: 9px;
-        color: #2a2a2a;
-        letter-spacing: 1px;
-    }
+    .t-name { font-size: 13px; color: #d4d4d4; transition: color 0.15s; letter-spacing: 0.5px; }
+    .t-desc { font-size: 11px; color: #4a4a4a; line-height: 1.5; }
+    .t-num  { position: absolute; top: 8px; right: 10px; font-size: 9px; color: #2a2a2a; letter-spacing: 1px; }
 
-    /* ── footer ─────────────────────────────────────── */
     footer {
         margin-top: 80px;
         padding-top: 24px;
@@ -242,16 +234,14 @@
     footer a { color: #4a4a4a; text-decoration: none; }
     footer a:hover { color: #ff2e63; }
 
-    /* ── responsive ─────────────────────────────────── */
     @media (max-width: 900px) {
-        .jp-column { right: 20px; font-size: 12px; letter-spacing: 20px; opacity: 0.35; }
-        .bg-nums { font-size: 9px; }
+        .lain { right: 20px; opacity: 0.12; }
+        .lain pre { font-size: 3.5px; }
+        .jp-column { right: 20px; font-size: 11px; letter-spacing: 20px; opacity: 0.35; }
     }
     @media (max-width: 600px) {
         .wrap { padding: 40px 20px 60px; }
-        #glow { display: none; }
-        .jp-column { display: none; }
-        .bg-nums { display: none; }
+        #glow, .lain, .jp-column, .bg-nums { display: none; }
         .wordmark { font-size: 40px; }
         .jp-title { font-size: 20px; letter-spacing: 10px; }
     }
@@ -261,7 +251,39 @@
 
 <div id="glow"></div>
 
-<!-- vertical japanese column on the right -->
+<!-- lain, block chars only -->
+<div class="lain">
+<pre>
+                ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+            ▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓
+          ▓▓▒▒▒▒░░░░░░░░░░░░░░▒▒▒▒▓▓
+        ▓▓▒▒░░░░░░░░░░░░░░░░░░░░▒▒▓▓
+       ▓▒▒░░░░░░░░░░░░░░░░░░░░░░░░▒▓
+      ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
+     ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░▓
+    ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▓
+   ▓▒░░░░░███░░░░░░░░░░░░░░███░░░░░░▒▓
+   ▓▒░░░██████░░░░░░░░░░░░██████░░░░▒▓
+   ▓▒░░████████░░░░░░░░░░████████░░░▒▓
+   ▓▒░░█▓▓▓▓▓▓█░░░░░░░░░░█▓▓▓▓▓▓█░░░▒▓
+   ▓▒░░█▓░░░▓▓█░░░░░░░░░░█▓░░░▓▓█░░░▒▓
+   ▓▒░░█▓░░░▓▓█░░░░░░░░░░█▓░░░▓▓█░░░▒▓
+   ▓▒░░████████░░░░░░░░░░████████░░░▒▓
+   ▓▒░░░██████░░░░░░░░░░░░██████░░░░▒▓
+    ▓▒░░░███░░░░░░░░░░░░░░░░███░░░░░▒▓
+    ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
+     ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
+     ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
+      ▓▒░░░░░░░░░░░░░░░░░░░░░░░░░░▒▓
+       ▓▒▒░░░░░░░░░░░░░░░░░░░░░░▒▒▓
+        ▓▓▒▒░░░░░░░░░░░░░░░░░░▒▒▓▓
+          ▓▓▓▒▒▒░░░░░░░░░░▒▒▒▓▓▓
+             ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+                ▓▓▓▓▓▓▓▓▓▓▓▓
+</pre>
+</div>
+
+<!-- vertical japanese -->
 <div class="jp-column">
     <span class="ch dim">現</span>
     <span class="ch">在</span>
@@ -271,7 +293,6 @@
     <span class="ch">間</span>
 </div>
 
-<!-- faint numbers watermark -->
 <div class="bg-nums" id="bgNums"></div>
 
 <div class="wrap">
@@ -280,7 +301,11 @@
         <p class="kicker">present day · present time</p>
         <p class="jp-title">フ ィ エ ス タ</p>
         <h1 class="wordmark">fiesta<span class="slash">/</span><span class="accent">osint</span><span class="cursor"></span></h1>
-        <p class="blurb">recon · network · utilities. everything runs in your browser — <em>nothing leaves your machine</em> except the requests you explicitly make.</p>
+
+        <blockquote class="lain-quote">
+            "no matter where you are, everyone is always connected."
+            <span class="attr">— lain</span>
+        </blockquote>
     </header>
 
     <section>
@@ -349,7 +374,6 @@
 </div>
 
 <script>
-    // ── cursor glow ────────────────────────────────────
     const glow = document.getElementById('glow');
     let raf = null, tx = 0, ty = 0, cx = 0, cy = 0;
 
@@ -367,29 +391,23 @@
     function loop() {
         cx += (tx - cx) * 0.15;
         cy += (ty - cy) * 0.15;
-        glow.style.transform = `translate(${cx}px, ${cy}px) translate(-50%,-50%)`;
-        if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) raf = requestAnimationFrame(loop);
+        glow.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+        if (Math.abs(tx-cx) > 0.5 || Math.abs(ty-cy) > 0.5) raf = requestAnimationFrame(loop);
         else raf = null;
     }
 
-    // ── watermark of hex / binary numbers ─────────────
     const bg = document.getElementById('bgNums');
     let nums = '';
     const cols = Math.floor(window.innerWidth / 18);
     const rows = Math.floor(window.innerHeight / 24);
     for (let y = 0; y < rows; y++) {
         let line = '';
-        for (let x = 0; x < cols; x++) {
-            line += Math.random().toString(16).slice(2, 6).padEnd(4, ' ');
-        }
+        for (let x = 0; x < cols; x++) line += Math.random().toString(16).slice(2, 6).padEnd(4, ' ');
         nums += line + '\n';
     }
     bg.textContent = nums;
-
-    // regenerate slowly
     setInterval(() => {
-        const bytes = Math.random().toString(16).slice(2, 6);
-        bg.textContent = bytes + nums.slice(bytes.length);
+        bg.textContent = Math.random().toString(16).slice(2, 6) + nums.slice(4);
     }, 400);
 </script>
 
