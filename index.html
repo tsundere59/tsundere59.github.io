@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>doomsday</title>
+<link rel="stylesheet" href="style.css">
 <style>
     * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
     html, body {
@@ -48,15 +49,8 @@
         0%,100% { opacity: 0.05; }
         50%     { opacity: 0.12; }
     }
-    body.wired {
-        background: #000;
-    }
-    body.wired::after { opacity: 0.25; }
-    body.grayscale {
-        filter: grayscale(100%);
-    }
+    body.grayscale { filter: grayscale(100%); }
 
-    /* hidden text — invisible in the dom, revealed only by ctrl+a */
     .hidden-msg {
         position: fixed;
         left: -9999px;
@@ -78,58 +72,82 @@
         will-change: transform;
     }
 
-    /* eyes */
+    /* eyes — sclera, iris, pupil, rim */
     .eye {
-        width: 22px; height: 12px;
-        background: #000;
-        border-radius: 50%;
-        box-shadow: 0 0 6px rgba(0,0,0,0.9), inset 0 0 4px rgba(20,20,20,0.8);
+        width: 26px;
+        height: 16px;
+        background: #e8e4df;
+        border: 1px solid #050506;
+        border-radius: 50% / 60%;
+        box-shadow: 0 0 6px rgba(0,0,0,0.9), inset 0 0 4px rgba(0,0,0,0.35);
         position: relative;
         overflow: hidden;
+    }
+    .eye .iris {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 12px; height: 12px;
+        background: radial-gradient(circle at 35% 35%, #ff2e63 0%, #8b0000 70%, #3a0000 100%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: transform 0.18s ease-out;
+        box-shadow: inset 0 0 3px rgba(0,0,0,0.6);
     }
     .eye .pupil {
         position: absolute;
         top: 50%; left: 50%;
-        width: 6px; height: 6px;
-        background: #1a0000;
+        width: 5px; height: 5px;
+        background: #000;
         border-radius: 50%;
-        transform: translate(-50%,-50%);
-        transition: transform 0.15s ease-out;
+        transform: translate(-50%, -50%);
     }
     .eye-pair {
         position: fixed;
         z-index: 9500;
         pointer-events: none;
         display: flex;
-        gap: 16px;
+        gap: 18px;
         opacity: 0;
         transform: translate(-50%,-50%);
-        transition: opacity 0.1s ease;
+        transition: opacity 0.12s ease;
     }
     .eye-pair.show { opacity: 0.95; }
-    .eye-pair.blink .eye {
-        animation: eyeBlink 0.35s ease-out;
-    }
+    .eye-pair.blink .eye { animation: eyeBlink 0.3s ease-out; }
     @keyframes eyeBlink {
-        0%   { height: 12px; }
+        0%   { height: 16px; }
         40%  { height: 2px; }
         60%  { height: 2px; }
-        100% { height: 12px; }
+        100% { height: 16px; }
     }
-
-    /* full-screen eye flash (2003 page + random) */
     .eye-flash {
         position: fixed;
         z-index: 9999;
         pointer-events: none;
-        width: 46px; height: 46px;
-        background: radial-gradient(circle at 50% 50%,
-            #000 0%, #000 28%, #8b0000 32%, #8b0000 44%,
-            #fff 48%, #fff 52%, #000 56%, #000 100%);
-        border-radius: 50%;
-        box-shadow: 0 0 20px rgba(0,0,0,0.9);
+        width: 52px; height: 32px;
+        background: #e8e4df;
+        border-radius: 50% / 60%;
+        box-shadow: 0 0 22px rgba(0,0,0,0.9), inset 0 0 6px rgba(0,0,0,0.35);
         transform: translate(-50%,-50%) scale(0);
         opacity: 0;
+        overflow: hidden;
+    }
+    .eye-flash::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 24px; height: 24px;
+        background: radial-gradient(circle at 35% 35%, #ff2e63 0%, #8b0000 70%, #3a0000 100%);
+        border-radius: 50%;
+        transform: translate(-50%,-50%);
+    }
+    .eye-flash::after {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 10px; height: 10px;
+        background: #000;
+        border-radius: 50%;
+        transform: translate(-50%,-50%);
     }
     .eye-flash.show { animation: eyePulse 0.55s ease-out forwards; }
     @keyframes eyePulse {
@@ -139,7 +157,6 @@
         100% { transform: translate(-50%,-50%) scale(1.4); opacity: 0; }
     }
 
-    /* boot */
     #boot {
         position: fixed; inset: 0;
         background: #050506;
@@ -176,7 +193,6 @@
         55%  { transform: translateY(80px) rotate(-1deg); opacity: 0.85; filter: blur(0.5px); }
         100% { transform: translateY(340px) rotate(-4deg); opacity: 0; filter: blur(3px); }
     }
-
     #collapse {
         position: fixed; inset: 0;
         z-index: 150;
@@ -192,7 +208,6 @@
         border-right: 1px solid #0a0508;
         will-change: transform, opacity;
     }
-
     #main {
         opacity: 0;
         transform: translateY(40px);
@@ -200,7 +215,6 @@
     }
     #main.show { opacity: 1; transform: translateY(0); }
 
-    /* scan sweep */
     .scan {
         position: fixed; left: 0; right: 0;
         height: 3px;
@@ -244,7 +258,7 @@
 
     .corner {
         position: fixed;
-        z-index: 50;
+        z-index: 900;
         color: #8b8580;
         font-size: 11px;
         opacity: 0.75;
@@ -252,8 +266,8 @@
         letter-spacing: 1px;
         font-family: Arial, Helvetica, sans-serif;
     }
-    .corner.tl { top: 16px; left: 20px; }
-    .corner.tr { top: 16px; right: 20px; }
+    .corner.tl { top: 14px; left: 20px; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .corner.tr { top: 14px; right: 20px; max-width: 220px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .corner.bl { bottom: 16px; left: 20px; }
     .corner.br { bottom: 16px; right: 20px; }
     .corner.clickable { pointer-events: auto; cursor: none; }
@@ -266,7 +280,7 @@
         color: #8b8580;
         font-size: 11px;
         letter-spacing: 3px;
-        z-index: 50;
+        z-index: 900;
         opacity: 0.7;
         font-family: Arial, Helvetica, sans-serif;
     }
@@ -277,13 +291,12 @@
         color: #6a6560;
         font-size: 10px;
         letter-spacing: 2px;
-        z-index: 50;
+        z-index: 900;
         opacity: 0.6;
         font-family: 'Courier New', monospace;
     }
     .hb.disc { color: #8b0000; }
 
-    /* wire */
     .wire {
         position: fixed;
         z-index: 1;
@@ -292,7 +305,6 @@
         opacity: 0.25;
     }
 
-    /* countdown */
     .countdown {
         position: fixed;
         bottom: 16px;
@@ -302,32 +314,32 @@
         font-size: 10px;
         letter-spacing: 3px;
         opacity: 0.5;
-        z-index: 50;
+        z-index: 900;
         font-family: 'Courier New', monospace;
     }
 
-    /* layout */
     .wrap {
         position: relative;
         z-index: 2;
         max-width: 720px;
         margin: 0 auto;
-        padding: 128px 56px 80px;
+        padding: 160px 56px 80px;
+        background: transparent;
     }
 
     header { margin-bottom: 80px; }
 
     .wordmark {
-        font-size: 68px;
+        font-size: 54px;
         font-weight: 700;
-        letter-spacing: -2px;
+        letter-spacing: -1.5px;
         line-height: 1;
         margin: 0;
         display: flex;
         align-items: baseline;
+        flex-wrap: wrap;
         opacity: 0;
         transform: translateY(10px);
-        flex-wrap: wrap;
     }
     .wordmark.show { opacity: 1; transform: translateY(0); transition: opacity 1s ease, transform 1s ease; }
     .wordmark .brand {
@@ -339,10 +351,10 @@
     .wordmark .accent { font-family: 'Courier New', monospace; color: #ff2e63; font-size: 0.72em; letter-spacing: 0; }
     .wordmark .cursor {
         display: inline-block;
-        width: 20px; height: 48px;
+        width: 20px; height: 40px;
         background: #ffb3c1;
         margin-left: 14px;
-        vertical-align: -8px;
+        vertical-align: -6px;
         animation: blink 1.1s steps(2) infinite;
         box-shadow: 0 0 14px rgba(255,179,193,0.6);
     }
@@ -439,9 +451,7 @@
     }
     footer.show { opacity: 1; }
 
-    /* ═════════════════════════════════════════════════
-       TOOLS — 2003 PORTAL
-       ═════════════════════════════════════════════════ */
+    /* ── 2003 portal ── */
     .portal {
         background: #c0c0c0;
         color: #000;
@@ -467,7 +477,6 @@
     .portal .p-header .sub { font-size: 12px; color: #ffff00; margin-top: 4px; }
     .blink { animation: blinkY 1s steps(2) infinite; color: #ff0000; font-weight: bold; text-shadow: 1px 1px 0 #fff; }
     @keyframes blinkY { 50% { opacity: 0; } }
-
     .portal .p-nav {
         background: #e0e0e0;
         text-align: center;
@@ -478,7 +487,6 @@
     .portal .p-nav a { color: #0000ee; text-decoration: underline; margin: 0 12px; font-family: Arial, sans-serif; cursor: none; }
     .portal .p-nav a:visited { color: #551a8b; }
     .portal .p-nav a:hover { color: #ff0000; }
-
     .portal .p-marquee {
         background: #000;
         color: #00ff00;
@@ -497,9 +505,7 @@
         0%   { transform: translateX(0); }
         100% { transform: translateX(-100%); }
     }
-
     .portal .p-content { max-width: 820px; margin: 20px auto; padding: 0 20px; }
-
     .portal .tool {
         background: #fff;
         border: 3px ridge #808080;
@@ -555,7 +561,6 @@
     }
     .portal .tool .out .miss { color: #8b0000; font-style: italic; }
     .portal .tool .out .ok   { color: #006400; }
-
     .portal footer {
         text-align: center;
         background: #e0e0e0;
@@ -579,9 +584,6 @@
         margin: 0 4px;
     }
 
-    /* ═════════════════════════════════════════════════
-       PAGE: VOID
-       ═════════════════════════════════════════════════ */
     .void-page {
         min-height: 100vh;
         display: flex;
@@ -600,7 +602,6 @@
     }
     @keyframes voidIn { to { opacity: 1; } }
 
-    /* PAGE: UNCLAIMED */
     .unclaimed-page {
         min-height: 100vh;
         display: flex;
@@ -617,13 +618,8 @@
         letter-spacing: 2px;
         margin-bottom: 24px;
     }
-    .unclaimed-page .u-sub {
-        color: #6a6560;
-        font-size: 11px;
-        letter-spacing: 3px;
-    }
+    .unclaimed-page .u-sub { color: #6a6560; font-size: 11px; letter-spacing: 3px; }
 
-    /* PAGE: LOCATE */
     .locate-page {
         min-height: 100vh;
         display: flex;
@@ -646,11 +642,8 @@
         margin-bottom: 8px;
         font-family: 'Courier New', monospace;
     }
-    .locate-page .l-time {
-        color: #ff2e63;
-    }
+    .locate-page .l-time { color: #ff2e63; }
 
-    /* PAGE: THEM */
     .them-page {
         min-height: 100vh;
         padding: 60px 40px;
@@ -666,7 +659,6 @@
     .them-page .file .dim { color: #4a4442; }
     .them-page .file .red { color: #8b0000; }
 
-    /* PAGE: GUESTBOOK */
     .gb-page {
         min-height: 100vh;
         background: #050506;
@@ -697,10 +689,7 @@
         letter-spacing: 2px;
         margin-bottom: 6px;
     }
-    .gb-page .entry .e-handle {
-        color: #ff2e63;
-        margin-right: 12px;
-    }
+    .gb-page .entry .e-handle { color: #ff2e63; margin-right: 12px; }
     .gb-page .entry .e-body {
         color: #b8b0a8;
         font-size: 12px;
@@ -735,9 +724,7 @@
         outline: none;
         resize: vertical;
     }
-    .gb-page .sign-form input:focus, .gb-page .sign-form textarea:focus {
-        border-color: #ff2e63;
-    }
+    .gb-page .sign-form input:focus, .gb-page .sign-form textarea:focus { border-color: #ff2e63; }
     .gb-page .sign-form button {
         background: #8b0000;
         border: 1px solid #ff2e63;
@@ -759,21 +746,11 @@
         letter-spacing: 3px;
         font-family: 'Courier New', monospace;
     }
-    .center-nav a {
-        color: #8b0000;
-        text-decoration: none;
-        cursor: none;
-        margin: 0 12px;
-    }
+    .center-nav a { color: #8b0000; text-decoration: none; cursor: none; margin: 0 12px; }
     .center-nav a:hover { color: #ff2e63; }
 
-    /* hidden-in-dom text reveal on ctrl+a */
-    ::selection {
-        background: #ff2e63;
-        color: #000;
-    }
+    ::selection { background: #ff2e63; color: #000; }
 
-    /* 404 */
     .p404 {
         min-height: 100vh;
         display: flex;
@@ -788,14 +765,13 @@
     .p404 .l1 { color: #b8b0a8; margin-top: 16px; font-size: 13px; letter-spacing: 3px; }
     .p404 .l2 { color: #6a6560; margin-top: 8px; font-size: 11px; letter-spacing: 4px; font-style: italic; }
 
-    /* sound toggle */
     .sound-toggle {
         position: fixed;
         bottom: 16px; right: 20px;
         color: #6a6560;
         font-size: 11px;
         letter-spacing: 2px;
-        z-index: 60;
+        z-index: 900;
         font-family: Arial, sans-serif;
         cursor: none;
         opacity: 0.6;
@@ -803,24 +779,22 @@
     .sound-toggle:hover { color: #ff2e63; opacity: 1; }
     .sound-toggle.on { color: #ff2e63; }
 
-    /* visit-note corner */
     .visit-note {
         position: fixed;
         bottom: 16px; left: 20px;
         color: #4a4442;
         font-size: 10px;
         letter-spacing: 2px;
-        z-index: 60;
+        z-index: 900;
         font-family: 'Courier New', monospace;
         opacity: 0.5;
         pointer-events: none;
     }
 
-    /* "do you want to continue" trap */
     .trap {
         position: fixed;
         inset: 0;
-        z-index: 500;
+        z-index: 9500;
         display: none;
         align-items: center;
         justify-content: center;
@@ -851,7 +825,6 @@
     }
     .trap .box .btn:hover { background: linear-gradient(180deg, #ffffb0 0%, #ffe060 50%, #ffb000 100%); }
 
-    /* fade-to-black on exit trap */
     .fade-black {
         position: fixed;
         inset: 0;
@@ -864,32 +837,26 @@
     .fade-black.active { opacity: 1; pointer-events: auto; }
 
     @media (max-width: 700px) {
-        .wrap { padding: 80px 24px 60px; }
+        .wrap { padding: 100px 24px 60px; }
         .corner { display: none; }
         .clock, .hb, .countdown, .sound-toggle, .visit-note { display: none; }
-        .wordmark { font-size: 42px; }
-        .wordmark .cursor { height: 32px; width: 14px; margin-left: 8px; }
+        .wordmark { font-size: 38px; }
+        .wordmark .cursor { height: 30px; width: 14px; margin-left: 8px; }
         #boot { padding: 24px 20px; font-size: 11px; }
     }
 </style>
 </head>
 <body>
 
-<!-- shared overlays -->
 <div id="cursor"></div>
 <div id="boot"></div>
 <div id="collapse"></div>
 
-<!-- sound toggle -->
 <span class="sound-toggle" id="soundToggle" title="toggle sound">[ ♪ ]</span>
-
-<!-- visit note -->
 <span class="visit-note" id="visitNote"></span>
 
-<!-- fade black overlay for exit trap -->
 <div class="fade-black" id="fadeBlack"></div>
 
-<!-- the trap modal -->
 <div class="trap" id="trap">
     <div class="box">
         <p id="trapQuestion">do you want to continue?</p>
@@ -898,52 +865,36 @@
     </div>
 </div>
 
-<!-- MAIN APP — swapped via hash routing -->
 <div id="main">
-
     <div class="bg-nums" id="bgNums"></div>
     <div class="scan"></div>
 
-    <span class="corner tl">◉ node-0032</span>
+    <span class="corner tl clickable" id="wiredToggle">◉ node-0032</span>
     <span class="corner tr clickable" id="cornerTr">doomsday</span>
     <span class="corner bl" id="clock">00:00:00</span>
     <span class="corner br clickable" id="cornerBr">@0_032 on discord</span>
 
-    <!-- heartbeat -->
     <div class="hb" id="hb">● connected</div>
-
-    <!-- countdown -->
     <div class="countdown" id="countdown">143:22:07</div>
 
-    <!-- view containers -->
     <div id="view"></div>
-
 </div>
 
-<!-- hidden text (reveal via ctrl+a) -->
 <div class="hidden-msg" id="hiddenMsg"></div>
 
 <script>
 // ═══════════════════════════════════════════════════════════
-// STATE (persists per tab via sessionStorage, per browser via localStorage)
+// STATE
 // ═══════════════════════════════════════════════════════════
 const S = {
     visits:   parseInt(localStorage.getItem('dd_visits') || '0', 10),
     wireLen:  parseInt(localStorage.getItem('dd_wire')  || '0', 10),
-    name:     localStorage.getItem('dd_name') || null,
-    hashCalls: 0,
     soundOn:  false,
-    heartbeatStable: true,
     clockOffset: 0,
     lastClockJump: 0,
-    userInteracted: false,
-    idleTimer: null,
 };
-function bumpVisits() {
-    S.visits += 1;
-    localStorage.setItem('dd_visits', String(S.visits));
-}
-bumpVisits();
+S.visits += 1;
+localStorage.setItem('dd_visits', String(S.visits));
 
 // ═══════════════════════════════════════════════════════════
 // CURSOR
@@ -951,26 +902,34 @@ bumpVisits();
 const cursor = document.getElementById('cursor');
 document.addEventListener('mousemove', e => {
     cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-    S.userInteracted = true;
-    // follow-eyes tracking
-    document.querySelectorAll('.eye .pupil').forEach(p => {
-        const eye = p.closest('.eye');
+
+    // iris follow with sensible clamp
+    document.querySelectorAll('.eye .iris').forEach(iris => {
+        const eye = iris.closest('.eye');
         const r = eye.getBoundingClientRect();
-        const dx = (e.clientX - (r.left + r.width/2)) / 40;
-        const dy = (e.clientY - (r.top + r.height/2)) / 40;
-        p.style.transform = `translate(calc(-50% + ${Math.max(-6,Math.min(6,dx*8))}px), calc(-50% + ${Math.max(-3,Math.min(3,dy*6))}px))`;
+        const cx = r.left + r.width / 2;
+        const cy = r.top  + r.height / 2;
+        const dx = e.clientX - cx;
+        const dy = e.clientY - cy;
+        const dist = Math.hypot(dx, dy) || 1;
+        const clampX = (dx / dist) * Math.min(5, dist / 30);
+        const clampY = (dy / dist) * Math.min(3, dist / 30);
+        iris.style.transform = `translate(calc(-50% + ${clampX}px), calc(-50% + ${clampY}px))`;
     });
 });
 
 // ═══════════════════════════════════════════════════════════
-// EYES — random flashes, cursor-followers, occasional blinks
+// EYES
 // ═══════════════════════════════════════════════════════════
 function spawnEyes(follow) {
     const pair = document.createElement('div');
     pair.className = 'eye-pair';
-    pair.innerHTML = '<div class="eye"><div class="pupil"></div></div><div class="eye"><div class="pupil"></div></div>';
+    pair.innerHTML = `
+        <div class="eye"><div class="iris"><div class="pupil"></div></div></div>
+        <div class="eye"><div class="iris"><div class="pupil"></div></div></div>
+    `;
     const padding = 60;
-    const x = padding + Math.random() * (window.innerWidth - padding * 2);
+    const x = padding + Math.random() * (window.innerWidth  - padding * 2);
     const y = padding + Math.random() * (window.innerHeight - padding * 2);
     pair.style.left = x + 'px';
     pair.style.top  = y + 'px';
@@ -979,21 +938,17 @@ function spawnEyes(follow) {
     document.body.appendChild(pair);
     requestAnimationFrame(() => pair.classList.add('show'));
 
-    // 1 in 15 blink
     if (Math.random() < 0.067) setTimeout(() => pair.classList.add('blink'), 200);
 
-    // follower eyes last longer
-    const life = follow ? 2000 + Math.random() * 2500 : 90 + Math.random() * 160;
+    const life = follow ? 2200 + Math.random() * 2000 : 120 + Math.random() * 220;
     setTimeout(() => {
         pair.classList.remove('show');
         setTimeout(() => pair.remove(), 200);
     }, life);
 }
-
 function scheduleEyes() {
     const delay = 4000 + Math.random() * 8000;
     setTimeout(() => {
-        // 30% chance the eyes track the cursor for a few seconds
         const follow = Math.random() < 0.3;
         spawnEyes(follow);
         if (Math.random() < 0.3) setTimeout(() => spawnEyes(false), 180);
@@ -1002,7 +957,6 @@ function scheduleEyes() {
 }
 scheduleEyes();
 
-// full-screen eye flash
 function flashEye(x, y) {
     const eye = document.createElement('div');
     eye.className = 'eye-flash';
@@ -1014,7 +968,7 @@ function flashEye(x, y) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// CURSOR TRAIL
+// TRAIL
 // ═══════════════════════════════════════════════════════════
 let lastTrail = 0;
 document.addEventListener('mousemove', e => {
@@ -1037,7 +991,7 @@ document.addEventListener('mousemove', e => {
 });
 
 // ═══════════════════════════════════════════════════════════
-// HEX WATERMARK — with occasional sentence reveal
+// HEX WATERMARK
 // ═══════════════════════════════════════════════════════════
 const bg = document.getElementById('bgNums');
 let bgBase = '';
@@ -1067,7 +1021,6 @@ setInterval(() => {
     }
 }, 400);
 
-// every 45 seconds, spell a sentence in hex across the page
 setInterval(() => {
     if (document.hidden) return;
     const sentence = 'they missed you';
@@ -1077,13 +1030,12 @@ setInterval(() => {
 }, 45000);
 
 // ═══════════════════════════════════════════════════════════
-// CLOCK — with occasional jumps
+// CLOCK
 // ═══════════════════════════════════════════════════════════
 const clockEl = document.getElementById('clock');
 const BOOT_TIME = Date.now();
 function tickClock() {
     let elapsed = Math.floor((Date.now() - BOOT_TIME) / 1000) + S.clockOffset;
-    // occasional jump — 1 in 40, at least 30s apart
     const now = Date.now();
     if (Math.random() < 0.025 && now - S.lastClockJump > 30000) {
         S.clockOffset += (Math.random() < 0.5 ? -1 : 1) * Math.floor(3 + Math.random() * 20);
@@ -1098,7 +1050,7 @@ tickClock();
 setInterval(tickClock, 1000);
 
 // ═══════════════════════════════════════════════════════════
-// HEARTBEAT — ● connected / ○ disconnected flicker
+// HEARTBEAT
 // ═══════════════════════════════════════════════════════════
 const hb = document.getElementById('hb');
 function scheduleHeartbeat() {
@@ -1116,7 +1068,7 @@ function scheduleHeartbeat() {
 scheduleHeartbeat();
 
 // ═══════════════════════════════════════════════════════════
-// COUNTDOWN — counts down, doesn't mean anything
+// COUNTDOWN
 // ═══════════════════════════════════════════════════════════
 const cdEl = document.getElementById('countdown');
 let cdSeconds = 143 * 3600 + 22 * 60 + 7;
@@ -1130,33 +1082,30 @@ function tickCountdown() {
 setInterval(tickCountdown, 1000);
 
 // ═══════════════════════════════════════════════════════════
-// WIRE — grows a red line by 1px per visit
+// WIRE
 // ═══════════════════════════════════════════════════════════
 S.wireLen += 1;
 localStorage.setItem('dd_wire', String(S.wireLen));
 function drawWire() {
+    document.querySelectorAll('.wire').forEach(w => w.remove());
     if (S.wireLen < 2) return;
+    if (location.hash && location.hash !== '#home' && location.hash !== '') return;
     const w = Math.min(1200, 40 + S.wireLen * 4);
+    const startY = 200 + ((S.visits * 37) % Math.max(1, window.innerHeight - 400));
     const wire = document.createElement('div');
     wire.className = 'wire';
-    // start at a deterministic point based on visit count
-    const startY = 200 + ((S.visits * 37) % (window.innerHeight - 400));
     wire.style.left = '0px';
     wire.style.top  = startY + 'px';
     wire.style.width = w + 'px';
     wire.style.height = '1px';
-    // bend by adding a second segment
     const wire2 = document.createElement('div');
     wire2.className = 'wire';
     wire2.style.left = w + 'px';
     wire2.style.top  = startY + 'px';
     wire2.style.width = '1px';
     wire2.style.height = Math.min(400, S.wireLen * 6) + 'px';
-    // only on the landing
-    if (location.hash === '' || location.hash === '#home') {
-        document.body.appendChild(wire);
-        document.body.appendChild(wire2);
-    }
+    document.body.appendChild(wire);
+    document.body.appendChild(wire2);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1170,37 +1119,31 @@ setInterval(() => {
 }, 8000);
 
 // ═══════════════════════════════════════════════════════════
-// FAVICON — periodically flips to an eye
+// FAVICON
 // ═══════════════════════════════════════════════════════════
 function setFavicon() {
-    const svgNormal = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ff2e63'/></svg>`;
-    const svgEye    = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><ellipse cx='9' cy='16' rx='4' ry='3' fill='%23fff'/><ellipse cx='23' cy='16' rx='4' ry='3' fill='%23fff'/><circle cx='9' cy='16' r='1.5' fill='%23000'/><circle cx='23' cy='16' r='1.5' fill='%23000'/></svg>`;
-    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    const normal = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ff2e63'/></svg>`;
+    const eye    = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><ellipse cx='9' cy='16' rx='4' ry='3' fill='%23fff'/><ellipse cx='23' cy='16' rx='4' ry='3' fill='%23fff'/><circle cx='9' cy='16' r='1.5' fill='%23000'/><circle cx='23' cy='16' r='1.5' fill='%23000'/></svg>`;
+    let link = document.querySelector("link[rel*='icon']:not([href*='style'])");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+    }
     link.type = 'image/svg+xml';
-    link.rel  = 'icon';
-    link.href = 'data:image/svg+xml,' + (Math.random() < 0.4 ? svgEye : svgNormal);
-    document.head.appendChild(link);
+    link.href = 'data:image/svg+xml,' + (Math.random() < 0.4 ? eye : normal);
 }
 setFavicon();
-setInterval(() => {
-    setFavicon();
-    setTimeout(() => {
-        const link = document.querySelector("link[rel*='icon']");
-        if (link) link.href = 'data:image/svg+xml,' + `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ff2e63'/></svg>`;
-    }, 5000);
-}, 55000);
+setInterval(() => { setFavicon(); }, 55000);
 
 // ═══════════════════════════════════════════════════════════
-// IDLE SCROLL DRIFT — page slides 20px every 30s of no input
+// IDLE SCROLL
 // ═══════════════════════════════════════════════════════════
+let idleTimer = null;
 function resetIdle() {
-    S.userInteracted = true;
-    clearTimeout(S.idleTimer);
-    S.idleTimer = setTimeout(() => {
-        if (!document.hidden) {
-            window.scrollBy({ top: 20, behavior: 'smooth' });
-        }
-        S.userInteracted = false;
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+        if (!document.hidden) window.scrollBy({ top: 20, behavior: 'smooth' });
         resetIdle();
     }, 30000);
 }
@@ -1208,21 +1151,7 @@ function resetIdle() {
 resetIdle();
 
 // ═══════════════════════════════════════════════════════════
-// RANDOM FLICKER — only after 5 min, only on landing
-// ═══════════════════════════════════════════════════════════
-setTimeout(() => {
-    setInterval(() => {
-        if (location.hash && location.hash !== '#home') return;
-        if (Math.random() < 0.25) {
-            document.documentElement.style.transition = 'opacity 40ms';
-            document.documentElement.style.opacity = '0';
-            setTimeout(() => { document.documentElement.style.opacity = '1'; }, 80);
-        }
-    }, 90000);
-}, 5 * 60 * 1000);
-
-// ═══════════════════════════════════════════════════════════
-// NIGHT MODE — extra line on landing after midnight
+// NIGHT MODE
 // ═══════════════════════════════════════════════════════════
 function isLateNight() {
     const h = new Date().getHours();
@@ -1230,7 +1159,7 @@ function isLateNight() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// HIDDEN TEXT — one per page, revealed on ctrl+a
+// HIDDEN TEXT
 // ═══════════════════════════════════════════════════════════
 const hiddenMsg = document.getElementById('hiddenMsg');
 const HIDDEN_BY_VIEW = {
@@ -1248,7 +1177,7 @@ function updateHiddenText(view) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// VISIT NOTE — "you came back" style messages
+// VISIT NOTE
 // ═══════════════════════════════════════════════════════════
 const visitNoteEl = document.getElementById('visitNote');
 function updateVisitNote() {
@@ -1260,13 +1189,12 @@ function updateVisitNote() {
     else if (n >= 7 && n < 15) msg = 'why are you still here.';
     else if (n >= 15 && n < 30) msg = 'do you know them?';
     else if (n >= 30) msg = 'they know you now.';
-    else msg = '';
     visitNoteEl.textContent = msg;
 }
 updateVisitNote();
 
 // ═══════════════════════════════════════════════════════════
-// SOUND — Web Audio synthesis, muted by default
+// SOUND
 // ═══════════════════════════════════════════════════════════
 let audioCtx = null;
 function initAudio() {
@@ -1327,25 +1255,20 @@ soundToggle.addEventListener('click', () => {
     S.soundOn = !S.soundOn;
     if (S.soundOn) {
         soundToggle.classList.add('on');
-        soundToggle.textContent = '[ ♪ ]';
         droneStart();
     } else {
         soundToggle.classList.remove('on');
-        soundToggle.textContent = '[ ♪ ]';
         droneStop();
     }
 });
-// whisper every 30-70s if sound on
-setInterval(() => {
-    if (S.soundOn && Math.random() < 0.5) whisper();
-}, 45000);
+setInterval(() => { if (S.soundOn && Math.random() < 0.5) whisper(); }, 45000);
 
 // ═══════════════════════════════════════════════════════════
-// BOOT — session-guarded, varies with visit count
+// BOOT
 // ═══════════════════════════════════════════════════════════
-const BOOT   = document.getElementById('boot');
-const MAIN   = document.getElementById('main');
-const VIEW   = document.getElementById('view');
+const BOOT = document.getElementById('boot');
+const MAIN = document.getElementById('main');
+const VIEW = document.getElementById('view');
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -1359,17 +1282,8 @@ function bootLines() {
         ['> verifying integrity ....... <span class="ok">OK</span>', ''],
         ['> doomsday/by fiesta', ''],
     ];
-    // visit 2
-    if (S.visits === 2) {
-        base[2] = ['> handshake ................. <span class="ok">OK</span>', ''];
-        base[5] = ['> verifying integrity ....... <span class="ok">OK</span>', ''];
-        base.push(['> welcome back', 'ok']);
-    }
-    // visits 5-9
-    else if (S.visits >= 5 && S.visits < 10) {
-        base.push(['> you are still here', 'ok']);
-    }
-    // 10+
+    if (S.visits === 2) base.push(['> welcome back', 'ok']);
+    else if (S.visits >= 5 && S.visits < 10) base.push(['> you are still here', 'ok']);
     else if (S.visits >= 10) {
         base.unshift(['> [!] welcome back, 0032', 'err']);
         base.push(['> do not close me', 'err']);
@@ -1394,19 +1308,15 @@ async function typeLine(text, color) {
 }
 
 async function runBoot() {
-    const seenThisSession = sessionStorage.getItem('dd_intro_seen');
-
-    if (seenThisSession) {
-        // skip boot if we already showed it in this tab
+    const seen = sessionStorage.getItem('dd_intro_seen');
+    if (seen) {
         BOOT.remove();
         MAIN.classList.add('show');
         startReveal(true);
         return;
     }
 
-    // decide if this boot will fail (1 in 10)
-    const willFail = Math.random() < 0.1;
-
+    let willFail = Math.random() < 0.1;
     const cur = document.createElement('span');
     cur.className = 'cursor';
     BOOT.appendChild(cur);
@@ -1416,11 +1326,10 @@ async function runBoot() {
     BOOT.appendChild(document.createTextNode('\n'));
 
     const lines = bootLines();
-    const failAt = willFail ? Math.floor(lines.length / 2) : -1;
+    let failAt = willFail ? Math.floor(lines.length / 2) : -1;
 
     for (let i = 0; i < lines.length; i++) {
         if (i === failAt) {
-            // crash mid-boot
             await sleep(280);
             const errLine = document.createElement('span');
             errLine.className = 'line show err';
@@ -1433,10 +1342,10 @@ async function runBoot() {
             await sleep(900);
             BOOT.innerHTML = '';
             BOOT.appendChild(document.createTextNode('\n'));
-            i = 0; // restart
-            await sleep(300);
-            // only one fail per boot
+            i = -1;
             failAt = -1;
+            await sleep(300);
+            continue;
         }
         await typeLine(lines[i][0], lines[i][1]);
         await sleep(220);
@@ -1507,8 +1416,7 @@ function collapseBoot(onComplete) {
 // ROUTER
 // ═══════════════════════════════════════════════════════════
 function currentView() {
-    const h = location.hash.replace('#', '') || 'home';
-    return h;
+    return location.hash.replace('#', '') || 'home';
 }
 
 function startReveal(instant) {
@@ -1547,42 +1455,49 @@ function startReveal(instant) {
         if (tiles.length) tiles[Math.floor(Math.random() * tiles.length)].classList.add('wrong');
     }, delay + 500);
 
-    // render view content (for non-home views)
     setTimeout(() => {
         renderView(v);
         if (v === 'home') drawWire();
     }, 100);
 }
 
-// ═══════════════════════════════════════════════════════════
-// VIEW RENDERERS
-// ═══════════════════════════════════════════════════════════
 function renderView(v) {
-    if (v === 'home')      VIEW.innerHTML = homeHTML();
-    else if (v === 'tools')VIEW.innerHTML = toolsHTML();
-    else if (v === 'void') VIEW.innerHTML = voidHTML();
+    if (v === 'home')           VIEW.innerHTML = homeHTML();
+    else if (v === 'tools')     VIEW.innerHTML = toolsHTML();
+    else if (v === 'void')      VIEW.innerHTML = voidHTML();
     else if (v === 'unclaimed') VIEW.innerHTML = unclaimedHTML();
     else if (v === 'locate')    VIEW.innerHTML = locateHTML();
     else if (v === 'them')      VIEW.innerHTML = themHTML();
     else if (v === 'guestbook') VIEW.innerHTML = guestbookHTML();
     else if (v === '404')       VIEW.innerHTML = notFoundHTML();
-    else                    VIEW.innerHTML = voidHTML();
+    else                        VIEW.innerHTML = voidHTML();
 
-    // rewire tile clicks and tool buttons after render
-    if (v === 'home')  wireHomeTiles();
-    if (v === 'tools') wireTools();
-    if (v === 'guestbook') wireGuestbook();
+    if (v === 'home')      wireHomeTiles();
+    if (v === 'tools')     wireTools();
     if (v === 'locate')    startLocateLoop();
     if (v === 'void')      maybeMoreVoid();
 
-    // add .show class to any new tiles after render
+    // patch footer with visitor counter
+    const f = document.getElementById('footer');
+    if (f && !f.dataset.patched) {
+        const vv = S.visits * 2 + Math.floor(Math.random() * 5);
+        const span = document.createElement('span');
+        span.style.color = '#4a4442';
+        span.style.fontSize = '10px';
+        span.style.letterSpacing = '2px';
+        span.style.marginLeft = '12px';
+        span.textContent = '· visitor ' + String(vv).padStart(4, '0');
+        f.appendChild(span);
+        f.dataset.patched = '1';
+    }
+
     document.querySelectorAll('.tile').forEach((t, i) => {
         setTimeout(() => t.classList.add('show'), i * 40);
     });
 }
 
 // ═══════════════════════════════════════════════════════════
-// HOME VIEW
+// HOME
 // ═══════════════════════════════════════════════════════════
 function homeHTML() {
     const late = isLateNight();
@@ -1624,14 +1539,10 @@ function homeHTML() {
         </footer>
     `;
 }
-
-function wireHomeTiles() {
-    // tools tile intercepts to show the "2003 portal" via hash
-    // nothing special needed — the hash router handles it
-}
+function wireHomeTiles() {}
 
 // ═══════════════════════════════════════════════════════════
-// TOOLS — 2003 portal + "they went missing"
+// TOOLS
 // ═══════════════════════════════════════════════════════════
 const MISSING_MESSAGES = [
     'they went missing.',
@@ -1670,6 +1581,16 @@ const MISSING_MESSAGES = [
 
 function toolsHTML() {
     const marquee = '★ welcome to doomsday tools ★  best viewed in 1024x768 ★  do not refresh the page ★  they are still here ★  everything works ★  nothing works ★  they went missing ★  do not look behind you ★  sign the guestbook ★  thanks for visiting ★';
+    let extra = '';
+    if (S.visits >= 5) {
+        extra = `
+            <div class="tool" style="border-color:#8b0000;">
+                <h2 style="color:#8b0000;"><span class="sparkle">☆</span> lookup <span class="sparkle">☆</span></h2>
+                <div class="desc" style="color:#8b0000;">...</div>
+                <div class="row"><label>who:</label><input type="text" id="lookup-in"><button onclick="tryLookup(event)">FIND!</button></div>
+                <div class="out" id="lookup-out"></div>
+            </div>`;
+    }
     return `
     <div class="portal">
         <div class="p-header">
@@ -1739,6 +1660,7 @@ function toolsHTML() {
                 <div class="row"><label>url:</label><input type="text" id="wh-in"><button onclick="tryTool(event, 'wh')">INSPECT!</button></div>
                 <div class="out" id="wh-out"></div>
             </div>
+            ${extra}
         </div>
         <footer>
             <div class="badge">netscape 4.0</div>
@@ -1760,13 +1682,15 @@ function pickMissing() {
 }
 
 function tryTool(evt, kind) {
-    const x = evt ? evt.clientX : window.innerWidth / 2;
-    const y = evt ? evt.clientY : window.innerHeight / 2;
-    flashEye(x, y);
     if (S.soundOn) heartbeatThump();
 
     const tool = evt.target.closest('.tool');
     const out  = tool.querySelector('.out');
+
+    // subtle button feedback
+    const btn = evt.target;
+    btn.style.filter = 'brightness(0.6)';
+    setTimeout(() => { btn.style.filter = ''; }, 120);
 
     // snowflake always works
     if (kind === 'sf') {
@@ -1786,21 +1710,46 @@ function tryTool(evt, kind) {
         return;
     }
 
-    // 2 in 10 chance the tool actually works
-    if (Math.random() < 0.2) {
-        // most tools just... don't. some return one weird output.
+    // 25% chance the tool "works" — mostly, but slightly wrong
+    if (Math.random() < 0.25) {
         if (kind === 'ip') {
             const v = document.getElementById('ip-in').value.trim();
             if (!v) {
-                out.innerHTML = '<span class="ok">[+] you: ' + Math.floor(Math.random()*255) + '.' + Math.floor(Math.random()*255) + '.' + Math.floor(Math.random()*255) + '.1</span>';
+                out.innerHTML = '<span class="dim">querying…</span>';
+                fetch('https://api.ipify.org?format=json')
+                    .then(r => r.json())
+                    .then(j => { out.innerHTML = '<span class="ok">[+] you: ' + j.ip + '</span>'; })
+                    .catch(() => { out.innerHTML = '<span class="miss">[!] ' + pickMissing() + '</span>'; });
                 return;
             }
         }
-        // dns with "localhost" returns a phone number
         if (kind === 'dns') {
             const v = document.getElementById('dns-in').value.trim().toLowerCase();
             if (v === 'localhost' || v === '127.0.0.1') {
                 out.innerHTML = '<span class="ok">[+] +1-555-0114</span>';
+                return;
+            }
+        }
+        if (kind === 'b64') {
+            const v = document.getElementById('b64-in').value.trim();
+            if (v) {
+                try {
+                    const real = btoa(v);
+                    const i = Math.floor(Math.random() * real.length);
+                    const flipped = real.slice(0, i) + String.fromCharCode(real.charCodeAt(i) ^ 1) + real.slice(i + 1);
+                    out.innerHTML = '<span class="ok">[+] ' + flipped + '</span>';
+                    return;
+                } catch {}
+            }
+        }
+        if (kind === 'hash') {
+            const v = document.getElementById('hash-in').value;
+            if (v) {
+                crypto.subtle.digest('SHA-256', new TextEncoder().encode(v)).then(h => {
+                    const hex = Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
+                    const bad = hex.slice(0, 30) + (hex[30] === 'a' ? 'b' : 'a') + hex.slice(31);
+                    out.innerHTML = '<span class="ok">[+] sha256 ' + bad + '</span>';
+                });
                 return;
             }
         }
@@ -1811,13 +1760,11 @@ function tryTool(evt, kind) {
     out.innerHTML = '<span class="miss">[!] ' + pickMissing() + '</span>';
     if (S.soundOn) whisper();
 
-    // tool border flash
     tool.style.borderColor = '#8b0000';
     setTimeout(() => { tool.style.borderColor = '#808080'; }, 400);
 }
 
 function wireTools() {
-    // marquee occasionally changes
     const m = document.getElementById('pMarquee');
     if (m) {
         setInterval(() => {
@@ -1828,19 +1775,17 @@ function wireTools() {
             }
         }, 90000);
     }
-
-    // exit trap on the "sign the guestbook" link
-    const links = document.querySelectorAll('.portal a[href="#guestbook"]');
-    links.forEach(l => l.addEventListener('click', e => {
-        // let it through, the router will handle it
-    }));
-
-    // no/no trap fires after 45 seconds on this view
     setTimeout(openTrap, 45000);
 }
 
+window.tryLookup = function(evt) {
+    const out = evt.target.closest('.tool').querySelector('.out');
+    const v = document.getElementById('lookup-in').value.trim();
+    out.innerHTML = '<span class="miss">[!] not yet.</span>';
+};
+
 // ═══════════════════════════════════════════════════════════
-// GUESTBOOK VIEW
+// GUESTBOOK
 // ═══════════════════════════════════════════════════════════
 const HISTORICAL_ENTRIES = [
     { handle: '@0_032', date: '2003-04-11', body: "they made me write this. i don't know what to say. tell them i'm okay." },
@@ -1853,23 +1798,18 @@ const HISTORICAL_ENTRIES = [
 ];
 
 function todayEntry() {
-    const t = new Date();
-    const d = t.toISOString().slice(0, 10);
+    const d = new Date().toISOString().slice(0, 10);
     return { handle: '', date: d, body: "came by earlier. you weren't here.", today: true };
 }
 
 function guestbookHTML() {
     const entries = [...HISTORICAL_ENTRIES, todayEntry()];
-    // check localStorage for user's own entries
     let userEntries = [];
     try { userEntries = JSON.parse(localStorage.getItem('dd_guestbook') || '[]'); } catch {}
-    // check if we should rename old entries to "mine"
     const lastSignTs = parseInt(localStorage.getItem('dd_gb_last_sign') || '0', 10);
     const now = Date.now();
     userEntries = userEntries.map(e => {
-        if (now - lastSignTs > 86400000 && e.handle) {
-            return { ...e, handle: 'mine' };
-        }
+        if (now - lastSignTs > 86400000 && e.handle) return { ...e, handle: 'mine' };
         return e;
     });
 
@@ -1899,11 +1839,9 @@ function guestbookHTML() {
         </div>`;
 }
 
-function signGuestbook(evt) {
-    flashEye(evt.clientX, evt.clientY);
+window.signGuestbook = function(evt) {
     const name = document.getElementById('gb-name').value.trim();
     const body = document.getElementById('gb-body').value.trim() || '...';
-    if (!body) return;
     let userEntries = [];
     try { userEntries = JSON.parse(localStorage.getItem('dd_guestbook') || '[]'); } catch {}
     userEntries.push({ handle: name, date: new Date().toISOString().slice(0, 10), body });
@@ -1911,33 +1849,24 @@ function signGuestbook(evt) {
     localStorage.setItem('dd_gb_last_sign', String(Date.now()));
     document.getElementById('gb-body').value = '';
     document.getElementById('gb-name').value = '';
-    // show confirmation, then reload after 1.5s (entry seems to disappear)
     const btn = evt.target;
-    const origText = btn.textContent;
+    const orig = btn.textContent;
     btn.textContent = 'signed.';
-    setTimeout(() => {
-        btn.textContent = origText;
-        renderView('guestbook');
-    }, 1500);
-}
-
-function wireGuestbook() {}
+    setTimeout(() => { btn.textContent = orig; renderView('guestbook'); }, 1500);
+};
 
 // ═══════════════════════════════════════════════════════════
-// VOID
+// OTHER VIEWS
 // ═══════════════════════════════════════════════════════════
 function voidHTML() {
     return `
         <div class="void-page">
-            <div class="void-text">
-                <div>do not look behind you.</div>
-            </div>
+            <div class="void-text"><div>do not look behind you.</div></div>
         </div>
         <div class="center-nav"><a href="#home" style="color:#4a4442;">← leave</a></div>
     `;
 }
 function maybeMoreVoid() {
-    // 15% of the time, after 20 seconds a second line appears
     if (Math.random() < 0.15) {
         setTimeout(() => {
             const t = document.querySelector('.void-text');
@@ -1946,9 +1875,6 @@ function maybeMoreVoid() {
     }
 }
 
-// ═══════════════════════════════════════════════════════════
-// UNCLAIMED
-// ═══════════════════════════════════════════════════════════
 function unclaimedHTML() {
     return `
         <div class="unclaimed-page">
@@ -1959,9 +1885,6 @@ function unclaimedHTML() {
     `;
 }
 
-// ═══════════════════════════════════════════════════════════
-// LOCATE
-// ═══════════════════════════════════════════════════════════
 function locateHTML() {
     return `
         <div class="locate-page">
@@ -1985,9 +1908,6 @@ function startLocateLoop() {
     locateInterval = setInterval(update, 1000);
 }
 
-// ═══════════════════════════════════════════════════════════
-// THEM/
-// ═══════════════════════════════════════════════════════════
 function themHTML() {
     return `
         <div class="them-page">
@@ -2013,9 +1933,6 @@ function themHTML() {
     `;
 }
 
-// ═══════════════════════════════════════════════════════════
-// 404
-// ═══════════════════════════════════════════════════════════
 function notFoundHTML() {
     return `
         <div class="p404">
@@ -2047,10 +1964,11 @@ function showQuote() {
     if (!qText) return;
     const [text, attr] = QUOTES[qi];
     qText.innerHTML = '';
-    text.split(' ').forEach((w, i) => {
+    const words = text.split(' ');
+    words.forEach((w, i) => {
         const span = document.createElement('span');
         span.className = 'word';
-        span.textContent = w + (i < text.split(' ').length - 1 ? ' ' : '');
+        span.textContent = w + (i < words.length - 1 ? ' ' : '');
         span.style.animationDelay = (i * 120) + 'ms';
         qText.appendChild(span);
     });
@@ -2065,7 +1983,7 @@ setInterval(() => {
 }, 11000);
 
 // ═══════════════════════════════════════════════════════════
-// TRAP — "do you want to continue?" no / no
+// TRAP
 // ═══════════════════════════════════════════════════════════
 const trap = document.getElementById('trap');
 const trapNo1 = document.getElementById('trapNo1');
@@ -2075,35 +1993,159 @@ function openTrap() {
     if (trap.classList.contains('active')) return;
     trap.classList.add('active');
     trapOpens++;
-    // move one of the no buttons 3px each time
     trapNo2.style.transform = `translateX(-${trapOpens * 3}px)`;
 }
 function closeTrap() {
     trap.classList.remove('active');
-    // reopen after 5s
-    setTimeout(() => {
-        if (location.hash === '#tools') openTrap();
-    }, 5000);
+    setTimeout(() => { if (location.hash === '#tools') openTrap(); }, 5000);
 }
 trapNo1.addEventListener('click', closeTrap);
 trapNo2.addEventListener('click', closeTrap);
 
 // ═══════════════════════════════════════════════════════════
-// FADE BLACK — exit trap
+// FADE BLACK
 // ═══════════════════════════════════════════════════════════
 const fadeBlack = document.getElementById('fadeBlack');
 function exitTrap() {
     fadeBlack.classList.add('active');
-    setTimeout(() => {
-        fadeBlack.classList.remove('active');
-    }, 1400);
+    setTimeout(() => { fadeBlack.classList.remove('active'); }, 1400);
 }
 
 // ═══════════════════════════════════════════════════════════
-// ROUTER
+// WIRED MODE
+// ═══════════════════════════════════════════════════════════
+const wiredToggle = document.getElementById('wiredToggle');
+wiredToggle.addEventListener('click', () => {
+    document.body.classList.toggle('wired');
+    const n = parseInt(localStorage.getItem('dd_wired_count') || '0', 10) + 1;
+    localStorage.setItem('dd_wired_count', String(n));
+    if (n === 1) wiredToggle.textContent = '◉ 0032';
+    else if (n === 5) wiredToggle.textContent = '◉ wired';
+    else if (n === 15) wiredToggle.textContent = '◉ you found it';
+    else if (n >= 30) wiredToggle.textContent = '◉ stop';
+});
+(function restoreWired() {
+    const n = parseInt(localStorage.getItem('dd_wired_count') || '0', 10);
+    if (n === 1) wiredToggle.textContent = '◉ 0032';
+    else if (n === 5) wiredToggle.textContent = '◉ wired';
+    else if (n === 15) wiredToggle.textContent = '◉ you found it';
+    else if (n >= 30) wiredToggle.textContent = '◉ stop';
+})();
+
+// ═══════════════════════════════════════════════════════════
+// FAKE LOGIN — second visit to #locate
+// ═══════════════════════════════════════════════════════════
+let locateVisits = 0;
+const _origStartLocate = startLocateLoop;
+window.startLocateLoop = function() {
+    locateVisits++;
+    if (locateVisits > 1) {
+        setTimeout(() => {
+            const lc = document.querySelector('.locate-page');
+            if (!lc) return;
+            lc.innerHTML = `
+                <div class="l-title">SIGN IN</div>
+                <div class="l-line" style="margin-bottom:14px;">you must sign in to locate.</div>
+                <input type="text" placeholder="username" id="ll-user" style="background:#0a0508;border:1px solid #1a1518;color:#e8e4df;font-family:'Courier New',monospace;padding:10px;margin-bottom:10px;width:280px;outline:none;">
+                <input type="password" placeholder="password" id="ll-pass" style="background:#0a0508;border:1px solid #1a1518;color:#e8e4df;font-family:'Courier New',monospace;padding:10px;margin-bottom:14px;width:280px;outline:none;">
+                <button onclick="fakeLogin(event)" style="background:#8b0000;border:1px solid #ff2e63;color:#fff;font-family:'Courier New',monospace;font-size:12px;letter-spacing:2px;padding:10px 22px;cursor:none;">SIGN IN</button>
+                <div class="l-line" style="margin-top:20px;font-size:11px;color:#4a4442;" id="ll-msg"></div>
+            `;
+        }, 400);
+        return;
+    }
+    _origStartLocate();
+};
+window.fakeLogin = function(e) {
+    const u = document.getElementById('ll-user');
+    const p = document.getElementById('ll-pass');
+    const m = document.getElementById('ll-msg');
+    u.value = '';
+    p.value = '';
+    const msgs = ['try again.', 'wrong.', 'not you.', 'they took your account.', 'attempt 2 of 3.', 'stop.'];
+    m.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+};
+
+// ═══════════════════════════════════════════════════════════
+// ARROW KEY GAME
+// ═══════════════════════════════════════════════════════════
+let gameDot = null;
+let gameStart = 0;
+let gameState = { x: 0, y: 0, active: false, last: 0 };
+function ensureGameDot() {
+    if (gameDot) return;
+    gameDot = document.createElement('div');
+    gameDot.id = 'gameDot';
+    gameDot.style.cssText = `
+        position: fixed;
+        width: 12px; height: 12px;
+        background: #ff2e63;
+        box-shadow: 0 0 12px rgba(255,46,99,0.9);
+        z-index: 9000;
+        pointer-events: none;
+        left: 50%; top: 50%;
+        transform: translate(-50%,-50%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    `;
+    document.body.appendChild(gameDot);
+}
+document.addEventListener('keydown', e => {
+    if (localStorage.getItem('dd_game_won') === '1') return;
+    if (currentView() !== 'home') return;
+    if (!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) return;
+    e.preventDefault();
+
+    if (!gameState.active) {
+        ensureGameDot();
+        gameState.active = true;
+        gameState.x = window.innerWidth / 2;
+        gameState.y = window.innerHeight / 2;
+        gameDot.style.opacity = '1';
+        gameStart = Date.now();
+    }
+    gameState.last = Date.now();
+
+    const step = 14;
+    if (e.key === 'ArrowUp')    gameState.y -= step;
+    if (e.key === 'ArrowDown')  gameState.y += step;
+    if (e.key === 'ArrowLeft')  gameState.x -= step;
+    if (e.key === 'ArrowRight') gameState.x += step;
+    gameState.x = Math.max(6, Math.min(window.innerWidth  - 6, gameState.x));
+    gameState.y = Math.max(6, Math.min(window.innerHeight - 6, gameState.y));
+    gameDot.style.left = gameState.x + 'px';
+    gameDot.style.top  = gameState.y + 'px';
+
+    if ((Date.now() - gameStart) / 1000 >= 60) {
+        flashEye(window.innerWidth/2, window.innerHeight/2);
+        const w = document.createElement('div');
+        w.textContent = 'you win.';
+        w.style.cssText = `
+            position: fixed;
+            left: 50%; top: 50%;
+            transform: translate(-50%,-50%);
+            color: #ff2e63;
+            font-family: 'Courier New', monospace;
+            font-size: 28px;
+            letter-spacing: 6px;
+            z-index: 9100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        `;
+        document.body.appendChild(w);
+        requestAnimationFrame(() => w.style.opacity = '1');
+        setTimeout(() => w.remove(), 3500);
+        gameState.active = false;
+        if (gameDot) { gameDot.remove(); gameDot = null; }
+        localStorage.setItem('dd_game_won', '1');
+    }
+});
+
+// ═══════════════════════════════════════════════════════════
+// ROUTER EVENTS
 // ═══════════════════════════════════════════════════════════
 window.addEventListener('hashchange', () => {
-    S.hashCalls++;
     const v = currentView();
     updateHiddenText(v);
     renderView(v);
@@ -2112,8 +2154,6 @@ window.addEventListener('hashchange', () => {
     if (v === 'tools') setTimeout(openTrap, 45000);
 });
 
-// initial render happens via runBoot/startReveal
-
 // ═══════════════════════════════════════════════════════════
 // DETERRENTS
 // ═══════════════════════════════════════════════════════════
@@ -2121,24 +2161,11 @@ document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('dragstart',  e => e.preventDefault());
 document.addEventListener('keydown', e => {
     const k = e.key.toLowerCase();
-    // let ctrl+a through so hidden text can be selected
     if (e.ctrlKey && k === 'a') return true;
     if (e.key === 'F12') { e.preventDefault(); return false; }
     if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) { e.preventDefault(); return false; }
     if (e.ctrlKey && (k === 'u' || k === 's')) { e.preventDefault(); return false; }
 }, true);
-
-// ═══════════════════════════════════════════════════════════
-// HISTORY URL SWAP — change the url without navigating
-// ═══════════════════════════════════════════════════════════
-setTimeout(() => {
-    if (location.hash === '' || location.hash === '#home') {
-        try { history.replaceState(null, '', '#do-you-know-them'); } catch {}
-        setTimeout(() => {
-            try { history.replaceState(null, '', '#home'); } catch {}
-        }, 30000);
-    }
-}, 60000);
 
 // ═══════════════════════════════════════════════════════════
 // GO
