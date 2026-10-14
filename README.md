@@ -4,7 +4,7 @@ present day. present time.
 
 ## site
 
-https://<tsundere59>.github.io
+https://tsundere59.github.io/
 
 ## structure
 
