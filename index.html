@@ -567,4 +567,90 @@ function showQuote() {
     const words = text.split(' ');
     words.forEach((w, i) => {
         const span = document.createElement('span');
-        span.class
+        span.className = 'word';
+        span.textContent = w + (i < words.length - 1 ? ' ' : '');
+        span.style.animationDelay = (i * 90) + 'ms';
+        qText.appendChild(span);
+    });
+    qAttr.textContent = attr;
+    qi = (qi + 1) % QUOTES.length;
+}
+setInterval(() => {
+    qLine.style.opacity = '0';
+    setTimeout(() => {
+        showQuote();
+        qLine.style.opacity = '1';
+    }, 700);
+}, 9000);
+
+// ── clock — deliberately off ────────────────────
+const clock = document.getElementById('clock');
+const BOOT_TIME = Date.now();
+function tickClock() {
+    // show "uptime" from when you opened the page, styled as a time
+    const elapsed = Math.floor((Date.now() - BOOT_TIME) / 1000);
+    const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+    const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    clock.textContent = h + ':' + m + ':' + s;
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+// ── hex watermark with occasional word injection ──
+const bg = document.getElementById('bgNums');
+let nums = '';
+const cols = Math.floor(window.innerWidth / 16);
+const rows = Math.floor(window.innerHeight / 22);
+for (let y = 0; y < rows; y++) {
+    let line = '';
+    for (let x = 0; x < cols; x++) line += Math.random().toString(16).slice(2, 6).padEnd(4, ' ') + ' ';
+    nums += line + '\n';
+}
+bg.textContent = nums;
+
+setInterval(() => {
+    // occasionally inject a word into the noise
+    const words = ['wired', 'lain', 'node', 'signal', 'help'];
+    if (Math.random() < 0.15) {
+        const word = words[Math.floor(Math.random() * words.length)];
+        const pos = Math.floor(Math.random() * Math.max(1, nums.length - word.length));
+        bg.textContent = nums.slice(0, pos) + word + nums.slice(pos + word.length);
+        setTimeout(() => { bg.textContent = nums; }, 1200);
+    } else {
+        bg.textContent = Math.random().toString(16).slice(2, 6) + nums.slice(4);
+    }
+}, 350);
+
+// ── cursor trail ────────────────────────────────
+let lastTrail = 0;
+document.addEventListener('mousemove', e => {
+    const now = Date.now();
+    if (now - lastTrail < 45) return;
+    lastTrail = now;
+    const dot = document.createElement('div');
+    dot.className = 'trail';
+    dot.style.left = (e.clientX - 3) + 'px';
+    dot.style.top  = (e.clientY - 3) + 'px';
+    document.body.appendChild(dot);
+    setTimeout(() => dot.style.opacity = '0', 30);
+    setTimeout(() => dot.remove(), 500);
+});
+
+// ── inspect-element deterrents ──────────────────
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('dragstart',  e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    const k = e.key.toLowerCase();
+    if (e.key === 'F12') { e.preventDefault(); return false; }
+    if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) { e.preventDefault(); return false; }
+    if (e.ctrlKey && (k === 'u' || k === 's')) { e.preventDefault(); return false; }
+}, true);
+
+// ── go ──────────────────────────────────────────
+runBoot();
+</script>
+
+</body>
+</html>
