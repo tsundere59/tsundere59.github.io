@@ -1,232 +1,249 @@
-:root {
-    --bg:        #0a0a0a;
-    --bg2:       #0f0f0f;
-    --surface:   #141414;
-    --border:    #2a2a2a;
-    --red:       #c41e3a;
-    --red-bright:#ff2e63;
-    --red-deep:  #8b0000;
-    --pink:      #ffb3c1;
-    --fg:        #d4d4d4;
-    --dim:       #6a6a6a;
-    --dimmer:    #3a3a3a;
+/* ═══════════════════════════════════════════════════════════
+   doomsday — wired mode palette
+   this file only activates when body has .wired class.
+   the base styling lives inline in index.html.
+   ═══════════════════════════════════════════════════════════ */
+
+body.wired {
+    background: #000 !important;
+    color: #ff2e63 !important;
+    transition: background 0.6s ease, color 0.6s ease;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', 'Courier New', monospace;
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
+body.wired::before {
+    opacity: 0.28 !important;
+    mix-blend-mode: screen !important;
 }
 
-/* scanline overlay — the CRT effect */
-.scanline {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1000;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0,0,0,0.15) 0px,
-        rgba(0,0,0,0.15) 1px,
-        transparent 1px,
-        transparent 3px
-    );
-    mix-blend-mode: multiply;
+body.wired::after {
+    opacity: 0.35 !important;
 }
 
-/* film grain */
-.noise {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 999;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* corners go hot */
+body.wired .corner {
+    color: #ff2e63 !important;
+    opacity: 0.95;
 }
 
-header {
-    padding: 60px 40px 20px;
-    max-width: 900px;
-    margin: 0 auto;
+body.wired .corner:hover {
+    color: #ffb3c1 !important;
 }
 
-.ascii {
-    color: var(--red);
-    font-size: 11px;
-    line-height: 1.1;
-    text-shadow: 0 0 8px rgba(196, 30, 58, 0.5);
-    overflow-x: auto;
-    white-space: pre;
-}
-
-.tagline {
-    color: var(--pink);
-    font-style: italic;
-    margin-top: 24px;
-    font-size: 13px;
-    opacity: 0.8;
-}
-
-.handle {
-    color: var(--red-bright);
-    font-weight: bold;
-    font-size: 18px;
-    margin-top: 8px;
-    letter-spacing: 1px;
-}
-
-main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px 40px 80px;
-}
-
-section {
-    margin-top: 48px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-}
-
-h2 {
-    color: var(--red);
-    font-size: 15px;
-    font-weight: normal;
-    margin-bottom: 12px;
-    letter-spacing: 0.5px;
-}
-
-.hint {
-    color: var(--dim);
-    font-size: 12px;
-    margin-bottom: 16px;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-    margin-top: 12px;
-}
-
-.card {
-    display: flex;
-    flex-direction: column;
-    padding: 14px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--fg);
-    text-decoration: none;
-    transition: all 0.15s ease;
-    position: relative;
-}
-
-.card:hover {
-    border-color: var(--red);
-    background: var(--bg2);
-    transform: translateY(-2px);
-}
-
-.card:hover .jp {
-    color: var(--red-bright);
-    text-shadow: 0 0 6px rgba(255, 46, 99, 0.6);
-}
-
-.card .jp {
-    color: var(--pink);
-    font-size: 12px;
-    transition: all 0.15s ease;
-}
-
-.card .en {
-    color: var(--fg);
-    margin-top: 4px;
-    font-size: 13px;
-}
-
-.card.wide {
-    grid-column: 1 / -1;
-}
-
-.accent { color: var(--red-bright); }
-.dim    { color: var(--dim); }
-
-footer {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px 40px 60px;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
-    text-align: center;
-}
-
-/* selection */
-::selection {
-    background: var(--red);
-    color: var(--bg);
-}
-
-/* scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--dimmer); }
-::-webkit-scrollbar-thumb:hover { background: var(--red-deep); }
-
-@media (max-width: 600px) {
-    header, main, footer { padding-left: 20px; padding-right: 20px; }
-    .ascii { font-size: 7px; }
-    .handle { font-size: 15px; }
-}
-/* ── glitch transition overlay ─────────────────── */
-#glitch {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 200;
-    pointer-events: none;
-    display: none;
-    overflow: hidden;
-}
-#glitch.active { display: block; }
-
-#glitch::before,
-#glitch::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: #000;
-}
-
-#glitch .slice {
-    position: absolute;
-    left: 0; right: 0;
-    height: 3px;
-    background: #ff2e63;
-    box-shadow: 0 0 12px #ff2e63, 0 0 24px #c41e3a;
-    mix-blend-mode: screen;
+body.wired .clock,
+body.wired .hb,
+body.wired .countdown,
+body.wired .visit-note,
+body.wired .sound-toggle {
+    color: #ff2e63 !important;
     opacity: 0.9;
 }
 
-#glitch .shard {
-    position: absolute;
-    background: #ff2e63;
-    opacity: 0.8;
-    mix-blend-mode: screen;
+body.wired .hb.disc {
+    color: #ffb3c1 !important;
+    animation: wired-pulse 0.6s ease-in-out infinite;
 }
 
-/* cursor trail — bigger, redder, sharper */
-.trail {
-    position: fixed;
-    width: 8px;
-    height: 8px;
-    background: #ff2e63;
-    z-index: 89;
-    pointer-events: none;
-    box-shadow: 0 0 8px rgba(255,46,99,0.8), 0 0 16px rgba(200,20,60,0.4);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    will-change: transform, opacity;
+@keyframes wired-pulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+}
+
+/* scan line brighter */
+body.wired .scan {
+    background: linear-gradient(to right,
+        transparent 0%,
+        rgba(255,46,99,0.9) 20%,
+        rgba(255,255,255,0.7) 50%,
+        rgba(255,46,99,0.9) 80%,
+        transparent 100%);
+    height: 4px;
+    filter: blur(1px);
+}
+
+/* hex watermark glows */
+body.wired .bg-nums {
+    opacity: 0.15 !important;
+    color: #ff2e63 !important;
+}
+
+/* wire in the background is thicker */
+body.wired .wire {
+    background: #ff2e63 !important;
+    opacity: 0.65 !important;
+}
+
+/* wordmark goes full red — no more off-white */
+body.wired .wordmark .brand {
+    color: #ff2e63 !important;
+    text-shadow: 2px 2px 0 #ffb3c1, -1px -1px 0 #8b0000;
+}
+
+body.wired .wordmark .accent {
+    color: #ffb3c1 !important;
+}
+
+body.wired .wordmark .slash {
+    color: #8b0000 !important;
+}
+
+body.wired .wordmark .cursor {
+    background: #ff2e63 !important;
+    box-shadow: 0 0 22px rgba(255,46,99,0.9) !important;
+}
+
+/* quotes go red */
+body.wired .quote {
+    color: #ffb3c1 !important;
+}
+
+body.wired .quote .prefix {
+    color: #ff2e63 !important;
+}
+
+body.wired .quote .attr {
+    color: #8b0000 !important;
+}
+
+/* section labels */
+body.wired .label {
+    color: #ffb3c1 !important;
+}
+
+body.wired .label .jp {
+    color: #8b0000 !important;
+}
+
+body.wired .label::after {
+    background: #2a0a12 !important;
+}
+
+/* tiles — everything bleeds red */
+body.wired .tile {
+    border-bottom-color: #2a0a12 !important;
+    color: #ffb3c1 !important;
+}
+
+body.wired .tile:hover {
+    background: rgba(255,46,99,0.12) !important;
+}
+
+body.wired .t-name {
+    color: #ffb3c1 !important;
+}
+
+body.wired .tile:hover .t-name {
+    color: #fff !important;
+    text-shadow: 0 0 12px rgba(255,46,99,1) !important;
+}
+
+body.wired .t-desc {
+    color: #8b0000 !important;
+}
+
+body.wired .tile:hover .t-desc {
+    color: #ff2e63 !important;
+}
+
+body.wired .t-num {
+    color: #8b0000 !important;
+}
+
+body.wired .t-jp {
+    color: #6a0018 !important;
+}
+
+body.wired .tile:hover .t-jp {
+    color: #ff2e63 !important;
+}
+
+/* footer */
+body.wired footer {
+    border-top-color: #2a0a12 !important;
+    color: #8b0000 !important;
+}
+
+/* cursor glow gets stronger */
+body.wired #cursor {
+    background: #fff !important;
+    box-shadow: 0 0 20px #ff2e63, 0 0 40px rgba(255,46,99,0.6) !important;
+}
+
+/* trail turns hot and stays longer */
+body.wired .trail {
+    background: #ff2e63 !important;
+    box-shadow: 0 0 16px rgba(255,46,99,1), 0 0 32px rgba(255,46,99,0.5) !important;
+}
+
+/* eyes get brighter in wired */
+body.wired .eye {
+    background: #1a0000 !important;
+    box-shadow: 0 0 12px rgba(255,46,99,0.5), inset 0 0 6px rgba(255,46,99,0.3) !important;
+}
+
+body.wired .eye .pupil {
+    background: #ff2e63 !important;
+    box-shadow: 0 0 8px rgba(255,46,99,0.9) !important;
+}
+
+body.wired .eye-flash {
+    box-shadow: 0 0 32px rgba(255,46,99,0.8);
+}
+
+/* guestbook goes dark */
+body.wired .gb-page {
+    background: #000 !important;
+}
+
+body.wired .gb-page .entry {
+    background: #0a0004 !important;
+    border-left-color: #ff2e63 !important;
+}
+
+body.wired .gb-page .entry .e-body {
+    color: #ffb3c1 !important;
+}
+
+body.wired .gb-page .entry .e-handle {
+    color: #ff2e63 !important;
+}
+
+/* the 2003 portal in wired mode — invert it */
+body.wired .portal {
+    filter: invert(1) hue-rotate(180deg);
+}
+body.wired .portal input,
+body.wired .portal textarea,
+body.wired .portal select,
+body.wired .portal button {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+/* void page stays void, just deeper */
+body.wired .void-page {
+    background: #000 !important;
+}
+
+body.wired .void-page .void-text {
+    color: #ffb3c1 !important;
+    text-shadow: 0 0 24px rgba(255,46,99,0.8);
+}
+
+/* unclaimed goes full monochrome-red */
+body.wired .unclaimed-page {
+    filter: grayscale(100%) sepia(100%) hue-rotate(-20deg) saturate(8) !important;
+}
+
+/* locate */
+body.wired .locate-page .l-title {
+    text-shadow: 0 0 20px rgba(255,46,99,0.9);
+}
+
+/* them/ */
+body.wired .them-page {
+    background: #000 !important;
+}
+
+body.wired .them-page .file .red {
+    color: #ff2e63 !important;
+    text-shadow: 0 0 8px rgba(255,46,99,0.6);
 }
