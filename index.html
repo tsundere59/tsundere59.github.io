@@ -832,3 +832,47 @@ runBoot();
 
 </body>
 </html>
+// ═══════════════════════════════════════════════
+// BOOT — only runs once per browser session
+// ═══════════════════════════════════════════════
+async function runBoot() {
+    // if we've already run the intro in this tab session, skip it
+    if (sessionStorage.getItem('doomsday_intro')) {
+        BOOT.remove();
+        MAIN.classList.add('show');
+        // instantly reveal the layout without the stagger
+        document.querySelectorAll('[data-anim]').forEach(l => l.classList.add('show'));
+        document.querySelectorAll('.tile').forEach(t => t.classList.add('show'));
+        document.getElementById('wordmark').classList.add('show');
+        document.getElementById('quoteLine').classList.add('show');
+        document.getElementById('footer').classList.add('show');
+        showQuote();
+        return;
+    }
+
+    const cur = document.createElement('span');
+    cur.className = 'cursor';
+    BOOT.appendChild(cur);
+
+    await sleep(500);
+    BOOT.innerHTML = '';
+    BOOT.appendChild(document.createTextNode('\n'));
+
+    for (const [text, color] of BOOT_LINES) {
+        await typeLine(text, color);
+        await sleep(220);
+    }
+
+    const endCursor = document.createElement('span');
+    endCursor.className = 'cursor';
+    BOOT.appendChild(endCursor);
+
+    await sleep(900);
+    collapseBoot(() => {
+        BOOT.remove();
+        MAIN.classList.add('show');
+        startReveal();
+        // mark as seen — next navigation in this tab skips the intro
+        sessionStorage.setItem('doomsday_intro', '1');
+    });
+}ds
