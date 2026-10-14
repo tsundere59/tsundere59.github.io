@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>grave://layer07</title>
+<meta name="description" content="grave.rest — tools from the wired. nothing tracked, nothing uploaded, all client-side.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -20,8 +22,9 @@
     --ash: #7d6f85;
     --bone: #cfc3d4;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   ::selection { background: var(--hot); color: var(--black); }
+  html { scroll-behavior: smooth; scrollbar-color: var(--blood) var(--black); }
   body {
     background: var(--black);
     color: var(--bone);
@@ -29,151 +32,215 @@
     font-weight: 300;
     overflow-x: hidden;
   }
-  /* ambient noise + tube curvature */
-  .tube { position: fixed; inset: 0; pointer-events: none; z-index: 80; }
-  .tube.lines { background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.22) 3px 4px); }
-  .tube.curve { box-shadow: inset 0 0 180px 60px rgba(0,0,0,.8); }
+
+  /* ===================== CRT / atmosphere ===================== */
+  .tube { position: fixed; inset: 0; pointer-events: none; }
+  .tube.lines { z-index: 80; background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.22) 3px 4px); }
+  .tube.curve { z-index: 82; box-shadow: inset 0 0 180px 60px rgba(0,0,0,.8); }
   .tube.hum {
+    z-index: 81;
     background: radial-gradient(ellipse 120% 60% at 50% -20%, rgba(255,36,96,.06), transparent 60%);
     animation: hum 7s ease-in-out infinite;
   }
-  @keyframes hum { 0%,100%{opacity:.6} 50%{opacity:1} }
-  .glitch { position: fixed; inset: 0; z-index: 81; pointer-events: none; opacity: 0; }
+  @keyframes hum { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+  .glitch { position: fixed; inset: 0; z-index: 83; pointer-events: none; opacity: 0; transition: opacity .05s; }
   .glitch.on { opacity: 1; background: rgba(255,36,96,.05); mix-blend-mode: screen; }
 
-  /* ===== boot ===== */
-  #bios { position: fixed; inset: 0; z-index: 300; background: var(--black); padding: 4vh 6vw; font-family: 'VT323', monospace; font-size: clamp(1rem, 2.2vw, 1.5rem); color: var(--rot); line-height: 1.6; white-space: pre-wrap; }
+  /* ===================== BIOS boot ===================== */
+  #bios {
+    position: fixed; inset: 0; z-index: 300;
+    background: var(--black);
+    padding: 4vh 6vw;
+    font-family: 'VT323', monospace;
+    font-size: clamp(1rem, 2.2vw, 1.5rem);
+    color: var(--rot);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
   #bios .b { color: var(--hot); }
   #bios.fade { transition: opacity .7s; opacity: 0; pointer-events: none; }
 
-  /* ===== shell ===== */
+  /* ===================== shell ===================== */
   .shell { display: grid; grid-template-columns: 64px 1fr; min-height: 100vh; position: relative; z-index: 10; }
-  @media (max-width: 760px) { .shell { grid-template-columns: 1fr; } }
 
-  /* layer rail */
   .rail {
     border-right: 1px solid var(--line);
     background: var(--pit);
     display: flex; flex-direction: column; align-items: center;
-    padding: 1rem 0; gap: .4rem; position: sticky; top: 0; height: 100vh;
+    padding: 1rem 0; gap: .4rem;
+    position: sticky; top: 0; height: 100vh;
   }
-  @media (max-width: 760px) { .rail { flex-direction: row; height: auto; position: static; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; padding: .6rem; justify-content: center; } }
   .rail a {
     font-family: 'VT323', monospace; font-size: 1.1rem;
     color: var(--bruise); text-decoration: none;
-    width: 44px; height: 44px; display: grid; place-items: center;
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
     border: 1px solid transparent; flex-shrink: 0;
+    transition: color .15s;
   }
   .rail a:hover { color: var(--hot); border-color: var(--line); text-shadow: 0 0 12px var(--hot); }
-  .rail .mark { color: var(--blood); writing-mode: vertical-rl; letter-spacing: .4em; font-size: .7rem; margin-top: auto; padding-bottom: 1rem; }
-  @media (max-width: 760px) { .rail .mark { writing-mode: horizontal-tb; margin: 0 0 0 auto; padding: 0 .5rem; } }
+  .rail .mark {
+    color: var(--blood);
+    writing-mode: vertical-rl;
+    letter-spacing: .4em; font-size: .7rem;
+    margin-top: auto; padding-bottom: 1rem;
+  }
 
   main { min-width: 0; }
 
-  /* ===== masthead ===== */
-  .mast { padding: clamp(2rem, 6vw, 4.5rem) clamp(1.2rem, 5vw, 4rem) 2rem; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
+  /* ===================== masthead ===================== */
+  .mast {
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1.2rem, 5vw, 4rem) 2rem;
+    border-bottom: 1px solid var(--line);
+    position: relative; overflow: hidden;
+  }
   .mast .sig {
     position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
-    font-family: 'VT323', monospace; font-size: clamp(6rem, 22vw, 17rem);
+    font-family: 'VT323', monospace;
+    font-size: clamp(6rem, 22vw, 17rem); line-height: 1;
     color: transparent; -webkit-text-stroke: 1px var(--bruise);
-    pointer-events: none; user-select: none; line-height: 1; z-index: 0;
+    pointer-events: none; user-select: none; z-index: 0;
   }
   .mast .proto { color: var(--ash); font-size: .75rem; letter-spacing: .3em; }
   .mast h1 {
     font-family: 'VT323', monospace;
     font-size: clamp(3.5rem, 11vw, 8.5rem);
-    color: var(--bone); line-height: .95; letter-spacing: .02em; z-index: 1; position: relative;
+    color: var(--bone); line-height: .95; letter-spacing: .02em;
+    position: relative; z-index: 1;
   }
   .mast h1 em { font-style: normal; color: var(--hot); text-shadow: 0 0 30px rgba(255,36,96,.55); }
-  .mast .under { margin-top: 1.2rem; display: flex; gap: 1.4rem; flex-wrap: wrap; font-size: .8rem; color: var(--ash); position: relative; z-index: 1; }
+  .mast .under {
+    margin-top: 1.2rem;
+    display: flex; gap: 1.4rem; flex-wrap: wrap;
+    font-size: .8rem; color: var(--ash);
+    position: relative; z-index: 1;
+  }
   .mast .under b { color: var(--rot); font-weight: 400; }
   .mast .under a { color: var(--flesh); text-decoration: none; border-bottom: 1px solid var(--blood); }
   .mast .under a:hover { color: var(--hot); }
   .typeafter::after { content: "▌"; color: var(--hot); animation: cur 1s steps(1) infinite; }
   @keyframes cur { 50% { opacity: 0; } }
 
-  /* ===== panels ===== */
+  /* ===================== deck / panes ===================== */
   .deck { display: grid; grid-template-columns: 1.6fr 1fr; }
-  @media (max-width: 980px) { .deck { grid-template-columns: 1fr; } }
   .pane { padding: 2rem clamp(1.2rem, 4vw, 3rem); border-bottom: 1px solid var(--line); }
   .pane.sx { border-right: 1px solid var(--line); }
-  @media (max-width: 980px) { .pane.sx { border-right: 0; } }
   .pane h2 {
-    font-family: 'VT323', monospace; font-size: 1.3rem; color: var(--flesh);
-    letter-spacing: .2em; margin-bottom: 1.4rem; text-transform: uppercase;
+    font-family: 'VT323', monospace; font-size: 1.3rem;
+    color: var(--flesh); letter-spacing: .2em;
+    margin-bottom: 1.4rem; text-transform: uppercase;
   }
   .pane h2::before { content: "▚ "; color: var(--blood); }
 
-  /* file listing */
+  /* file-system tool listing */
   .fs { font-size: .85rem; }
   .fs .head, .fs .file {
-    display: grid; grid-template-columns: 2.2rem 1fr auto; gap: .8rem;
+    display: grid; grid-template-columns: 3.4rem 1fr auto; gap: .8rem;
     padding: .55rem .4rem; align-items: baseline;
   }
   .fs .head { color: var(--bruise); border-bottom: 1px dashed var(--line); font-size: .7rem; letter-spacing: .15em; }
   .fs .file { border-bottom: 1px solid var(--row); color: var(--ash); text-decoration: none; transition: all .15s; }
   .fs .file:hover { background: var(--row); color: var(--bone); padding-left: .8rem; }
-  .fs .file .perm { color: var(--blood); }
+  .fs .file .perm { color: var(--blood); font-size: .75rem; }
   .fs .file .nm { color: var(--bone); }
   .fs .file:hover .nm { color: var(--hot); }
   .fs .file .sz { font-size: .72rem; }
+  .fs .count { margin-top: 1rem; font-size: .72rem; color: var(--bruise); letter-spacing: .15em; }
+  .fs .count b { color: var(--rot); font-weight: 400; }
 
-  /* prose boxes */
+  /* prose */
   .prose p { color: var(--ash); line-height: 2; font-size: .85rem; margin-bottom: 1rem; }
   .prose .q { border-left: 2px solid var(--blood); padding-left: 1rem; color: var(--bone); font-style: italic; }
   .prose .q span { color: var(--bruise); font-style: normal; font-size: .72rem; display: block; margin-top: .4rem; letter-spacing: .15em; }
 
-  /* contact slab */
+  /* slabs */
   .slab {
-    margin: 0 clamp(1.2rem, 4vw, 3rem) 3rem;
+    margin: 0 clamp(1.2rem, 4vw, 3rem) 1.4rem;
     border: 1px solid var(--blood);
     background: linear-gradient(120deg, var(--pit), var(--row));
-    padding: 2.2rem; position: relative; overflow: hidden;
+    padding: 2.2rem;
+    position: relative; overflow: hidden;
   }
+  .slab.quiet { border-color: var(--line); }
   .slab::before {
-    content: "@0_032"; position: absolute; right: .5rem; bottom: -1.2rem;
-    font-family: 'VT323', monospace; font-size: 6rem; color: rgba(255,36,96,.07); pointer-events: none;
+    position: absolute; right: .5rem; bottom: -1.2rem;
+    font-family: 'VT323', monospace; font-size: 6rem;
+    color: rgba(255,36,96,.07); pointer-events: none;
   }
-  .slab h3 { font-family: 'VT323', monospace; color: var(--hot); font-size: 2rem; text-shadow: 0 0 20px rgba(255,36,96,.4); }
-  .slab p { color: var(--ash); font-size: .85rem; margin: .8rem 0 1.2rem; line-height: 1.9; }
+  .slab.dead::before { content: "RIP"; }
+  .slab.live::before { content: "@0_032"; }
+  .slab h3 {
+    font-family: 'VT323', monospace; color: var(--hot);
+    font-size: 2rem; text-shadow: 0 0 20px rgba(255,36,96,.4);
+  }
+  .slab p { color: var(--ash); font-size: .85rem; margin: .8rem 0 1.2rem; line-height: 1.9; position: relative; z-index: 1; }
+  .slab .ok { color: var(--rot); }
   .slab a.btn {
-    display: inline-block; color: var(--hot); text-decoration: none;
-    border: 1px solid var(--hot); padding: .55rem 1.4rem; font-size: .85rem; letter-spacing: .12em;
+    display: inline-block; position: relative; z-index: 1;
+    color: var(--hot); text-decoration: none;
+    border: 1px solid var(--hot); padding: .55rem 1.4rem;
+    font-size: .85rem; letter-spacing: .12em;
+    transition: all .15s;
   }
   .slab a.btn:hover { background: var(--hot); color: var(--black); box-shadow: 0 0 30px rgba(255,36,96,.5); }
 
-  /* footer strip */
+  /* graveyard rows */
+  .graves { font-size: .85rem; }
+  .graves .empty { color: var(--bruise); font-style: italic; padding: .6rem 0; }
+  .graves .grave { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-bottom: 1px solid var(--row); }
+  .graves .grave .dead-name { color: var(--flesh); text-decoration: line-through; text-decoration-color: var(--blood); }
+  .graves .grave .date { color: var(--blood); font-size: .75rem; }
+
+  /* footer */
   .strip {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: .6rem;
-    padding: .8rem clamp(1.2rem, 4vw, 3rem) 2.5rem; font-size: .72rem; color: var(--bruise); letter-spacing: .12em;
+    padding: .8rem clamp(1.2rem, 4vw, 3rem) 2.5rem;
+    font-size: .72rem; color: var(--bruise); letter-spacing: .12em;
   }
   .strip a { color: var(--ash); text-decoration: none; }
   .strip a:hover { color: var(--hot); }
 
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  /* ===================== responsive ===================== */
+  @media (max-width: 980px) {
+    .deck { grid-template-columns: 1fr; }
+    .pane.sx { border-right: 0; }
+  }
+  @media (max-width: 760px) {
+    .shell { grid-template-columns: 1fr; }
+    .rail { flex-direction: row; height: auto; position: static; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; padding: .6rem; justify-content: center; }
+    .rail .mark { writing-mode: horizontal-tb; margin: 0 0 0 auto; padding: 0 .5rem; }
+ @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
 
-<div class="tube lines"></div>
-<div class="tube curve"></div>
-<div class="tube hum"></div>
-<div class="glitch" id="glitch"></div>
+<div class="tube lines" aria-hidden="true"></div>
+<div class="tube hum" aria-hidden="true"></div>
+<div class="tube curve" aria-hidden="true"></div>
+<div class="glitch" id="glitch" aria-hidden="true"></div>
 
-<div id="bios"></div>
+<div id="bios" aria-hidden="true"></div>
 
 <div class="shell">
-  <nav class="rail" aria-label="layers">
-    <a href="#fs" title="tools">01</a>
-    <a href="#who" title="about">02</a>
-    <a href="#dead" title="graveyard">03</a>
-    <a href="game.html" title="game">04</a>
+
+  <!-- ===== layer rail ===== -->
+  <nav class="rail" aria-label="site layers">
+    <a href="#fs"    title="tools">01</a>
+    <a href="#who"   title="about">02</a>
+    <a href="#dead"  title="graveyard">03</a>
+    <a href="#comms" title="contact">04</a>
+    <a href="game.html" title="game">05</a>
     <span class="mark">grave://0_032</span>
   </nav>
 
   <main>
+
+    <!-- ===== masthead ===== -->
     <header class="mast">
-      <div class="sig">lain</div>
+      <div class="sig" aria-hidden="true">lain</div>
       <div class="proto">SERIAL EXPERIMENTS · PROTOCOL 7 · EST. 2024</div>
       <h1>grave<em>.</em>rest</h1>
       <div class="under">
@@ -183,12 +250,14 @@
       </div>
     </header>
 
+    <!-- ===== tools + about ===== -->
     <div class="deck">
       <section class="pane sx" id="fs">
         <h2>file system — tools</h2>
         <div class="fs">
           <div class="head"><span>perm</span><span>name</span><span>size</span></div>
           <div id="files"></div>
+          <div class="count"><b id="toolCount">0</b> binaries loaded · all client-side · zero telemetry</div>
         </div>
       </section>
 
@@ -200,13 +269,16 @@
       </section>
     </div>
 
-    <section class="slab" id="dead">
+    <!-- ===== graveyard ===== -->
+    <section class="slab dead" id="dead">
       <h3>graveyard</h3>
-      <p>reserved for the projects that die here. every personal site has one — most just pretend they don't. the first burial hasn't happened yet. it will.</p>
-      <p>status: <span style="color:var(--rot)">empty</span> · waiting for the first body</p>
+      <p>reserved for the projects that die here. every personal site has one — most just pretend they don't.</p>
+      <div class="graves" id="graves"></div>
+      <p>status: <span class="ok" id="graveStatus">empty · waiting for the first body</span></p>
     </section>
 
-    <section class="slab" style="border-color:var(--line)">
+    <!-- ===== contact ===== -->
+    <section class="slab live" id="comms">
       <h3>contact</h3>
       <p>one channel. discord. if you found this site, you already know how to use it.</p>
       <a class="btn" href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">OPEN CHANNEL — @0_032</a>
@@ -216,69 +288,155 @@
       <span>grave.rest — close the world, .txnT the nEXT</span>
       <span><a href="game.html">game</a> · <a href="https://discord.com/users/0_032">@0_032</a> · est. 2024</span>
     </div>
+
   </main>
 </div>
 
 <script>
-/* ===== BIOS boot ===== */
-const bios = document.getElementById("bios");
-const lines = [
-  "GRAVE BIOS v0.32 — OmniPresence", "",
-  "cpu ......... human, overworked        <span class='b'>[OK]</span>",
-  "memory ...... selectively failing      <span class='b'>[OK]</span>",
-  "wired link .. layer 07 handshake       <span class='b'>[OK]</span>",
-  "protocol .... legacy schumann          <span class='b'>[OK]</span>",
-  "injection ... denied. nice try.        <span class='b'>[!!]</span>", "",
-  "present day, present time. hahahaha.", "",
-  "loading grave.rest ..."
-];
-let li = 0;
-(function pump() {
-  if (li < lines.length) { bios.innerHTML = lines.slice(0, ++li).join("\n"); setTimeout(pump, 130); }
-  else setTimeout(() => { bios.classList.add("fade"); setTimeout(() => bios.remove(), 800); }, 750);
+/* ============================================================
+   BIOS BOOT SEQUENCE
+   ============================================================ */
+(function () {
+  const bios = document.getElementById("bios");
+  const lines = [
+    "GRAVE BIOS v0.32 — OmniPresence", "",
+    "cpu ......... human, overworked        <span class='b'>[OK]</span>",
+    "memory ...... selectively failing      <span class='b'>[OK]</span>",
+    "wired link .. layer 07 handshake       <span class='b'>[OK]</span>",
+    "protocol .... legacy schumann          <span class='b'>[OK]</span>",
+    "injection ... denied. nice try.        <span class='b'>[!!]</span>", "",
+    "present day, present time. hahahaha.", "",
+    "loading grave.rest ..."
+  ];
+  let i = 0;
+  (function pump() {
+    if (i < lines.length) {
+      bios.innerHTML = lines.slice(0, ++i).join("\n");
+      setTimeout(pump, 130);
+    } else {
+      setTimeout(() => {
+        bios.classList.add("fade");
+        setTimeout(() => bios.remove(), 800);
+      }, 750);
+    }
+  })();
 })();
 
-/* ===== typed subtitle ===== */
-const SUBS = ["you don't seem to understand.", "i am not here.", "the wired is everywhere.", "everything is connected.", "you weren't supposed to find this."];
-const typed = document.getElementById("typed");
-let si = 0, ch = 0, del = false;
-(function typeLoop() {
-  const s = SUBS[si];
-  typed.textContent = s.slice(0, ch);
-  if (!del && ch < s.length) { ch++; setTimeout(typeLoop, 55); }
-  else if (!del) { del = true; setTimeout(typeLoop, 2600); }
-  else if (ch > 0) { ch--; setTimeout(typeLoop, 22); }
-  else { del = false; si = (si + 1) % SUBS.length; setTimeout(typeLoop, 400); }
-})();
-
-/* ===== clock ===== */
-setInterval(() => document.getElementById("clk").textContent = new Date().toLocaleTimeString("en-GB"), 1000);
-
-/* ===== tools as a unix file listing — EDIT HERE ===== */
+/* ============================================================
+   TOOLS — EDIT THIS ARRAY ONLY
+   [name, description, link, size]
+   name  : shown as the filename
+   desc  : one line, shown after the name
+   link  : "#" = on-site tool, or a full URL
+   size  : cosmetic file size
+   ============================================================ */
 const TOOLS = [
-  ["snow",   "discord snowflake decoder",        "4k"],
-  ["base64", "encoder / decoder, no upload",     "2k"],
-  ["hash",   "md5 · sha1 · sha256 in-browser",   "3k"],
-  ["jwt",    "token inspector",                  "6k"],
-  ["regex",  "regex tester with live matches",   "5k"],
-  ["colors", "hex / rgb / oklch converter",      "2k"],
+  ["01_snow",     "discord snowflake decoder",                    "#",     "4k"],
+  ["02_base64",   "base64 encode / decode, nothing uploaded",     "#",     "2k"],
+  ["03_hash",     "md5 · sha1 · sha256, computed locally",        "#",     "3k"],
+  ["04_jwt",      "jwt token inspector",                          "#",     "6k"],
+  ["05_regex",    "regex tester with live match highlighting",    "#",     "5k"],
+  ["06_colors",   "hex / rgb / oklch converter",                  "#",     "2k"],
+  ["07_uuid",     "uuid v4 factory",                              "#",     "1k"],
+  ["08_unix",     "unix timestamp ⇄ human time",                  "#",     "1k"],
+  ["09_url",      "url parser and builder",                       "#",     "2k"],
+  ["10_json",     "json formatter and validator",                 "#",     "4k"],
+  ["11_yaml",     "yaml ⇄ json converter",                        "#",     "3k"],
+  ["12_csv",      "csv ⇄ json converter",                         "#",     "3k"],
+  ["13_markdown", "markdown ⇄ html",                              "#",     "4k"],
+  ["14_diff",     "text diff, side by side",                      "#",     "5k"],
+  ["15_case",     "camelCase / snake_case / kebab-case",          "#",     "1k"],
+  ["16_lorem",    "lorem ipsum generator",                        "#",     "1k"],
+  ["17_qr",       "qr code generator",                            "#",     "3k"],
+  ["18_png",      "png metadata viewer",                          "#",     "2k"],
+  ["19_exif",     "image exif stripper / viewer",                 "#",     "3k"],
+  ["20_b64img",   "image ⇄ data url",                             "#",     "2k"],
+  ["21_favicon",  "favicon generator",                            "#",     "2k"],
+  ["22_htpasswd", "htpasswd generator",                           "#",     "1k"],
+  ["23_cron",     "cron expression explainer",                    "#",     "2k"],
+  ["24_ansi",     "ansi escape code preview",                     "#",     "2k"],
+  ["25_ascii",    "text ⇄ ascii art",                             "#",     "3k"],
+  ["26_caesar",   "caesar / rot13 cipher",                        "#",     "1k"],
+  ["27_morse",    "morse code translator",                        "#",     "1k"],
+  ["28_pass",     "diceware password generator",                  "#",     "2k"],
+  ["29_entropy",  "password entropy meter",                       "#",     "1k"],
+  ["30_tz",       "timezone converter",                           "#",     "2k"],
+  ["31_roman",    "roman numeral ⇄ integer",                      "#",     "1k"],
+  ["32_bmi",      "bmi calculator, judged by no one",             "#",     "1k"],
+  ["33_dice",     "weighted dice, seeded rng",                    "#",     "1k"],
+  ["34_void",     "a button that does nothing. honestly.",        "#",     "0k"],
 ];
-const ICON = { d: "drwx", x: "-rwx" };
-document.getElementById("files").innerHTML = TOOLS.map(([n, d, s]) => `
-  <a class="file" href="#">
-    <span class="perm">${ICON.x}</span>
+
+document.getElementById("files").innerHTML = TOOLS.map(([n, d, link, s]) => `
+  <a class="file" href="${link}" ${link.startsWith("http") ? 'target="_blank" rel="noopener noreferrer"' : ""}>
+    <span class="perm">-rwx</span>
     <span><span class="nm">${n}</span> <span style="font-size:.72rem">— ${d}</span></span>
     <span class="sz">${s}</span>
   </a>`).join("");
+document.getElementById("toolCount").textContent = TOOLS.length;
 
-/* ===== random glitch pulses ===== */
-const g = document.getElementById("glitch");
+/* ============================================================
+   GRAVEYARD — add rows as your projects die
+   [name, epitaph, date]  or leave empty []
+   ============================================================ */
+const GRAVES = [
+  // ["project-name", "what it was. what killed it.", "2025-xx-xx"],
+];
+const gravesEl = document.getElementById("graves");
+if (GRAVES.length === 0) {
+  gravesEl.innerHTML = '<div class="empty">— nothing buried yet. the ground is fresh.</div>';
+} else {
+  gravesEl.innerHTML = GRAVES.map(([n, e, d]) => `
+    <div class="grave">
+      <span><span class="dead-name">${n}</span> <span style="color:var(--ash);font-size:.75rem">— ${e}</span></span>
+      <span class="date">${d}</span>
+    </div>`).join("");
+  document.getElementById("graveStatus").innerHTML =
+    GRAVES.length + " buried · the ground is settling";
+}
+
+/* ============================================================
+   TYPED SUBTITLE — cycles real show lines
+   ============================================================ */
+(function () {
+  const SUBS = [
+    "you don't seem to understand.",
+    "i am not here.",
+    "the wired is everywhere.",
+    "everything is connected.",
+    "you weren't supposed to find this."
+  ];
+  const el = document.getElementById("typed");
+  let si = 0, ch = 0, del = false;
+  (function loop() {
+    const s = SUBS[si];
+    el.textContent = s.slice(0, ch);
+    if (!del && ch < s.length)      { ch++; setTimeout(loop, 55); }
+    else if (!del)                  { del = true; setTimeout(loop, 2600); }
+    else if (ch > 0)                { ch--; setTimeout(loop, 22); }
+    else { del = false; si = (si + 1) % SUBS.length; setTimeout(loop, 400); }
+  })();
+})();
+
+/* ============================================================
+   CLOCK
+   ============================================================ */
 setInterval(() => {
-  if (Math.random() < .18) {
-    g.classList.add("on");
-    setTimeout(() => g.classList.remove("on"), 90 + Math.random() * 120);
-  }
-}, 4000);
+  document.getElementById("clk").textContent = new Date().toLocaleTimeString("en-GB");
+}, 1000);
+
+/* ============================================================
+   RANDOM GLITCH PULSES
+   ============================================================ */
+(function () {
+  const g = document.getElementById("glitch");
+  setInterval(() => {
+    if (Math.random() < 0.18) {
+      g.classList.add("on");
+      setTimeout(() => g.classList.remove("on"), 90 + Math.random() * 120);
+    }
+  }, 4000);
+})();
 </script>
 </body>
 </html>
