@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>fiesta</title>
+<title>doomsday</title>
 <style>
     * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
 
@@ -31,9 +31,7 @@
         color: #8b0000;
         white-space: pre-wrap;
         overflow: hidden;
-        transition: opacity 1.2s ease;
     }
-    #boot.done { opacity: 0; pointer-events: none; }
     #boot .line { opacity: 0; display: block; }
     #boot .line.show { opacity: 1; }
     #boot .ok   { color: #ff2e63; }
@@ -46,44 +44,53 @@
         vertical-align: -3px;
         animation: blink 1s steps(2) infinite;
     }
-
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* ── glitch transition overlay ──────────────── */
-    #glitch {
+    /* when boot enters collapse mode, lines break into strips */
+    #boot.collapsing {
+        pointer-events: none;
+    }
+    #boot.collapsing .line {
+        display: inline-block;
+        animation: shatter 1.1s cubic-bezier(0.55, 0.05, 0.65, 0.5) forwards;
+    }
+    @keyframes shatter {
+        0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+        20%  { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(220px) rotate(-3deg); opacity: 0; }
+    }
+
+    /* ── collapse strips — the boot screen falls in vertical bands ── */
+    #collapse {
         position: fixed;
         inset: 0;
-        background: #000;
-        z-index: 200;
+        z-index: 150;
         pointer-events: none;
         display: none;
         overflow: hidden;
+        background: #000;
     }
-    #glitch.active { display: block; }
+    #collapse.active { display: block; }
 
-    #glitch .slice {
+    .band {
         position: absolute;
-        left: 0; right: 0;
-        height: 3px;
-        background: #ff2e63;
-        box-shadow: 0 0 12px #ff2e63, 0 0 24px #c41e3a;
-        mix-blend-mode: screen;
-        opacity: 0.9;
-    }
-
-    #glitch .shard {
-        position: absolute;
-        background: #ff2e63;
-        opacity: 0.8;
-        mix-blend-mode: screen;
+        top: 0;
+        height: 100%;
+        background: #000;
+        border-right: 1px solid #0f0000;
+        will-change: transform, opacity;
     }
 
     /* ── main page ──────────────────────────────── */
     #main {
         opacity: 0;
-        transition: opacity 1.4s ease;
+        transform: translateY(30px);
     }
-    #main.show { opacity: 1; }
+    #main.show {
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 1.4s ease, transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
     .scan {
         position: fixed;
@@ -345,8 +352,8 @@
 <!-- boot overlay -->
 <div id="boot"></div>
 
-<!-- glitch overlay -->
-<div id="glitch"></div>
+<!-- collapse overlay -->
+<div id="collapse"></div>
 
 <!-- main content -->
 <div id="main">
@@ -355,24 +362,12 @@
 <div class="scan"></div>
 
 <span class="corner tl">◉ node-01</span>
-<span class="corner tr">tsundere59.github.io</span>
+<span class="corner tr">doomsday</span>
 <span class="corner bl" id="clock">00:00:00</span>
-<span class="corner br">@0_032</span>
+<span class="corner br">@0_032 on discord</span>
 
 <div class="chain left">
 <pre>o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 -o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
 o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 -o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
@@ -430,25 +425,13 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 -o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
 o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
--o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o
-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
 -o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o</pre>
 </div>
 
 <div class="wrap">
 
     <header>
-        <h1 class="wordmark" id="wordmark">fiesta<span class="slash">/</span><span class="accent">osint</span><span class="cursor"></span></h1>
+        <h1 class="wordmark" id="wordmark">doomsday<span class="slash">/</span><span class="accent">by fiesta</span><span class="cursor"></span></h1>
         <p class="quote" id="quoteLine">
             <span class="prefix">›</span><span id="quoteText"></span><span class="attr" id="quoteAttr"></span>
         </p>
@@ -481,8 +464,8 @@ o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-o-
     </section>
 
     <footer id="footer">
-        <span>@0_032</span>
-        <a href="https://github.com/tsundere59">github</a>
+        <span>@0_032 on discord</span>
+        <span>doomsday</span>
     </footer>
 
 </div>
@@ -498,12 +481,12 @@ const MAIN = document.getElementById('main');
 
 const BOOT_LINES = [
     ['> establishing connection...', 'warn'],
-    ['> node: tsundere59.github.io', 'warn'],
+    ['> node: doomsday', 'warn'],
     ['> handshake ................. <span class="ok">OK</span>', ''],
     ['> routing through 7 hops', 'warn'],
     ['> loading modules ........... <span class="ok">8 found</span>', ''],
     ['> verifying integrity ....... <span class="ok">OK</span>', ''],
-    ['> fiesta/osint', ''],
+    ['> doomsday/by fiesta', ''],
 ];
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -526,7 +509,6 @@ async function typeLine(text, color) {
 }
 
 async function runBoot() {
-    // blinking cursor while booting
     const cursor = document.createElement('span');
     cursor.className = 'cursor';
     BOOT.appendChild(cursor);
@@ -540,83 +522,87 @@ async function runBoot() {
         await sleep(220);
     }
 
-    // final cursor on its own line
     const endCursor = document.createElement('span');
     endCursor.className = 'cursor';
     BOOT.appendChild(endCursor);
 
     await sleep(700);
-    playGlitch(() => {
-        BOOT.classList.add('done');
+    collapseBoot(() => {
+        BOOT.remove();
         MAIN.classList.add('show');
-        setTimeout(() => BOOT.remove(), 1500);
         startReveal();
     });
 }
 
 // ═══════════════════════════════════════════════
-// GLITCH TRANSITION
+// COLLAPSE TRANSITION
+// boot screen shatters into fragments, then
+// the whole thing falls apart in vertical bands
 // ═══════════════════════════════════════════════
-function playGlitch(onComplete) {
-    const g = document.getElementById('glitch');
-    g.innerHTML = '';
-    g.classList.add('active');
+function collapseBoot(onComplete) {
+    // phase 1: break the boot lines apart — each line becomes a fragment
+    // that tilts and drops
+    BOOT.classList.add('collapsing');
 
-    // 24 red shards at random positions
-    for (let i = 0; i < 24; i++) {
-        const shard = document.createElement('div');
-        shard.className = 'shard';
-        const w = 40 + Math.random() * 300;
-        const h = 2 + Math.random() * 8;
-        shard.style.width = w + 'px';
-        shard.style.height = h + 'px';
-        shard.style.left = (Math.random() * 100) + '%';
-        shard.style.top  = (Math.random() * 100) + '%';
-        shard.style.transform = 'translateX(' + (Math.random() * 60 - 30) + 'px)';
-        shard.style.opacity = String(0.4 + Math.random() * 0.6);
-        g.appendChild(shard);
+    // phase 2: the boot screen splits into vertical bands that tumble down
+    const collapse = document.getElementById('collapse');
+    collapse.classList.add('active');
+    collapse.innerHTML = '';
+
+    const bandCount = 18;
+    const bands = [];
+    for (let i = 0; i < bandCount; i++) {
+        const band = document.createElement('div');
+        band.className = 'band';
+        const width = 100 / bandCount;
+        band.style.left = (i * width) + '%';
+        band.style.width = width + '%';
+        // staggered delay so bands fall at different times
+        band.dataset.delay = (Math.random() * 350).toFixed(0);
+        band.dataset.drift = ((Math.random() - 0.5) * 40).toFixed(0);
+        collapse.appendChild(band);
+        bands.push(band);
     }
 
-    // tearing slices
-    let frame = 0;
-    const iv = setInterval(() => {
-        g.querySelectorAll('.slice').forEach(s => s.remove());
-        const n = 3 + Math.floor(Math.random() * 4);
-        for (let i = 0; i < n; i++) {
-            const sl = document.createElement('div');
-            sl.className = 'slice';
-            sl.style.top = (Math.random() * 100) + '%';
-            sl.style.transform = 'translateX(' + (Math.random() * 40 - 20) + 'px) scaleY(' + (1 + Math.random() * 3) + ')';
-            g.appendChild(sl);
-        }
-        frame++;
-        if (frame > 6) {
-            clearInterval(iv);
-            g.style.background = '#ff2e63';
+    // fade the boot layer out as the bands drop
+    setTimeout(() => {
+        BOOT.style.transition = 'opacity 0.5s ease';
+        BOOT.style.opacity = '0';
+    }, 200);
+
+    // trigger band fall — starts after 150ms so phase 1 is visible first
+    setTimeout(() => {
+        bands.forEach((band, i) => {
+            const delay = parseInt(band.dataset.delay);
+            const drift = parseInt(band.dataset.drift);
             setTimeout(() => {
-                g.style.background = '#000';
-                setTimeout(() => {
-                    g.classList.remove('active');
-                    g.innerHTML = '';
-                    if (onComplete) onComplete();
-                }, 60);
-            }, 90);
-        }
-    }, 55);
+                band.style.transition = 'transform 1.4s cubic-bezier(0.55, 0.05, 0.65, 0.5), opacity 1.4s ease';
+                band.style.transform = `translate(${drift}px, 110vh) rotate(${drift/10}deg)`;
+                band.style.opacity = '0';
+            }, delay);
+        });
+    }, 150);
+
+    // after the bands have fallen, clear the overlay and reveal the main page
+    setTimeout(() => {
+        collapse.classList.remove('active');
+        collapse.innerHTML = '';
+        if (onComplete) onComplete();
+    }, 2100);
 }
 
 // ═══════════════════════════════════════════════
 // REVEAL SEQUENCE
 // ═══════════════════════════════════════════════
 function startReveal() {
-    setTimeout(() => document.getElementById('wordmark').classList.add('show'), 300);
+    setTimeout(() => document.getElementById('wordmark').classList.add('show'), 200);
 
     setTimeout(() => {
         document.getElementById('quoteLine').classList.add('show');
         showQuote();
-    }, 900);
+    }, 700);
 
-    let delay = 1300;
+    let delay = 1100;
     document.querySelectorAll('[data-anim]').forEach(label => {
         setTimeout(() => label.classList.add('show'), delay);
         delay += 220;
@@ -676,7 +662,7 @@ setInterval(() => {
 }, 9000);
 
 // ═══════════════════════════════════════════════
-// CLOCK (uptime, deliberately disguised as time)
+// CLOCK (uptime, disguised as time)
 // ═══════════════════════════════════════════════
 const clock = document.getElementById('clock');
 const BOOT_TIME = Date.now();
@@ -705,7 +691,7 @@ for (let y = 0; y < rows; y++) {
 bg.textContent = nums;
 
 setInterval(() => {
-    const words = ['wired', 'lain', 'node', 'signal', 'help'];
+    const words = ['wired', 'lain', 'node', 'signal', 'help', 'doomsday'];
     if (Math.random() < 0.15) {
         const word = words[Math.floor(Math.random() * words.length)];
         const pos = Math.floor(Math.random() * Math.max(1, nums.length - word.length));
