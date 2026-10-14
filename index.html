@@ -3,232 +3,282 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>grave.rest</title>
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<title>grave://layer07</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #050407;
+    --pit: #0b0810;
+    --row: #120d1a;
+    --bruise: #241631;
+    --line: #2e1f3d;
+    --blood: #a31331;
+    --hot: #ff2460;
+    --flesh: #ff9ec2;
+    --rot: #83f0a4;
+    --ash: #7d6f85;
+    --bone: #cfc3d4;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  ::selection { background: var(--hot); color: var(--black); }
+  body {
+    background: var(--black);
+    color: var(--bone);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+  /* ambient noise + tube curvature */
+  .tube { position: fixed; inset: 0; pointer-events: none; z-index: 80; }
+  .tube.lines { background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.22) 3px 4px); }
+  .tube.curve { box-shadow: inset 0 0 180px 60px rgba(0,0,0,.8); }
+  .tube.hum {
+    background: radial-gradient(ellipse 120% 60% at 50% -20%, rgba(255,36,96,.06), transparent 60%);
+    animation: hum 7s ease-in-out infinite;
+  }
+  @keyframes hum { 0%,100%{opacity:.6} 50%{opacity:1} }
+  .glitch { position: fixed; inset: 0; z-index: 81; pointer-events: none; opacity: 0; }
+  .glitch.on { opacity: 1; background: rgba(255,36,96,.05); mix-blend-mode: screen; }
+
+  /* ===== boot ===== */
+  #bios { position: fixed; inset: 0; z-index: 300; background: var(--black); padding: 4vh 6vw; font-family: 'VT323', monospace; font-size: clamp(1rem, 2.2vw, 1.5rem); color: var(--rot); line-height: 1.6; white-space: pre-wrap; }
+  #bios .b { color: var(--hot); }
+  #bios.fade { transition: opacity .7s; opacity: 0; pointer-events: none; }
+
+  /* ===== shell ===== */
+  .shell { display: grid; grid-template-columns: 64px 1fr; min-height: 100vh; position: relative; z-index: 10; }
+  @media (max-width: 760px) { .shell { grid-template-columns: 1fr; } }
+
+  /* layer rail */
+  .rail {
+    border-right: 1px solid var(--line);
+    background: var(--pit);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 1rem 0; gap: .4rem; position: sticky; top: 0; height: 100vh;
+  }
+  @media (max-width: 760px) { .rail { flex-direction: row; height: auto; position: static; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; padding: .6rem; justify-content: center; } }
+  .rail a {
+    font-family: 'VT323', monospace; font-size: 1.1rem;
+    color: var(--bruise); text-decoration: none;
+    width: 44px; height: 44px; display: grid; place-items: center;
+    border: 1px solid transparent; flex-shrink: 0;
+  }
+  .rail a:hover { color: var(--hot); border-color: var(--line); text-shadow: 0 0 12px var(--hot); }
+  .rail .mark { color: var(--blood); writing-mode: vertical-rl; letter-spacing: .4em; font-size: .7rem; margin-top: auto; padding-bottom: 1rem; }
+  @media (max-width: 760px) { .rail .mark { writing-mode: horizontal-tb; margin: 0 0 0 auto; padding: 0 .5rem; } }
+
+  main { min-width: 0; }
+
+  /* ===== masthead ===== */
+  .mast { padding: clamp(2rem, 6vw, 4.5rem) clamp(1.2rem, 5vw, 4rem) 2rem; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
+  .mast .sig {
+    position: absolute; right: -1rem; top: 50%; transform: translateY(-50%);
+    font-family: 'VT323', monospace; font-size: clamp(6rem, 22vw, 17rem);
+    color: transparent; -webkit-text-stroke: 1px var(--bruise);
+    pointer-events: none; user-select: none; line-height: 1; z-index: 0;
+  }
+  .mast .proto { color: var(--ash); font-size: .75rem; letter-spacing: .3em; }
+  .mast h1 {
+    font-family: 'VT323', monospace;
+    font-size: clamp(3.5rem, 11vw, 8.5rem);
+    color: var(--bone); line-height: .95; letter-spacing: .02em; z-index: 1; position: relative;
+  }
+  .mast h1 em { font-style: normal; color: var(--hot); text-shadow: 0 0 30px rgba(255,36,96,.55); }
+  .mast .under { margin-top: 1.2rem; display: flex; gap: 1.4rem; flex-wrap: wrap; font-size: .8rem; color: var(--ash); position: relative; z-index: 1; }
+  .mast .under b { color: var(--rot); font-weight: 400; }
+  .mast .under a { color: var(--flesh); text-decoration: none; border-bottom: 1px solid var(--blood); }
+  .mast .under a:hover { color: var(--hot); }
+  .typeafter::after { content: "▌"; color: var(--hot); animation: cur 1s steps(1) infinite; }
+  @keyframes cur { 50% { opacity: 0; } }
+
+  /* ===== panels ===== */
+  .deck { display: grid; grid-template-columns: 1.6fr 1fr; }
+  @media (max-width: 980px) { .deck { grid-template-columns: 1fr; } }
+  .pane { padding: 2rem clamp(1.2rem, 4vw, 3rem); border-bottom: 1px solid var(--line); }
+  .pane.sx { border-right: 1px solid var(--line); }
+  @media (max-width: 980px) { .pane.sx { border-right: 0; } }
+  .pane h2 {
+    font-family: 'VT323', monospace; font-size: 1.3rem; color: var(--flesh);
+    letter-spacing: .2em; margin-bottom: 1.4rem; text-transform: uppercase;
+  }
+  .pane h2::before { content: "▚ "; color: var(--blood); }
+
+  /* file listing */
+  .fs { font-size: .85rem; }
+  .fs .head, .fs .file {
+    display: grid; grid-template-columns: 2.2rem 1fr auto; gap: .8rem;
+    padding: .55rem .4rem; align-items: baseline;
+  }
+  .fs .head { color: var(--bruise); border-bottom: 1px dashed var(--line); font-size: .7rem; letter-spacing: .15em; }
+  .fs .file { border-bottom: 1px solid var(--row); color: var(--ash); text-decoration: none; transition: all .15s; }
+  .fs .file:hover { background: var(--row); color: var(--bone); padding-left: .8rem; }
+  .fs .file .perm { color: var(--blood); }
+  .fs .file .nm { color: var(--bone); }
+  .fs .file:hover .nm { color: var(--hot); }
+  .fs .file .sz { font-size: .72rem; }
+
+  /* prose boxes */
+  .prose p { color: var(--ash); line-height: 2; font-size: .85rem; margin-bottom: 1rem; }
+  .prose .q { border-left: 2px solid var(--blood); padding-left: 1rem; color: var(--bone); font-style: italic; }
+  .prose .q span { color: var(--bruise); font-style: normal; font-size: .72rem; display: block; margin-top: .4rem; letter-spacing: .15em; }
+
+  /* contact slab */
+  .slab {
+    margin: 0 clamp(1.2rem, 4vw, 3rem) 3rem;
+    border: 1px solid var(--blood);
+    background: linear-gradient(120deg, var(--pit), var(--row));
+    padding: 2.2rem; position: relative; overflow: hidden;
+  }
+  .slab::before {
+    content: "@0_032"; position: absolute; right: .5rem; bottom: -1.2rem;
+    font-family: 'VT323', monospace; font-size: 6rem; color: rgba(255,36,96,.07); pointer-events: none;
+  }
+  .slab h3 { font-family: 'VT323', monospace; color: var(--hot); font-size: 2rem; text-shadow: 0 0 20px rgba(255,36,96,.4); }
+  .slab p { color: var(--ash); font-size: .85rem; margin: .8rem 0 1.2rem; line-height: 1.9; }
+  .slab a.btn {
+    display: inline-block; color: var(--hot); text-decoration: none;
+    border: 1px solid var(--hot); padding: .55rem 1.4rem; font-size: .85rem; letter-spacing: .12em;
+  }
+  .slab a.btn:hover { background: var(--hot); color: var(--black); box-shadow: 0 0 30px rgba(255,36,96,.5); }
+
+  /* footer strip */
+  .strip {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: .6rem;
+    padding: .8rem clamp(1.2rem, 4vw, 3rem) 2.5rem; font-size: .72rem; color: var(--bruise); letter-spacing: .12em;
+  }
+  .strip a { color: var(--ash); text-decoration: none; }
+  .strip a:hover { color: var(--hot); }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
 </head>
 <body>
 
-<div class="frame">
+<div class="tube lines"></div>
+<div class="tube curve"></div>
+<div class="tube hum"></div>
+<div class="glitch" id="glitch"></div>
 
-  <div class="banner">
-    <span class="banner-title">grave.rest</span>
-  </div>
+<div id="bios"></div>
 
-  <nav class="nav">
-    <a href="#" data-open="tools">tools</a><span class="sep">·</span>
-    <a href="#" data-open="about">about</a><span class="sep">·</span>
-    <a href="#" data-open="links">links</a><span class="sep">·</span>
-    <a href="game.html">game</a><span class="sep">·</span>
-    <a href="#" data-open="graveyard">graveyard</a><span class="sep">·</span>
-    <a href="#" data-open="log">log</a><span class="sep">·</span>
-    <a href="#" data-open="now">now</a><span class="sep">·</span>
-    <a href="#" data-open="stats">stats</a>
+<div class="shell">
+  <nav class="rail" aria-label="layers">
+    <a href="#fs" title="tools">01</a>
+    <a href="#who" title="about">02</a>
+    <a href="#dead" title="graveyard">03</a>
+    <a href="game.html" title="game">04</a>
+    <span class="mark">grave://0_032</span>
   </nav>
 
-  <div class="layout">
+  <main>
+    <header class="mast">
+      <div class="sig">lain</div>
+      <div class="proto">SERIAL EXPERIMENTS · PROTOCOL 7 · EST. 2024</div>
+      <h1>grave<em>.</em>rest</h1>
+      <div class="under">
+        <span id="typed" class="typeafter"></span>
+        <span>| <b id="clk">--:--:--</b></span>
+        <span>| <a href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">@0_032</a></span>
+      </div>
+    </header>
 
-    <aside class="side">
-      <div class="box">
-        <span class="box-title">site</span>
-        <div class="box-text">
-          <span class="k">up since 2024</span><br>
-          <span class="k">34 tools</span><br>
-          <span class="k">5 game levels</span>
+    <div class="deck">
+      <section class="pane sx" id="fs">
+        <h2>file system — tools</h2>
+        <div class="fs">
+          <div class="head"><span>perm</span><span>name</span><span>size</span></div>
+          <div id="files"></div>
         </div>
-      </div>
-      <div class="box">
-        <span class="box-title">link back</span>
-        <div class="box-text" style="text-align:center">
-          <span class="k">&lt;grave.rest&gt;</span><br>
-          <span class="m" style="font-size:12px">copy this</span>
-        </div>
-      </div>
-      <div class="box">
-        <span class="box-title">visitors</span>
-        <div class="box-text">
-          <span class="k" id="visitor">------</span><br>
-          <span class="m">this session</span>
-        </div>
-      </div>
-      <div class="box">
-        <span class="box-title">status</span>
-        <div class="box-text">
-          <span class="k" id="clock">--:--:--</span><br>
-          <span class="m">local time</span>
-        </div>
-      </div>
-    </aside>
+      </section>
 
-    <main class="center">
-
-      <div class="content-box ascii-box">
-        <pre class="ascii-figure" aria-hidden="true">⠀⠀⠀⠀⠀⠀⠀⠀⢰⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡶⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⢿⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠀⠀⠀⠀⠀⢀⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢧⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠀⠀⠀⠀⠀⡼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡼⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠀⠀⠀⠀⢰⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢧⠀⠀⠀⠀⢰⡆⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠀⠀⠀⢀⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣇⠀⠀⠀⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠀⠀⠀⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⡄⠀⢀⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⡀⠀⠀⠀⢀⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣧⠀⣸⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣄⠀⠀⣸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣤⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠘⢧⡀⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣠⣤⣤⣤⣤⣤⣤⣦⣦⣤⣤⣤⣤⣤⣀⣀⡀⠀⠈⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⡠⠤⢶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣿⣤⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡾⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣴⣶⣿⡇⠀⠀⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⡀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⡟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⡀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣠⣴⡞⠉⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⣿⣿⠃⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣄⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠤⠖⠋⠁⢸⣿⣇⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⡟⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠻⣇⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡤⠖⠉⠀⠀⠀⠀⠀⠀⣿⣿⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⠁⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠔⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⠀⢸⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⢹⣿⣿⣇⣀⣀⣀⣀⣀⣹⣿⣿⣿⣿⣿⣿⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⠀⠀⠀⠀⠀⣀⡤⢲⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡀⢸⣿⢸⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⢀⣠⣾⣿⣿⠿⠿⠿⠿⠛⠛⠛⢿⣿⢿⣿⣿⣿⡇⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⡄⠀⣠⣴⡿⠁⠀⠈⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠘⣿⠈⣿⣿⣿⠿⢿⣿⣿⣿⡇⠀⠀⠠⠞⠛⠉⠀⠛⠁⠀⠀⠀⠀⠀⠀⠀⠘⣿⢸⣿⣿⣿⡇⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢹⣿⣿⣿⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣿⣿⣿⣿⣧⣶⣾⣿⣿⣿⡿⠿⣿⣷⣶⣦⣄⡀⠀⠀⠀⠀⠀⢿⡇⠀⣿⠀⢻⣿⡇⠀⠀⠉⠻⣿⡇⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⠘⣿⣿⣿⠇⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⢿⣿⡇⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⢾⣿⣿⣿⣿⣿⣿⡏⠉⠀⠀⠈⣿⡇⠀⠀⠀⠀⠈⠉⠛⠦⠀⠀⠀⠀⠘⠀⠀⠈⠀⠈⣿⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⢀⡴⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠟⠁⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀⠸⣿⡇⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠋⣠⢾⣿⣿⠋⠈⠉⠉⠁⠀⠀⠀⠀⠘⠇⠀⠠⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⣠⣴⣾⢟⣛⠭⠭⠭⢝⡻⢿⣷⣦⣄⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⡿⠀⠀⠀⣿⠁⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣿⠀⠞⠁⠀⠿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⡵⢋⡴⠉⣄⠀⠀⠀⠀⠈⠳⡙⢿⣷⡀⠀⠀⠀⠀⠀⣿⣿⣿⣿⢿⣿⣿⣿⡇⠀⠀⠀⠈⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⠶⢞⣛⣛⣛⣻⠷⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠎⠀⡼⠁⡀⠈⢠⣶⡄⠀⠀⠀⡇⠈⣿⣷⡄⠀⠀⠀⠀⣿⣿⣿⠃⠀⠉⢻⡿⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⢠⣴⡿⠋⡱⠚⢅⠀⠀⠀⠀⠉⢢⡉⠲⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠘⠻⠃⠀⠀⠀⡇⠀⢸⡿⠃⠀⠀⠀⠀⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⢐⣽⡿⠁⢸⠁⣀⠀⠀⣤⣤⠀⠀⠀⢳⠀⠈⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠱⡄⠀⠀⠀⠀⠀⠀⠀⣰⠃⣠⡄⠀⠀⠀⠀⠀⢰⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢾⣿⣿⣿⡿⠛⠈⠉⠀⠀⠀⠀⠀⣾⣿⠁⠀⢰⠀⠀⠀⠀⠻⠟⠀⠀⠀⢸⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠈⠓⠤⠄⣀⡠⠤⣞⣥⡾⠟⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡼⠃⠈⢿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀⠘⢆⠀⠀⠀⠀⠀⠀⠀⢠⠎⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠓⠒⠒⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠞⠀⠀⢀⠘⢿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠈⠑⠦⣄⣀⣀⡤⠞⢁⡠⢢⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⠋⠀⠀⠀⢠⠁⡌⢿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣒⡢⠤⣤⣤⠤⠴⠒⠉⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠃⠀⠀⠀⠀⡎⢸⠁⠀⠙⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⡁⠀⠀⠀⠀⠀⠀⠰⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠹⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⣿⣿⣿⣷⣄⠀⠀⠀⠀⡀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠁⢿⣿⣿⣿⣿⣷⣦⣀⠀⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠁⠀⠈⢿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠁⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣴⣶⣶⣶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠤⢤⠀⠀⠒⠓⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠁⠀⠀⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⣰⠃⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⠀⠀⠀⠀⣰⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⠀⠀⠀⢰⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⠇⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠒⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⠀⠀⢠⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⠀⠀⠹⣿⣿⣿⣿⣿⣿⣷⠹⣿⣿⣿⣿⣿⣧⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⠀⢠⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⠟⠋⠛⢿⣿⡄⢹⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿
-⣿⣿⠀⠀⠀⢀⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠇⠀⠻⠏⠀⠈⠙⠿⠿⢿⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡤⠚⠁⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿</pre>
-      </div>
-
-      <div class="content-box">
-        <h2>about me</h2>
-        <p class="center"><span class="red">◆</span> grave.rest <span class="red">◆</span> est. 2024 <span class="red">◆</span></p>
-        <p style="text-align:center;margin-top:14px">
-          <span class="pink" style="font-size:20px">@0_032</span>
-          <br>
-          <span style="color:#8a7a78;font-size:14px">on discord</span>
-        </p>
-      </div>
-
-      <div class="marquee">
-        <span>
-          <span class="blink">◆</span> you were not supposed to find this <span class="blink">◆</span> hello. hello. hello. hello. <span class="blink">◆</span> the wired is everywhere <span class="blink">◆</span> close your eyes <span class="blink">◆</span>
-        </span>
-      </div>
-
-    </main>
-
-    <aside class="side">
-      <div class="box">
-        <span class="box-title">recent</span>
-        <div class="box-text">
-          <span class="k">10/14</span> landing<br>
-          <span class="k">10/14</span> 5-level game<br>
-          <span class="k">10/14</span> 34 tools
-        </div>
-      </div>
-      <div class="box">
-        <span class="box-title">silence</span>
-        <div class="box-text">
-          <span class="m">no audio.<br>no music.<br>just the hum.</span>
-        </div>
-      </div>
-      <div class="box">
-        <span class="box-title">theme</span>
-        <div class="box-text">
-          <button id="themeToggle" style="background:none;border:1px solid #ff2e63;color:#ff2e63;font-family:inherit;font-size:13px;padding:3px 8px;cursor:pointer;letter-spacing:1px">[ dark ]</button>
-        </div>
-      </div>
-    </aside>
-
-  </div>
-
-  <div class="statusbar">
-    <span><a href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">@0_032</a></span>
-    <span class="dim">est. 2024</span>
-  </div>
-
-</div>
-
-<div class="overlay" id="ov-about"><div class="overlay-inner">
-  <button class="overlay-close" data-close>×</button>
-  <h2>about</h2>
-  <p>grave.rest is a personal site. no company, no mission, no roadmap.</p>
-  <p>i made it because the internet is boring now and i wanted one place that didn't feel like a product. tools are free, nothing is tracked, nothing leaves your browser.</p>
-  <p>say hi at <a href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">@0_032</a>.</p>
-</div></div>
-
-<div class="overlay" id="ov-links"><div class="overlay-inner">
-  <button class="overlay-close" data-close>×</button>
-  <h2>links</h2>
-  <p>the only link i'll give you:</p>
-  <p style="font-size:24px;text-align:center"><a href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">@0_032</a></p>
-</div></div>
-
-<div class="overlay" id="ov-graveyard"><div class="overlay-inner">
-  <button class="overlay-close" data-close>×</button>
-  <h2>graveyard</h2>
-  <p><span style="color:#ff8ab0">nothing yet</span> — 2026 — the first thing to die here will be a project i actually cared about. this space is reserved.</p>
-</div></div>
-
-<div class="overlay" id="ov-log"><div class="overlay-inner">
-  <button class="overlay-close" data-close>×</button>
-  <h2>log</h2>
-  <p><span style="color:#ff8ab0">2026-10-14</span> — built the landing.</p>
-  <p><span style="color:#ff8ab0">2026-10-14</span> — added a game. five levels. it works.</p>
-</div></div>
-
-<div class="overlay" id="ov-now"><div class="overlay-inner">
-  <button class="overlay-close" data-close>×</button>
-  <h2>now</h2>
-  <p>working on grave.rest. adding tools nobody asked for. drinking coffee. it's late.</p>
-  <p style="color:#8a7a78">last updated: 2026-10-14</p>
-</div></div>
-
-<div class="overlay" id="ov-stats"><div class="overlay-inner">
-  <button class="overlay-close" data-close>×</button>
-  <h2>stats</h2>
-  <p>visits: <span style="color:#ff8ab0" id="stVisits">—</span></p>
-  <p>visitor id: <span style="color:#ff8ab0" id="stVisitor">—</span></p>
-  <p>session: <span style="color:#ff8ab0" id="stSession">—</span></p>
-  <p>theme: <span style="color:#ff8ab0" id="stTheme">—</span></p>
-</div></div>
-
-<div class="tools-panel" id="toolsPanel">
-  <div class="tools-wrap">
-    <div class="lain-eye"></div>
-    <div class="lain-ghost g1">⣀⡤⢤⣤⣤⣄</div>
-    <div class="lain-ghost g2">⣶⣧⣐⠍⢙⣀</div>
-    <div class="lain-ghost g3">⡀⠀⠉⠙⠻⣿</div>
-    <div class="lain-wire"></div>
-    <button class="overlay-close" data-close-tools>×</button>
-    <h2>tools</h2>
-    <div class="tools-body">
-      <aside id="sidebar" class="sidebar"></aside>
-      <main id="stage" class="stage">
-        <div id="crumb" class="crumb">grave.rest <span class="slash">/</span> tools</div>
-      </main>
+      <section class="pane prose" id="who">
+        <h2>subject: you</h2>
+        <p>this isn't a product page. nothing here converts, nothing here funnels, nothing here wants your email. it's a room with the lights off and the machines on.</p>
+        <p>every tool runs entirely in your browser. no accounts, no analytics, no server watching you type. when you close the tab, it's like you were never here.</p>
+        <p class="q">"no matter where you are, everyone is always connected."<span>— but you can still be unreachable. that's what this place is.</span></p>
+      </section>
     </div>
-  </div>
+
+    <section class="slab" id="dead">
+      <h3>graveyard</h3>
+      <p>reserved for the projects that die here. every personal site has one — most just pretend they don't. the first burial hasn't happened yet. it will.</p>
+      <p>status: <span style="color:var(--rot)">empty</span> · waiting for the first body</p>
+    </section>
+
+    <section class="slab" style="border-color:var(--line)">
+      <h3>contact</h3>
+      <p>one channel. discord. if you found this site, you already know how to use it.</p>
+      <a class="btn" href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">OPEN CHANNEL — @0_032</a>
+    </section>
+
+    <div class="strip">
+      <span>grave.rest — close the world, .txnT the nEXT</span>
+      <span><a href="game.html">game</a> · <a href="https://discord.com/users/0_032">@0_032</a> · est. 2024</span>
+    </div>
+  </main>
 </div>
 
-<div class="ticker" aria-hidden="true">
-  <div class="ticker-track">
-    <span>present day. present time. hahahaha. · you don't seem to understand. · no matter where you go, everyone's connected. · i am not here. · close your eyes. · the wired is everywhere. · i don't want to die. · </span>
-    <span>present day. present time. hahahaha. · you don't seem to understand. · no matter where you go, everyone's connected. · i am not here. · close your eyes. · the wired is everywhere. · i don't want to die. · </span>
-  </div>
-</div>
+<script>
+/* ===== BIOS boot ===== */
+const bios = document.getElementById("bios");
+const lines = [
+  "GRAVE BIOS v0.32 — OmniPresence", "",
+  "cpu ......... human, overworked        <span class='b'>[OK]</span>",
+  "memory ...... selectively failing      <span class='b'>[OK]</span>",
+  "wired link .. layer 07 handshake       <span class='b'>[OK]</span>",
+  "protocol .... legacy schumann          <span class='b'>[OK]</span>",
+  "injection ... denied. nice try.        <span class='b'>[!!]</span>", "",
+  "present day, present time. hahahaha.", "",
+  "loading grave.rest ..."
+];
+let li = 0;
+(function pump() {
+  if (li < lines.length) { bios.innerHTML = lines.slice(0, ++li).join("\n"); setTimeout(pump, 130); }
+  else setTimeout(() => { bios.classList.add("fade"); setTimeout(() => bios.remove(), 800); }, 750);
+})();
 
-<script src="app.js"></script>
-<script src="tools.js"></script><script>document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('[data-open="tools"]');if(a){setTimeout(function(){document.dispatchEvent(new CustomEvent("grave:tools-open"))},60)}});</script>
+/* ===== typed subtitle ===== */
+const SUBS = ["you don't seem to understand.", "i am not here.", "the wired is everywhere.", "everything is connected.", "you weren't supposed to find this."];
+const typed = document.getElementById("typed");
+let si = 0, ch = 0, del = false;
+(function typeLoop() {
+  const s = SUBS[si];
+  typed.textContent = s.slice(0, ch);
+  if (!del && ch < s.length) { ch++; setTimeout(typeLoop, 55); }
+  else if (!del) { del = true; setTimeout(typeLoop, 2600); }
+  else if (ch > 0) { ch--; setTimeout(typeLoop, 22); }
+  else { del = false; si = (si + 1) % SUBS.length; setTimeout(typeLoop, 400); }
+})();
+
+/* ===== clock ===== */
+setInterval(() => document.getElementById("clk").textContent = new Date().toLocaleTimeString("en-GB"), 1000);
+
+/* ===== tools as a unix file listing — EDIT HERE ===== */
+const TOOLS = [
+  ["snow",   "discord snowflake decoder",        "4k"],
+  ["base64", "encoder / decoder, no upload",     "2k"],
+  ["hash",   "md5 · sha1 · sha256 in-browser",   "3k"],
+  ["jwt",    "token inspector",                  "6k"],
+  ["regex",  "regex tester with live matches",   "5k"],
+  ["colors", "hex / rgb / oklch converter",      "2k"],
+];
+const ICON = { d: "drwx", x: "-rwx" };
+document.getElementById("files").innerHTML = TOOLS.map(([n, d, s]) => `
+  <a class="file" href="#">
+    <span class="perm">${ICON.x}</span>
+    <span><span class="nm">${n}</span> <span style="font-size:.72rem">— ${d}</span></span>
+    <span class="sz">${s}</span>
+  </a>`).join("");
+
+/* ===== random glitch pulses ===== */
+const g = document.getElementById("glitch");
+setInterval(() => {
+  if (Math.random() < .18) {
+    g.classList.add("on");
+    setTimeout(() => g.classList.remove("on"), 90 + Math.random() * 120);
+  }
+}, 4000);
+</script>
 </body>
 </html>
-
