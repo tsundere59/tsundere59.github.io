@@ -6,7 +6,6 @@
 <title>doomsday</title>
 <style>
     * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
-
     html, body {
         background: #050506;
         color: #e8e4df;
@@ -18,8 +17,6 @@
         overflow-x: hidden;
         cursor: none;
     }
-
-    /* VHS grain overlay */
     body::before {
         content: '';
         position: fixed;
@@ -36,8 +33,6 @@
         50%  { transform: translate(-3px, 2px); }
         100% { transform: translate(2px, -2px); }
     }
-
-    /* chromatic aberration */
     body::after {
         content: '';
         position: fixed;
@@ -46,40 +41,60 @@
         pointer-events: none;
         opacity: 0.06;
         background: linear-gradient(90deg,
-            rgba(255, 0, 90, 0.4) 0%,
-            transparent 2%,
-            transparent 98%,
-            rgba(0, 200, 255, 0.4) 100%);
+            rgba(255,0,90,0.4) 0%, transparent 2%, transparent 98%, rgba(0,200,255,0.4) 100%);
         animation: chroma 3.4s ease-in-out infinite;
     }
     @keyframes chroma {
-        0%, 100% { opacity: 0.05; }
-        50%      { opacity: 0.12; }
+        0%,100% { opacity: 0.05; }
+        50%     { opacity: 0.12; }
+    }
+    body.wired {
+        background: #000;
+    }
+    body.wired::after { opacity: 0.25; }
+    body.grayscale {
+        filter: grayscale(100%);
     }
 
-    /* custom cursor */
+    /* hidden text — invisible in the dom, revealed only by ctrl+a */
+    .hidden-msg {
+        position: fixed;
+        left: -9999px;
+        color: rgba(255,255,255,0);
+        font-size: 1px;
+        pointer-events: none;
+        user-select: text !important;
+    }
+
     #cursor {
         position: fixed;
         top: 0; left: 0;
-        width: 10px;
-        height: 10px;
+        width: 10px; height: 10px;
         background: #ff2e63;
-        box-shadow: 0 0 8px rgba(255, 46, 99, 0.9),
-                    0 0 16px rgba(255, 46, 99, 0.4);
+        box-shadow: 0 0 8px rgba(255,46,99,0.9), 0 0 16px rgba(255,46,99,0.4);
         pointer-events: none;
         z-index: 10000;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%,-50%);
         will-change: transform;
     }
 
-    /* random eyes */
+    /* eyes */
     .eye {
-        width: 22px;
-        height: 12px;
+        width: 22px; height: 12px;
         background: #000;
         border-radius: 50%;
-        box-shadow: 0 0 6px rgba(0,0,0,0.9),
-                    inset 0 0 4px rgba(20,20,20,0.8);
+        box-shadow: 0 0 6px rgba(0,0,0,0.9), inset 0 0 4px rgba(20,20,20,0.8);
+        position: relative;
+        overflow: hidden;
+    }
+    .eye .pupil {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 6px; height: 6px;
+        background: #1a0000;
+        border-radius: 50%;
+        transform: translate(-50%,-50%);
+        transition: transform 0.15s ease-out;
     }
     .eye-pair {
         position: fixed;
@@ -88,15 +103,45 @@
         display: flex;
         gap: 16px;
         opacity: 0;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%,-50%);
         transition: opacity 0.1s ease;
     }
     .eye-pair.show { opacity: 0.95; }
+    .eye-pair.blink .eye {
+        animation: eyeBlink 0.35s ease-out;
+    }
+    @keyframes eyeBlink {
+        0%   { height: 12px; }
+        40%  { height: 2px; }
+        60%  { height: 2px; }
+        100% { height: 12px; }
+    }
+
+    /* full-screen eye flash (2003 page + random) */
+    .eye-flash {
+        position: fixed;
+        z-index: 9999;
+        pointer-events: none;
+        width: 46px; height: 46px;
+        background: radial-gradient(circle at 50% 50%,
+            #000 0%, #000 28%, #8b0000 32%, #8b0000 44%,
+            #fff 48%, #fff 52%, #000 56%, #000 100%);
+        border-radius: 50%;
+        box-shadow: 0 0 20px rgba(0,0,0,0.9);
+        transform: translate(-50%,-50%) scale(0);
+        opacity: 0;
+    }
+    .eye-flash.show { animation: eyePulse 0.55s ease-out forwards; }
+    @keyframes eyePulse {
+        0%   { transform: translate(-50%,-50%) scale(0.2); opacity: 0; }
+        20%  { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
+        60%  { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
+        100% { transform: translate(-50%,-50%) scale(1.4); opacity: 0; }
+    }
 
     /* boot */
     #boot {
-        position: fixed;
-        inset: 0;
+        position: fixed; inset: 0;
         background: #050506;
         z-index: 100;
         padding: 48px 56px;
@@ -111,16 +156,15 @@
     #boot .line.show { opacity: 1; }
     #boot .ok   { color: #ff2e63; }
     #boot .warn { color: #8b8580; }
+    #boot .err  { color: #8b0000; }
     #boot .cursor {
         display: inline-block;
-        width: 8px;
-        height: 14px;
+        width: 8px; height: 14px;
         background: #ff2e63;
         vertical-align: -3px;
         animation: blink 1s steps(2) infinite;
     }
     @keyframes blink { 50% { opacity: 0; } }
-
     #boot.collapsing { pointer-events: none; }
     #boot.collapsing .line {
         display: inline-block;
@@ -128,15 +172,13 @@
     }
     @keyframes shatter {
         0%   { transform: translateY(0) rotate(0deg); opacity: 1; filter: blur(0px); }
-        15%  { transform: translateY(2px) rotate(0.5deg); opacity: 1; filter: blur(0px); }
+        15%  { transform: translateY(2px) rotate(0.5deg); opacity: 1; }
         55%  { transform: translateY(80px) rotate(-1deg); opacity: 0.85; filter: blur(0.5px); }
         100% { transform: translateY(340px) rotate(-4deg); opacity: 0; filter: blur(3px); }
     }
 
-    /* collapse */
     #collapse {
-        position: fixed;
-        inset: 0;
+        position: fixed; inset: 0;
         z-index: 150;
         pointer-events: none;
         display: none;
@@ -145,37 +187,28 @@
     }
     #collapse.active { display: block; }
     .band {
-        position: absolute;
-        top: 0;
-        height: 100%;
+        position: absolute; top: 0; height: 100%;
         background: #050506;
         border-right: 1px solid #0a0508;
         will-change: transform, opacity;
     }
 
-    /* main */
     #main {
         opacity: 0;
         transform: translateY(40px);
-    }
-    #main.show {
-        opacity: 1;
-        transform: translateY(0);
         transition: opacity 1.6s ease, transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
+    #main.show { opacity: 1; transform: translateY(0); }
 
+    /* scan sweep */
     .scan {
-        position: fixed;
-        left: 0; right: 0;
+        position: fixed; left: 0; right: 0;
         height: 3px;
         background: linear-gradient(to right,
-            transparent 0%,
-            rgba(255, 46, 99, 0.5) 20%,
-            rgba(255, 255, 255, 0.3) 50%,
-            rgba(255, 46, 99, 0.5) 80%,
-            transparent 100%);
-        z-index: 90;
-        pointer-events: none;
+            transparent 0%, rgba(255,46,99,0.5) 20%,
+            rgba(255,255,255,0.3) 50%,
+            rgba(255,46,99,0.5) 80%, transparent 100%);
+        z-index: 90; pointer-events: none;
         animation: sweep 11s ease-in-out infinite;
         filter: blur(0.5px);
     }
@@ -192,16 +225,14 @@
         z-index: 89;
         pointer-events: none;
         border-radius: 50%;
-        box-shadow: 0 0 10px rgba(255, 179, 193, 0.8),
-                    0 0 20px rgba(255, 46, 99, 0.4);
+        box-shadow: 0 0 10px rgba(255,179,193,0.8), 0 0 20px rgba(255,46,99,0.4);
         transition: opacity 0.7s ease, transform 0.7s ease;
         will-change: transform, opacity;
     }
 
     .bg-nums {
         position: fixed; inset: 0;
-        z-index: 0;
-        pointer-events: none;
+        z-index: 0; pointer-events: none;
         overflow: hidden;
         opacity: 0.05;
         font-size: 10px; line-height: 1.5;
@@ -225,11 +256,12 @@
     .corner.tr { top: 16px; right: 20px; }
     .corner.bl { bottom: 16px; left: 20px; }
     .corner.br { bottom: 16px; right: 20px; }
+    .corner.clickable { pointer-events: auto; cursor: none; }
+    .corner.clickable:hover { color: #ff2e63; }
 
     .clock {
         position: fixed;
-        top: 16px;
-        left: 50%;
+        top: 16px; left: 50%;
         transform: translateX(-50%);
         color: #8b8580;
         font-size: 11px;
@@ -237,6 +269,41 @@
         z-index: 50;
         opacity: 0.7;
         font-family: Arial, Helvetica, sans-serif;
+    }
+    .hb {
+        position: fixed;
+        top: 40px; left: 50%;
+        transform: translateX(-50%);
+        color: #6a6560;
+        font-size: 10px;
+        letter-spacing: 2px;
+        z-index: 50;
+        opacity: 0.6;
+        font-family: 'Courier New', monospace;
+    }
+    .hb.disc { color: #8b0000; }
+
+    /* wire */
+    .wire {
+        position: fixed;
+        z-index: 1;
+        pointer-events: none;
+        background: #8b0000;
+        opacity: 0.25;
+    }
+
+    /* countdown */
+    .countdown {
+        position: fixed;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #6a6560;
+        font-size: 10px;
+        letter-spacing: 3px;
+        opacity: 0.5;
+        z-index: 50;
+        font-family: 'Courier New', monospace;
     }
 
     /* layout */
@@ -246,7 +313,6 @@
         max-width: 720px;
         margin: 0 auto;
         padding: 128px 56px 80px;
-        background: transparent;
     }
 
     header { margin-bottom: 80px; }
@@ -263,37 +329,22 @@
         transform: translateY(10px);
         flex-wrap: wrap;
     }
-    .wordmark.show {
-        opacity: 1;
-        transform: translateY(0);
-        transition: opacity 1s ease, transform 1s ease;
-    }
+    .wordmark.show { opacity: 1; transform: translateY(0); transition: opacity 1s ease, transform 1s ease; }
     .wordmark .brand {
         font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
         color: #ff2e63;
         text-shadow: 2px 2px 0 #ffb3c1, -1px -1px 0 #8b0000;
     }
-    .wordmark .slash  {
-        color: #8b8580;
-        font-weight: 400;
-        margin: 0 10px;
-        font-family: 'Courier New', monospace;
-    }
-    .wordmark .accent {
-        font-family: 'Courier New', monospace;
-        color: #ff2e63;
-        font-size: 0.72em;
-        letter-spacing: 0;
-    }
+    .wordmark .slash { color: #8b8580; font-weight: 400; margin: 0 10px; font-family: 'Courier New', monospace; }
+    .wordmark .accent { font-family: 'Courier New', monospace; color: #ff2e63; font-size: 0.72em; letter-spacing: 0; }
     .wordmark .cursor {
         display: inline-block;
-        width: 20px;
-        height: 48px;
+        width: 20px; height: 48px;
         background: #ffb3c1;
         margin-left: 14px;
         vertical-align: -8px;
         animation: blink 1.1s steps(2) infinite;
-        box-shadow: 0 0 14px rgba(255, 179, 193, 0.6);
+        box-shadow: 0 0 14px rgba(255,179,193,0.6);
     }
 
     .quote {
@@ -312,6 +363,16 @@
     .quote .word { display: inline-block; opacity: 0; animation: wordIn 0.5s forwards; }
     @keyframes wordIn { to { opacity: 1; } }
 
+    .visitor-note {
+        margin-top: 22px;
+        font-size: 12px;
+        color: #6a6560;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 1px;
+        min-height: 18px;
+        opacity: 0.7;
+    }
+
     section { margin-bottom: 60px; }
 
     .label {
@@ -327,25 +388,11 @@
         transform: translateX(-6px);
         font-family: Arial, Helvetica, sans-serif;
     }
-    .label.show {
-        opacity: 1;
-        transform: translateX(0);
-        transition: opacity 0.6s ease, transform 0.6s ease;
-    }
+    .label.show { opacity: 1; transform: translateX(0); transition: opacity 0.6s ease, transform 0.6s ease; }
     .label .jp { color: #6a6560; font-size: 14px; letter-spacing: 2px; font-weight: 400; }
-    .label::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: #1a1518;
-        transform: translateY(-4px);
-    }
+    .label::after { content: ''; flex: 1; height: 1px; background: #1a1518; transform: translateY(-4px); }
 
-    .grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0;
-    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
     @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
 
     .tile {
@@ -361,34 +408,20 @@
         transform: translateX(-8px);
         transition: opacity 0.6s ease, transform 0.6s ease, background 0.2s;
         position: relative;
+        cursor: none;
     }
     .tile.show { opacity: 1; transform: translateX(0); }
-
     .tile.wrong .t-name { color: #4a4442; }
     .tile.wrong .t-desc { color: #22201e; }
-
-    .t-num {
-        font-size: 10px;
-        color: #6a6560;
-        font-weight: 700;
-        letter-spacing: 1px;
-        width: 24px;
-        font-family: Arial, sans-serif;
-    }
+    .t-num { font-size: 10px; color: #6a6560; font-weight: 700; letter-spacing: 1px; width: 24px; font-family: Arial, sans-serif; }
     .t-main { display: flex; flex-direction: column; gap: 2px; }
-    .t-name {
-        font-size: 14px;
-        color: #e8e4df;
-        font-weight: 700;
-        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
-    }
+    .t-name { font-size: 14px; color: #e8e4df; font-weight: 700; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; }
     .t-desc { font-size: 11px; color: #8b8580; font-family: 'Courier New', monospace; }
-    .t-jp   { font-size: 12px; color: #6a6560; letter-spacing: 2px; }
-
-    .tile:hover { background: rgba(255, 179, 193, 0.05); }
-    .tile:hover .t-name { color: #ffb3c1; text-shadow: 0 0 8px rgba(255, 179, 193, 0.5); }
+    .t-jp { font-size: 12px; color: #6a6560; letter-spacing: 2px; }
+    .tile:hover { background: rgba(255,179,193,0.05); }
+    .tile:hover .t-name { color: #ffb3c1; text-shadow: 0 0 8px rgba(255,179,193,0.5); }
     .tile:hover .t-desc { color: #b8b0a8; }
-    .tile:hover .t-jp   { color: #ff2e63; }
+    .tile:hover .t-jp { color: #ff2e63; }
 
     footer {
         margin-top: 100px;
@@ -406,9 +439,434 @@
     }
     footer.show { opacity: 1; }
 
+    /* ═════════════════════════════════════════════════
+       TOOLS — 2003 PORTAL
+       ═════════════════════════════════════════════════ */
+    .portal {
+        background: #c0c0c0;
+        color: #000;
+        font-family: 'Times New Roman', Times, serif;
+        min-height: 100vh;
+        padding: 0;
+    }
+    .portal .p-header {
+        background: linear-gradient(180deg, #000080 0%, #0000c0 50%, #000080 100%);
+        color: #fff;
+        text-align: center;
+        padding: 14px 10px;
+        border-bottom: 3px solid #fff;
+    }
+    .portal .p-header h1 {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 26px;
+        margin: 0;
+        color: #ffff00;
+        text-shadow: 2px 2px 0 #000, -1px -1px 0 #ff00ff;
+        letter-spacing: 1px;
+    }
+    .portal .p-header .sub { font-size: 12px; color: #ffff00; margin-top: 4px; }
+    .blink { animation: blinkY 1s steps(2) infinite; color: #ff0000; font-weight: bold; text-shadow: 1px 1px 0 #fff; }
+    @keyframes blinkY { 50% { opacity: 0; } }
+
+    .portal .p-nav {
+        background: #e0e0e0;
+        text-align: center;
+        padding: 8px 0;
+        border-bottom: 2px ridge #808080;
+        font-size: 14px;
+    }
+    .portal .p-nav a { color: #0000ee; text-decoration: underline; margin: 0 12px; font-family: Arial, sans-serif; cursor: none; }
+    .portal .p-nav a:visited { color: #551a8b; }
+    .portal .p-nav a:hover { color: #ff0000; }
+
+    .portal .p-marquee {
+        background: #000;
+        color: #00ff00;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        padding: 6px 0;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .portal .p-marquee span {
+        display: inline-block;
+        padding-left: 100%;
+        animation: scrollLeft 22s linear infinite;
+    }
+    @keyframes scrollLeft {
+        0%   { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+
+    .portal .p-content { max-width: 820px; margin: 20px auto; padding: 0 20px; }
+
+    .portal .tool {
+        background: #fff;
+        border: 3px ridge #808080;
+        padding: 16px 20px;
+        margin-bottom: 20px;
+    }
+    .portal .tool h2 {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: #cc0000;
+        font-size: 20px;
+        margin: 0 0 4px 0;
+        text-align: center;
+        text-decoration: underline;
+    }
+    .portal .tool h2 .sparkle { color: #ff00ff; font-weight: normal; }
+    .portal .tool .desc { color: #666; font-size: 12px; text-align: center; margin-bottom: 12px; font-style: italic; }
+    .portal .tool .row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .portal .tool label { font-family: Arial, sans-serif; font-size: 13px; color: #000; min-width: 90px; }
+    .portal .tool input[type="text"], .portal .tool textarea, .portal .tool select {
+        flex: 1;
+        min-width: 200px;
+        border: 2px inset #c0c0c0;
+        background: #fff;
+        color: #000;
+        padding: 4px 6px;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        outline: none;
+    }
+    .portal .tool button {
+        background: linear-gradient(180deg, #f0f0f0 0%, #d0d0d0 50%, #b0b0b0 100%);
+        border: 2px outset #c0c0c0;
+        color: #000;
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        padding: 6px 18px;
+        cursor: none;
+        font-weight: bold;
+    }
+    .portal .tool button:hover { background: linear-gradient(180deg, #ffffb0 0%, #ffe060 50%, #ffb000 100%); }
+    .portal .tool button:active { border-style: inset; }
+    .portal .tool .out {
+        background: #fffbe0;
+        border: 1px solid #999;
+        padding: 10px 14px;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        min-height: 22px;
+        margin-top: 10px;
+        color: #000;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .portal .tool .out .miss { color: #8b0000; font-style: italic; }
+    .portal .tool .out .ok   { color: #006400; }
+
+    .portal footer {
+        text-align: center;
+        background: #e0e0e0;
+        border-top: 2px ridge #808080;
+        padding: 16px;
+        font-size: 11px;
+        color: #333;
+        font-family: Arial, sans-serif;
+        margin-top: 40px;
+        display: block;
+        opacity: 1;
+    }
+    .portal .badge {
+        display: inline-block;
+        border: 1px solid #000;
+        background: #000;
+        color: #00ff00;
+        padding: 2px 6px;
+        font-family: 'Courier New', monospace;
+        font-size: 10px;
+        margin: 0 4px;
+    }
+
+    /* ═════════════════════════════════════════════════
+       PAGE: VOID
+       ═════════════════════════════════════════════════ */
+    .void-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+    }
+    .void-page .void-text {
+        color: #ff2e63;
+        font-family: 'Courier New', monospace;
+        font-size: 15px;
+        letter-spacing: 4px;
+        text-align: center;
+        opacity: 0;
+        animation: voidIn 3s ease forwards;
+    }
+    @keyframes voidIn { to { opacity: 1; } }
+
+    /* PAGE: UNCLAIMED */
+    .unclaimed-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #0a0a0a;
+        filter: grayscale(100%);
+    }
+    .unclaimed-page .u-line {
+        color: #d4d4d4;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        letter-spacing: 2px;
+        margin-bottom: 24px;
+    }
+    .unclaimed-page .u-sub {
+        color: #6a6560;
+        font-size: 11px;
+        letter-spacing: 3px;
+    }
+
+    /* PAGE: LOCATE */
+    .locate-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #050506;
+    }
+    .locate-page .l-title {
+        color: #ff2e63;
+        font-size: 22px;
+        letter-spacing: 6px;
+        margin-bottom: 24px;
+        font-family: 'Courier New', monospace;
+    }
+    .locate-page .l-line {
+        color: #b8b0a8;
+        font-size: 13px;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        font-family: 'Courier New', monospace;
+    }
+    .locate-page .l-time {
+        color: #ff2e63;
+    }
+
+    /* PAGE: THEM */
+    .them-page {
+        min-height: 100vh;
+        padding: 60px 40px;
+        font-family: 'Courier New', monospace;
+        background: #050506;
+    }
+    .them-page .file {
+        color: #b8b0a8;
+        font-size: 13px;
+        line-height: 2;
+        letter-spacing: 1px;
+    }
+    .them-page .file .dim { color: #4a4442; }
+    .them-page .file .red { color: #8b0000; }
+
+    /* PAGE: GUESTBOOK */
+    .gb-page {
+        min-height: 100vh;
+        background: #050506;
+        padding: 80px 40px;
+        font-family: 'Courier New', monospace;
+    }
+    .gb-page .gb-title {
+        color: #ff2e63;
+        font-size: 28px;
+        letter-spacing: 4px;
+        margin-bottom: 8px;
+    }
+    .gb-page .gb-sub {
+        color: #6a6560;
+        font-size: 11px;
+        letter-spacing: 3px;
+        margin-bottom: 40px;
+    }
+    .gb-page .entry {
+        padding: 16px 20px;
+        border-left: 2px solid #8b0000;
+        margin-bottom: 20px;
+        background: #0a0508;
+    }
+    .gb-page .entry .e-meta {
+        color: #4a4442;
+        font-size: 10px;
+        letter-spacing: 2px;
+        margin-bottom: 6px;
+    }
+    .gb-page .entry .e-handle {
+        color: #ff2e63;
+        margin-right: 12px;
+    }
+    .gb-page .entry .e-body {
+        color: #b8b0a8;
+        font-size: 12px;
+        line-height: 1.7;
+        font-family: Georgia, serif;
+        font-style: italic;
+    }
+    .gb-page .entry.today .e-meta { color: #8b0000; }
+    .gb-page .entry.today .e-body { color: #e8e4df; }
+    .gb-page .entry.oldest { border-left-color: #4a4442; opacity: 0.6; }
+    .gb-page .sign-form {
+        margin-top: 40px;
+        padding-top: 24px;
+        border-top: 1px solid #14100e;
+    }
+    .gb-page .sign-form label {
+        color: #6a6560;
+        font-size: 11px;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 6px;
+    }
+    .gb-page .sign-form input, .gb-page .sign-form textarea {
+        width: 100%;
+        background: #0a0508;
+        border: 1px solid #1a1518;
+        color: #e8e4df;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        padding: 10px;
+        margin-bottom: 14px;
+        outline: none;
+        resize: vertical;
+    }
+    .gb-page .sign-form input:focus, .gb-page .sign-form textarea:focus {
+        border-color: #ff2e63;
+    }
+    .gb-page .sign-form button {
+        background: #8b0000;
+        border: 1px solid #ff2e63;
+        color: #fff;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        padding: 10px 22px;
+        cursor: none;
+    }
+    .gb-page .sign-form button:hover { background: #ff2e63; color: #050506; }
+
+    .center-nav {
+        text-align: center;
+        padding: 40px 0;
+        color: #6a6560;
+        font-size: 11px;
+        letter-spacing: 3px;
+        font-family: 'Courier New', monospace;
+    }
+    .center-nav a {
+        color: #8b0000;
+        text-decoration: none;
+        cursor: none;
+        margin: 0 12px;
+    }
+    .center-nav a:hover { color: #ff2e63; }
+
+    /* hidden-in-dom text reveal on ctrl+a */
+    ::selection {
+        background: #ff2e63;
+        color: #000;
+    }
+
+    /* 404 */
+    .p404 {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #050506;
+        font-family: 'Courier New', monospace;
+        text-align: center;
+    }
+    .p404 .n { color: #ff2e63; font-size: 88px; letter-spacing: -4px; margin: 0; }
+    .p404 .l1 { color: #b8b0a8; margin-top: 16px; font-size: 13px; letter-spacing: 3px; }
+    .p404 .l2 { color: #6a6560; margin-top: 8px; font-size: 11px; letter-spacing: 4px; font-style: italic; }
+
+    /* sound toggle */
+    .sound-toggle {
+        position: fixed;
+        bottom: 16px; right: 20px;
+        color: #6a6560;
+        font-size: 11px;
+        letter-spacing: 2px;
+        z-index: 60;
+        font-family: Arial, sans-serif;
+        cursor: none;
+        opacity: 0.6;
+    }
+    .sound-toggle:hover { color: #ff2e63; opacity: 1; }
+    .sound-toggle.on { color: #ff2e63; }
+
+    /* visit-note corner */
+    .visit-note {
+        position: fixed;
+        bottom: 16px; left: 20px;
+        color: #4a4442;
+        font-size: 10px;
+        letter-spacing: 2px;
+        z-index: 60;
+        font-family: 'Courier New', monospace;
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    /* "do you want to continue" trap */
+    .trap {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.7);
+    }
+    .trap.active { display: flex; }
+    .trap .box {
+        background: #e0e0e0;
+        border: 3px ridge #808080;
+        color: #000;
+        padding: 24px 32px;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        font-size: 13px;
+    }
+    .trap .box p { margin: 0 0 20px 0; }
+    .trap .box .btn {
+        background: linear-gradient(180deg, #f0f0f0 0%, #d0d0d0 50%, #b0b0b0 100%);
+        border: 2px outset #c0c0c0;
+        color: #000;
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        padding: 6px 18px;
+        margin: 0 8px;
+        cursor: none;
+        font-weight: bold;
+        transition: transform 0.3s ease;
+    }
+    .trap .box .btn:hover { background: linear-gradient(180deg, #ffffb0 0%, #ffe060 50%, #ffb000 100%); }
+
+    /* fade-to-black on exit trap */
+    .fade-black {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        z-index: 8000;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+    .fade-black.active { opacity: 1; pointer-events: auto; }
+
     @media (max-width: 700px) {
         .wrap { padding: 80px 24px 60px; }
         .corner { display: none; }
+        .clock, .hb, .countdown, .sound-toggle, .visit-note { display: none; }
         .wordmark { font-size: 42px; }
         .wordmark .cursor { height: 32px; width: 14px; margin-left: 8px; }
         #boot { padding: 24px 20px; font-size: 11px; }
@@ -417,131 +875,511 @@
 </head>
 <body>
 
+<!-- shared overlays -->
 <div id="cursor"></div>
 <div id="boot"></div>
 <div id="collapse"></div>
 
+<!-- sound toggle -->
+<span class="sound-toggle" id="soundToggle" title="toggle sound">[ ♪ ]</span>
+
+<!-- visit note -->
+<span class="visit-note" id="visitNote"></span>
+
+<!-- fade black overlay for exit trap -->
+<div class="fade-black" id="fadeBlack"></div>
+
+<!-- the trap modal -->
+<div class="trap" id="trap">
+    <div class="box">
+        <p id="trapQuestion">do you want to continue?</p>
+        <button class="btn" id="trapNo1">no</button>
+        <button class="btn" id="trapNo2">no</button>
+    </div>
+</div>
+
+<!-- MAIN APP — swapped via hash routing -->
 <div id="main">
 
-<div class="bg-nums" id="bgNums"></div>
-<div class="scan"></div>
+    <div class="bg-nums" id="bgNums"></div>
+    <div class="scan"></div>
 
-<span class="corner tl">◉ node-01</span>
-<span class="corner tr">doomsday</span>
-<span class="corner bl" id="clock">00:00:00</span>
-<span class="corner br">@0_032 on discord</span>
+    <span class="corner tl">◉ node-0032</span>
+    <span class="corner tr clickable" id="cornerTr">doomsday</span>
+    <span class="corner bl" id="clock">00:00:00</span>
+    <span class="corner br clickable" id="cornerBr">@0_032 on discord</span>
 
-<div class="wrap">
+    <!-- heartbeat -->
+    <div class="hb" id="hb">● connected</div>
 
-    <header>
-        <h1 class="wordmark" id="wordmark">
-            <span class="brand">doomsday</span>
-            <span class="slash">/</span>
-            <span class="accent">by fiesta</span>
-            <span class="cursor"></span>
-        </h1>
-        <p class="quote" id="quoteLine">
-            <span class="prefix">›</span><span id="quoteText"></span><span class="attr" id="quoteAttr"></span>
-        </p>
-    </header>
+    <!-- countdown -->
+    <div class="countdown" id="countdown">143:22:07</div>
 
-    <section>
-        <p class="label" data-anim>TOOLS <span class="jp">道具</span></p>
-        <div class="grid" data-grid>
-            <a class="tile" href="tools.html#snowflake"><span class="t-num">01</span><span class="t-main"><span class="t-name">snowflake</span><span class="t-desc">discord id → timestamp</span></span><span class="t-jp">雪片</span></a>
-            <a class="tile" href="tools.html#base64"><span class="t-num">02</span><span class="t-main"><span class="t-name">base64</span><span class="t-desc">encode / decode</span></span><span class="t-jp">符号化</span></a>
-            <a class="tile" href="tools.html#hash"><span class="t-num">03</span><span class="t-main"><span class="t-name">hash text</span><span class="t-desc">sha family</span></span><span class="t-jp">散列</span></a>
-            <a class="tile" href="tools.html#pwd"><span class="t-num">04</span><span class="t-main"><span class="t-name">password gen</span><span class="t-desc">crypto random</span></span><span class="t-jp">暗号</span></a>
-        </div>
-    </section>
-
-    <section>
-        <p class="label" data-anim>NETWORK <span class="jp">網</span></p>
-        <div class="grid" data-grid>
-            <a class="tile" href="tools.html#ip"><span class="t-num">05</span><span class="t-main"><span class="t-name">ip lookup</span><span class="t-desc">geo · isp · asn</span></span><span class="t-jp">住所</span></a>
-            <a class="tile" href="tools.html#dns"><span class="t-num">06</span><span class="t-main"><span class="t-name">dns lookup</span><span class="t-desc">a · mx · txt</span></span><span class="t-jp">名前解決</span></a>
-        </div>
-    </section>
-
-    <section>
-        <p class="label" data-anim>DISCORD <span class="jp">通信</span></p>
-        <div class="grid" data-grid>
-            <a class="tile" href="tools.html#token"><span class="t-num">07</span><span class="t-main"><span class="t-name">token decode</span><span class="t-desc">static header parse</span></span><span class="t-jp">証票</span></a>
-            <a class="tile" href="tools.html#webhook"><span class="t-num">08</span><span class="t-main"><span class="t-name">webhook inspect</span><span class="t-desc">url → metadata</span></span><span class="t-jp">送信</span></a>
-        </div>
-    </section>
-
-    <footer id="footer">
-        <span>@0_032 on discord</span>
-        <span>doomsday</span>
-    </footer>
+    <!-- view containers -->
+    <div id="view"></div>
 
 </div>
 
-</div>
+<!-- hidden text (reveal via ctrl+a) -->
+<div class="hidden-msg" id="hiddenMsg"></div>
 
 <script>
-// ═══════════════════════════════════════════════
-// CUSTOM CURSOR
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// STATE (persists per tab via sessionStorage, per browser via localStorage)
+// ═══════════════════════════════════════════════════════════
+const S = {
+    visits:   parseInt(localStorage.getItem('dd_visits') || '0', 10),
+    wireLen:  parseInt(localStorage.getItem('dd_wire')  || '0', 10),
+    name:     localStorage.getItem('dd_name') || null,
+    hashCalls: 0,
+    soundOn:  false,
+    heartbeatStable: true,
+    clockOffset: 0,
+    lastClockJump: 0,
+    userInteracted: false,
+    idleTimer: null,
+};
+function bumpVisits() {
+    S.visits += 1;
+    localStorage.setItem('dd_visits', String(S.visits));
+}
+bumpVisits();
+
+// ═══════════════════════════════════════════════════════════
+// CURSOR
+// ═══════════════════════════════════════════════════════════
 const cursor = document.getElementById('cursor');
 document.addEventListener('mousemove', e => {
     cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    S.userInteracted = true;
+    // follow-eyes tracking
+    document.querySelectorAll('.eye .pupil').forEach(p => {
+        const eye = p.closest('.eye');
+        const r = eye.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width/2)) / 40;
+        const dy = (e.clientY - (r.top + r.height/2)) / 40;
+        p.style.transform = `translate(calc(-50% + ${Math.max(-6,Math.min(6,dx*8))}px), calc(-50% + ${Math.max(-3,Math.min(3,dy*6))}px))`;
+    });
 });
 
-// ═══════════════════════════════════════════════
-// RANDOM EYES
-// ═══════════════════════════════════════════════
-function spawnEyes() {
+// ═══════════════════════════════════════════════════════════
+// EYES — random flashes, cursor-followers, occasional blinks
+// ═══════════════════════════════════════════════════════════
+function spawnEyes(follow) {
     const pair = document.createElement('div');
     pair.className = 'eye-pair';
-    pair.innerHTML = '<div class="eye"></div><div class="eye"></div>';
+    pair.innerHTML = '<div class="eye"><div class="pupil"></div></div><div class="eye"><div class="pupil"></div></div>';
     const padding = 60;
-    const x = padding + Math.random() * (window.innerWidth  - padding * 2);
+    const x = padding + Math.random() * (window.innerWidth - padding * 2);
     const y = padding + Math.random() * (window.innerHeight - padding * 2);
     pair.style.left = x + 'px';
     pair.style.top  = y + 'px';
     const rot = (Math.random() * 20 - 10).toFixed(1);
-    pair.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+    pair.style.transform = `translate(-50%,-50%) rotate(${rot}deg)`;
     document.body.appendChild(pair);
     requestAnimationFrame(() => pair.classList.add('show'));
-    const life = 90 + Math.random() * 160;
+
+    // 1 in 15 blink
+    if (Math.random() < 0.067) setTimeout(() => pair.classList.add('blink'), 200);
+
+    // follower eyes last longer
+    const life = follow ? 2000 + Math.random() * 2500 : 90 + Math.random() * 160;
     setTimeout(() => {
         pair.classList.remove('show');
         setTimeout(() => pair.remove(), 200);
     }, life);
 }
+
 function scheduleEyes() {
     const delay = 4000 + Math.random() * 8000;
     setTimeout(() => {
-        spawnEyes();
-        if (Math.random() < 0.3) setTimeout(spawnEyes, 180);
+        // 30% chance the eyes track the cursor for a few seconds
+        const follow = Math.random() < 0.3;
+        spawnEyes(follow);
+        if (Math.random() < 0.3) setTimeout(() => spawnEyes(false), 180);
         scheduleEyes();
     }, delay);
 }
 scheduleEyes();
 
-// ═══════════════════════════════════════════════
-// BOOT
-// ═══════════════════════════════════════════════
-const BOOT = document.getElementById('boot');
-const MAIN = document.getElementById('main');
+// full-screen eye flash
+function flashEye(x, y) {
+    const eye = document.createElement('div');
+    eye.className = 'eye-flash';
+    eye.style.left = x + 'px';
+    eye.style.top  = y + 'px';
+    document.body.appendChild(eye);
+    requestAnimationFrame(() => eye.classList.add('show'));
+    setTimeout(() => eye.remove(), 700);
+}
 
-const BOOT_LINES = [
-    ['> establishing connection...', 'warn'],
-    ['> node: doomsday', 'warn'],
-    ['> handshake ................. <span class="ok">OK</span>', ''],
-    ['> routing through 7 hops', 'warn'],
-    ['> loading modules ........... <span class="ok">8 found</span>', ''],
-    ['> verifying integrity ....... <span class="ok">OK</span>', ''],
-    ['> doomsday/by fiesta', ''],
-];
+// ═══════════════════════════════════════════════════════════
+// CURSOR TRAIL
+// ═══════════════════════════════════════════════════════════
+let lastTrail = 0;
+document.addEventListener('mousemove', e => {
+    const now = Date.now();
+    if (now - lastTrail < 70) return;
+    lastTrail = now;
+    const dot = document.createElement('div');
+    dot.className = 'trail';
+    const size = 5 + Math.random() * 7;
+    dot.style.width  = size + 'px';
+    dot.style.height = size + 'px';
+    dot.style.left = (e.clientX - size / 2) + 'px';
+    dot.style.top  = (e.clientY - size / 2) + 'px';
+    document.body.appendChild(dot);
+    requestAnimationFrame(() => {
+        dot.style.opacity = '0';
+        dot.style.transform = 'scale(0.2)';
+    });
+    setTimeout(() => dot.remove(), 720);
+});
+
+// ═══════════════════════════════════════════════════════════
+// HEX WATERMARK — with occasional sentence reveal
+// ═══════════════════════════════════════════════════════════
+const bg = document.getElementById('bgNums');
+let bgBase = '';
+function buildBg() {
+    bgBase = '';
+    const cols = Math.floor(window.innerWidth / 16);
+    const rows = Math.floor(window.innerHeight / 22);
+    for (let y = 0; y < rows; y++) {
+        let line = '';
+        for (let x = 0; x < cols; x++) line += Math.random().toString(16).slice(2, 6).padEnd(4, ' ') + ' ';
+        bgBase += line + '\n';
+    }
+    bg.textContent = bgBase;
+}
+buildBg();
+window.addEventListener('resize', buildBg);
+
+setInterval(() => {
+    const words = ['stay', 'help', 'wait', 'you', 'ok', 'here', 'smile', 'wake up', 'them', '032'];
+    if (Math.random() < 0.18) {
+        const word = words[Math.floor(Math.random() * words.length)];
+        const pos = Math.floor(Math.random() * Math.max(1, bgBase.length - word.length));
+        bg.textContent = bgBase.slice(0, pos) + word + bgBase.slice(pos + word.length);
+        setTimeout(() => { bg.textContent = bgBase; }, 1400);
+    } else {
+        bg.textContent = Math.random().toString(16).slice(2, 6) + bgBase.slice(4);
+    }
+}, 400);
+
+// every 45 seconds, spell a sentence in hex across the page
+setInterval(() => {
+    if (document.hidden) return;
+    const sentence = 'they missed you';
+    const hex = sentence.split('').map(c => c.charCodeAt(0).toString(16)).join(' ');
+    bg.textContent = (hex + '   ').repeat(80);
+    setTimeout(() => { bg.textContent = bgBase; }, 3000);
+}, 45000);
+
+// ═══════════════════════════════════════════════════════════
+// CLOCK — with occasional jumps
+// ═══════════════════════════════════════════════════════════
+const clockEl = document.getElementById('clock');
+const BOOT_TIME = Date.now();
+function tickClock() {
+    let elapsed = Math.floor((Date.now() - BOOT_TIME) / 1000) + S.clockOffset;
+    // occasional jump — 1 in 40, at least 30s apart
+    const now = Date.now();
+    if (Math.random() < 0.025 && now - S.lastClockJump > 30000) {
+        S.clockOffset += (Math.random() < 0.5 ? -1 : 1) * Math.floor(3 + Math.random() * 20);
+        S.lastClockJump = now;
+    }
+    const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+    const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    clockEl.textContent = h + ':' + m + ':' + s;
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+// ═══════════════════════════════════════════════════════════
+// HEARTBEAT — ● connected / ○ disconnected flicker
+// ═══════════════════════════════════════════════════════════
+const hb = document.getElementById('hb');
+function scheduleHeartbeat() {
+    const delay = 20000 + Math.random() * 20000;
+    setTimeout(() => {
+        hb.textContent = '○ disconnected';
+        hb.classList.add('disc');
+        setTimeout(() => {
+            hb.textContent = '● connected';
+            hb.classList.remove('disc');
+        }, 900 + Math.random() * 900);
+        scheduleHeartbeat();
+    }, delay);
+}
+scheduleHeartbeat();
+
+// ═══════════════════════════════════════════════════════════
+// COUNTDOWN — counts down, doesn't mean anything
+// ═══════════════════════════════════════════════════════════
+const cdEl = document.getElementById('countdown');
+let cdSeconds = 143 * 3600 + 22 * 60 + 7;
+function tickCountdown() {
+    cdSeconds = Math.max(0, cdSeconds - 1);
+    const h = String(Math.floor(cdSeconds / 3600)).padStart(3, '0');
+    const m = String(Math.floor((cdSeconds % 3600) / 60)).padStart(2, '0');
+    const s = String(cdSeconds % 60).padStart(2, '0');
+    cdEl.textContent = h + ':' + m + ':' + s;
+}
+setInterval(tickCountdown, 1000);
+
+// ═══════════════════════════════════════════════════════════
+// WIRE — grows a red line by 1px per visit
+// ═══════════════════════════════════════════════════════════
+S.wireLen += 1;
+localStorage.setItem('dd_wire', String(S.wireLen));
+function drawWire() {
+    if (S.wireLen < 2) return;
+    const w = Math.min(1200, 40 + S.wireLen * 4);
+    const wire = document.createElement('div');
+    wire.className = 'wire';
+    // start at a deterministic point based on visit count
+    const startY = 200 + ((S.visits * 37) % (window.innerHeight - 400));
+    wire.style.left = '0px';
+    wire.style.top  = startY + 'px';
+    wire.style.width = w + 'px';
+    wire.style.height = '1px';
+    // bend by adding a second segment
+    const wire2 = document.createElement('div');
+    wire2.className = 'wire';
+    wire2.style.left = w + 'px';
+    wire2.style.top  = startY + 'px';
+    wire2.style.width = '1px';
+    wire2.style.height = Math.min(400, S.wireLen * 6) + 'px';
+    // only on the landing
+    if (location.hash === '' || location.hash === '#home') {
+        document.body.appendChild(wire);
+        document.body.appendChild(wire2);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// TITLE ROTATION
+// ═══════════════════════════════════════════════════════════
+const TITLES = ['doomsday', 'doomsday', 'doomsday', 'doomsday', 'doomsday', "don't close me"];
+let titleIdx = 0;
+setInterval(() => {
+    titleIdx = (titleIdx + 1) % TITLES.length;
+    document.title = TITLES[titleIdx];
+}, 8000);
+
+// ═══════════════════════════════════════════════════════════
+// FAVICON — periodically flips to an eye
+// ═══════════════════════════════════════════════════════════
+function setFavicon() {
+    const svgNormal = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ff2e63'/></svg>`;
+    const svgEye    = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><ellipse cx='9' cy='16' rx='4' ry='3' fill='%23fff'/><ellipse cx='23' cy='16' rx='4' ry='3' fill='%23fff'/><circle cx='9' cy='16' r='1.5' fill='%23000'/><circle cx='23' cy='16' r='1.5' fill='%23000'/></svg>`;
+    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/svg+xml';
+    link.rel  = 'icon';
+    link.href = 'data:image/svg+xml,' + (Math.random() < 0.4 ? svgEye : svgNormal);
+    document.head.appendChild(link);
+}
+setFavicon();
+setInterval(() => {
+    setFavicon();
+    setTimeout(() => {
+        const link = document.querySelector("link[rel*='icon']");
+        if (link) link.href = 'data:image/svg+xml,' + `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ff2e63'/></svg>`;
+    }, 5000);
+}, 55000);
+
+// ═══════════════════════════════════════════════════════════
+// IDLE SCROLL DRIFT — page slides 20px every 30s of no input
+// ═══════════════════════════════════════════════════════════
+function resetIdle() {
+    S.userInteracted = true;
+    clearTimeout(S.idleTimer);
+    S.idleTimer = setTimeout(() => {
+        if (!document.hidden) {
+            window.scrollBy({ top: 20, behavior: 'smooth' });
+        }
+        S.userInteracted = false;
+        resetIdle();
+    }, 30000);
+}
+['mousemove', 'keydown', 'scroll', 'touchstart'].forEach(ev => window.addEventListener(ev, resetIdle, { passive: true }));
+resetIdle();
+
+// ═══════════════════════════════════════════════════════════
+// RANDOM FLICKER — only after 5 min, only on landing
+// ═══════════════════════════════════════════════════════════
+setTimeout(() => {
+    setInterval(() => {
+        if (location.hash && location.hash !== '#home') return;
+        if (Math.random() < 0.25) {
+            document.documentElement.style.transition = 'opacity 40ms';
+            document.documentElement.style.opacity = '0';
+            setTimeout(() => { document.documentElement.style.opacity = '1'; }, 80);
+        }
+    }, 90000);
+}, 5 * 60 * 1000);
+
+// ═══════════════════════════════════════════════════════════
+// NIGHT MODE — extra line on landing after midnight
+// ═══════════════════════════════════════════════════════════
+function isLateNight() {
+    const h = new Date().getHours();
+    return h >= 0 && h < 4;
+}
+
+// ═══════════════════════════════════════════════════════════
+// HIDDEN TEXT — one per page, revealed on ctrl+a
+// ═══════════════════════════════════════════════════════════
+const hiddenMsg = document.getElementById('hiddenMsg');
+const HIDDEN_BY_VIEW = {
+    home:      'hello.  are you there?  it is warm here.  are you there.',
+    tools:     'they all went missing.  2003.  the room is empty now.',
+    void:      'you found it.  nobody finds it.  tell no one.  tell me.',
+    unclaimed: 'this is what it looks like from here.',
+    guestbook: 'i signed it too.  my entry disappeared.  so will yours.',
+    locate:    'i am still here.  i am still here.  i am still here.',
+    them:      'them/  them/  them/  them/  them/  them/  them/',
+    '404':     'the page was here.  you remember it.',
+};
+function updateHiddenText(view) {
+    hiddenMsg.textContent = (HIDDEN_BY_VIEW[view] || HIDDEN_BY_VIEW.home).repeat(30);
+}
+
+// ═══════════════════════════════════════════════════════════
+// VISIT NOTE — "you came back" style messages
+// ═══════════════════════════════════════════════════════════
+const visitNoteEl = document.getElementById('visitNote');
+function updateVisitNote() {
+    const n = S.visits;
+    let msg = '';
+    if (n === 2) msg = 'you came back.';
+    else if (n === 3) msg = 'you keep coming back.';
+    else if (n >= 4 && n < 7) msg = 'you are still here.';
+    else if (n >= 7 && n < 15) msg = 'why are you still here.';
+    else if (n >= 15 && n < 30) msg = 'do you know them?';
+    else if (n >= 30) msg = 'they know you now.';
+    else msg = '';
+    visitNoteEl.textContent = msg;
+}
+updateVisitNote();
+
+// ═══════════════════════════════════════════════════════════
+// SOUND — Web Audio synthesis, muted by default
+// ═══════════════════════════════════════════════════════════
+let audioCtx = null;
+function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function droneStart() {
+    if (!audioCtx) return;
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.value = 55;
+    osc2.type = 'sine'; osc2.frequency.value = 82.4;
+    gain.gain.value = 0.03;
+    gain2.gain.value = 0.018;
+    osc.connect(gain).connect(audioCtx.destination);
+    osc2.connect(gain2).connect(audioCtx.destination);
+    osc.start(); osc2.start();
+    window._drone = { osc, gain, osc2, gain2 };
+}
+function droneStop() {
+    if (window._drone) {
+        try { window._drone.osc.stop(); window._drone.osc2.stop(); } catch {}
+        window._drone = null;
+    }
+}
+function heartbeatThump() {
+    if (!audioCtx) return;
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.value = 52;
+    gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.14);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.16);
+}
+function whisper() {
+    if (!audioCtx) return;
+    const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.5, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.15;
+    const src = audioCtx.createBufferSource();
+    const filter = audioCtx.createBiquadFilter();
+    const gain = audioCtx.createGain();
+    filter.type = 'bandpass'; filter.frequency.value = 1400; filter.Q.value = 0.7;
+    gain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.02, audioCtx.currentTime + 0.1);
+    gain.gain.linearRampToValueAtTime(0.0, audioCtx.currentTime + 0.45);
+    src.buffer = buffer;
+    src.connect(filter).connect(gain).connect(audioCtx.destination);
+    src.start();
+}
+const soundToggle = document.getElementById('soundToggle');
+soundToggle.addEventListener('click', () => {
+    initAudio();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    S.soundOn = !S.soundOn;
+    if (S.soundOn) {
+        soundToggle.classList.add('on');
+        soundToggle.textContent = '[ ♪ ]';
+        droneStart();
+    } else {
+        soundToggle.classList.remove('on');
+        soundToggle.textContent = '[ ♪ ]';
+        droneStop();
+    }
+});
+// whisper every 30-70s if sound on
+setInterval(() => {
+    if (S.soundOn && Math.random() < 0.5) whisper();
+}, 45000);
+
+// ═══════════════════════════════════════════════════════════
+// BOOT — session-guarded, varies with visit count
+// ═══════════════════════════════════════════════════════════
+const BOOT   = document.getElementById('boot');
+const MAIN   = document.getElementById('main');
+const VIEW   = document.getElementById('view');
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+function bootLines() {
+    const base = [
+        ['> establishing connection...', 'warn'],
+        ['> node: doomsday', 'warn'],
+        ['> handshake ................. <span class="ok">OK</span>', ''],
+        ['> routing through 7 hops', 'warn'],
+        ['> loading modules ........... <span class="ok">8 found</span>', ''],
+        ['> verifying integrity ....... <span class="ok">OK</span>', ''],
+        ['> doomsday/by fiesta', ''],
+    ];
+    // visit 2
+    if (S.visits === 2) {
+        base[2] = ['> handshake ................. <span class="ok">OK</span>', ''];
+        base[5] = ['> verifying integrity ....... <span class="ok">OK</span>', ''];
+        base.push(['> welcome back', 'ok']);
+    }
+    // visits 5-9
+    else if (S.visits >= 5 && S.visits < 10) {
+        base.push(['> you are still here', 'ok']);
+    }
+    // 10+
+    else if (S.visits >= 10) {
+        base.unshift(['> [!] welcome back, 0032', 'err']);
+        base.push(['> do not close me', 'err']);
+    }
+    return base;
+}
+
 async function typeLine(text, color) {
     const span = document.createElement('span');
-    span.className = 'line show ' + color;
+    span.className = 'line show ' + (color || '');
     BOOT.appendChild(span);
     BOOT.appendChild(document.createTextNode('\n'));
     if (text.includes('<')) {
@@ -556,18 +1394,18 @@ async function typeLine(text, color) {
 }
 
 async function runBoot() {
-    // session guard — skip intro if already seen in this tab
-    if (sessionStorage.getItem('doomsday_intro')) {
+    const seenThisSession = sessionStorage.getItem('dd_intro_seen');
+
+    if (seenThisSession) {
+        // skip boot if we already showed it in this tab
         BOOT.remove();
         MAIN.classList.add('show');
-        document.querySelectorAll('[data-anim]').forEach(l => l.classList.add('show'));
-        document.querySelectorAll('.tile').forEach(t => t.classList.add('show'));
-        document.getElementById('wordmark').classList.add('show');
-        document.getElementById('quoteLine').classList.add('show');
-        document.getElementById('footer').classList.add('show');
-        showQuote();
+        startReveal(true);
         return;
     }
+
+    // decide if this boot will fail (1 in 10)
+    const willFail = Math.random() < 0.1;
 
     const cur = document.createElement('span');
     cur.className = 'cursor';
@@ -577,8 +1415,30 @@ async function runBoot() {
     BOOT.innerHTML = '';
     BOOT.appendChild(document.createTextNode('\n'));
 
-    for (const [text, color] of BOOT_LINES) {
-        await typeLine(text, color);
+    const lines = bootLines();
+    const failAt = willFail ? Math.floor(lines.length / 2) : -1;
+
+    for (let i = 0; i < lines.length; i++) {
+        if (i === failAt) {
+            // crash mid-boot
+            await sleep(280);
+            const errLine = document.createElement('span');
+            errLine.className = 'line show err';
+            errLine.textContent = '> ERR:: HANDSHAKE FAILED';
+            BOOT.appendChild(errLine);
+            BOOT.appendChild(document.createTextNode('\n'));
+            BOOT.style.background = '#8b0000';
+            await sleep(180);
+            BOOT.style.background = '#050506';
+            await sleep(900);
+            BOOT.innerHTML = '';
+            BOOT.appendChild(document.createTextNode('\n'));
+            i = 0; // restart
+            await sleep(300);
+            // only one fail per boot
+            failAt = -1;
+        }
+        await typeLine(lines[i][0], lines[i][1]);
         await sleep(220);
     }
 
@@ -590,22 +1450,20 @@ async function runBoot() {
     collapseBoot(() => {
         BOOT.remove();
         MAIN.classList.add('show');
-        startReveal();
-        sessionStorage.setItem('doomsday_intro', '1');
+        startReveal(false);
+        sessionStorage.setItem('dd_intro_seen', '1');
     });
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // COLLAPSE
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 function collapseBoot(onComplete) {
     BOOT.classList.add('collapsing');
-
     setTimeout(() => {
         const collapse = document.getElementById('collapse');
         collapse.classList.add('active');
         collapse.innerHTML = '';
-
         collapse.style.background = '#ffb3c1';
         setTimeout(() => { collapse.style.background = '#050506'; }, 70);
 
@@ -622,7 +1480,6 @@ function collapseBoot(onComplete) {
             collapse.appendChild(band);
             bands.push(band);
         }
-
         BOOT.style.transition = 'opacity 0.9s ease';
         BOOT.style.opacity = '0';
 
@@ -646,14 +1503,29 @@ function collapseBoot(onComplete) {
     }, 1200);
 }
 
-// ═══════════════════════════════════════════════
-// REVEAL
-// ═══════════════════════════════════════════════
-function startReveal() {
-    setTimeout(() => document.getElementById('wordmark').classList.add('show'), 200);
+// ═══════════════════════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════════════════════
+function currentView() {
+    const h = location.hash.replace('#', '') || 'home';
+    return h;
+}
 
+function startReveal(instant) {
+    const v = currentView();
+    updateHiddenText(v);
+
+    if (instant) {
+        document.querySelectorAll('.wordmark, .quote, .label, .tile, footer').forEach(el => el.classList.add('show'));
+        renderView(v);
+        showQuote();
+        drawWire();
+        return;
+    }
+
+    setTimeout(() => document.getElementById('wordmark')?.classList.add('show'), 200);
     setTimeout(() => {
-        document.getElementById('quoteLine').classList.add('show');
+        document.getElementById('quoteLine')?.classList.add('show');
         showQuote();
     }, 800);
 
@@ -669,18 +1541,495 @@ function startReveal() {
             delay += grid.querySelectorAll('.tile').length * 80 + 260;
         }
     });
-
-    setTimeout(() => document.getElementById('footer').classList.add('show'), delay + 300);
-
+    setTimeout(() => document.getElementById('footer')?.classList.add('show'), delay + 300);
     setTimeout(() => {
         const tiles = document.querySelectorAll('.tile');
         if (tiles.length) tiles[Math.floor(Math.random() * tiles.length)].classList.add('wrong');
     }, delay + 500);
+
+    // render view content (for non-home views)
+    setTimeout(() => {
+        renderView(v);
+        if (v === 'home') drawWire();
+    }, 100);
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// VIEW RENDERERS
+// ═══════════════════════════════════════════════════════════
+function renderView(v) {
+    if (v === 'home')      VIEW.innerHTML = homeHTML();
+    else if (v === 'tools')VIEW.innerHTML = toolsHTML();
+    else if (v === 'void') VIEW.innerHTML = voidHTML();
+    else if (v === 'unclaimed') VIEW.innerHTML = unclaimedHTML();
+    else if (v === 'locate')    VIEW.innerHTML = locateHTML();
+    else if (v === 'them')      VIEW.innerHTML = themHTML();
+    else if (v === 'guestbook') VIEW.innerHTML = guestbookHTML();
+    else if (v === '404')       VIEW.innerHTML = notFoundHTML();
+    else                    VIEW.innerHTML = voidHTML();
+
+    // rewire tile clicks and tool buttons after render
+    if (v === 'home')  wireHomeTiles();
+    if (v === 'tools') wireTools();
+    if (v === 'guestbook') wireGuestbook();
+    if (v === 'locate')    startLocateLoop();
+    if (v === 'void')      maybeMoreVoid();
+
+    // add .show class to any new tiles after render
+    document.querySelectorAll('.tile').forEach((t, i) => {
+        setTimeout(() => t.classList.add('show'), i * 40);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// HOME VIEW
+// ═══════════════════════════════════════════════════════════
+function homeHTML() {
+    const late = isLateNight();
+    return `
+        <header>
+            <h1 class="wordmark" id="wordmark">
+                <span class="brand">doomsday</span>
+                <span class="slash">/</span>
+                <span class="accent">by fiesta</span>
+                <span class="cursor"></span>
+            </h1>
+            <p class="quote" id="quoteLine">
+                <span class="prefix">›</span><span id="quoteText"></span><span class="attr" id="quoteAttr"></span>
+            </p>
+            ${late ? '<p class="visitor-note">you\'re up late.</p>' : ''}
+        </header>
+
+        <section>
+            <p class="label" data-anim>TOOLS <span class="jp">道具</span></p>
+            <div class="grid" data-grid>
+                <a class="tile" href="#tools"><span class="t-num">01</span><span class="t-main"><span class="t-name">tools</span><span class="t-desc">they went missing</span></span><span class="t-jp">道具</span></a>
+                <a class="tile" href="#guestbook"><span class="t-num">02</span><span class="t-main"><span class="t-name">guestbook</span><span class="t-desc">leave a mark</span></span><span class="t-jp">署名</span></a>
+            </div>
+        </section>
+
+        <section>
+            <p class="label" data-anim>ELSEWHERE <span class="jp">何処</span></p>
+            <div class="grid" data-grid>
+                <a class="tile" href="#them"><span class="t-num">03</span><span class="t-main"><span class="t-name">them/</span><span class="t-desc">a folder</span></span><span class="t-jp">彼等</span></a>
+                <a class="tile" href="#void"><span class="t-num">04</span><span class="t-main"><span class="t-name">void</span><span class="t-desc">do not enter</span></span><span class="t-jp">虚無</span></a>
+                <a class="tile" href="#unclaimed"><span class="t-num">05</span><span class="t-main"><span class="t-name">unclaimed</span><span class="t-desc">someone left it</span></span><span class="t-jp">無主</span></a>
+                <a class="tile" href="#locate"><span class="t-num">06</span><span class="t-main"><span class="t-name">locate</span><span class="t-desc">last seen</span></span><span class="t-jp">探</span></a>
+            </div>
+        </section>
+
+        <footer id="footer">
+            <span>@0_032 on discord</span>
+            <span>doomsday</span>
+        </footer>
+    `;
+}
+
+function wireHomeTiles() {
+    // tools tile intercepts to show the "2003 portal" via hash
+    // nothing special needed — the hash router handles it
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOOLS — 2003 portal + "they went missing"
+// ═══════════════════════════════════════════════════════════
+const MISSING_MESSAGES = [
+    'they went missing.',
+    'this one doesn\'t work anymore. they took it.',
+    'ERROR 404: the file was deleted.',
+    'someone was here. now they aren\'t.',
+    'the tool is offline. we don\'t know why.',
+    'no response. no response. no response.',
+    'it was working yesterday.',
+    'the file exists. you can\'t open it.',
+    'connection refused. try again never.',
+    'this is the wrong place. you know that.',
+    'they were here last night. ask them.',
+    'the archive is empty.',
+    'signal lost.',
+    'nothing to see. nothing to see. nothing.',
+    'it\'s not your turn.',
+    'you already used this one.',
+    'we don\'t talk about this tool.',
+    'wrong door. go back.',
+    'they know you tried.',
+    'have you checked your reflection?',
+    'the server went quiet at 3:14am.',
+    'return to sender. no forwarding address.',
+    'this page is a memory of itself.',
+    'you were never supposed to find this.',
+    'someone is still typing...',
+    'the last person who used this is fine.',
+    'the last person who used this is not fine.',
+    'the lights are on but the house is empty.',
+    'it\'s been 11,342 days.',
+    'we are all here. we are not here.',
+    'same as before.',
+    'you again.',
+];
+
+function toolsHTML() {
+    const marquee = '★ welcome to doomsday tools ★  best viewed in 1024x768 ★  do not refresh the page ★  they are still here ★  everything works ★  nothing works ★  they went missing ★  do not look behind you ★  sign the guestbook ★  thanks for visiting ★';
+    return `
+    <div class="portal">
+        <div class="p-header">
+            <h1>★彡 DOOMSDAY TOOLS 彡★</h1>
+            <div class="sub">the best tools on the web!!! <span class="blink">(NEW!)</span></div>
+        </div>
+        <div class="p-nav">
+            [ <a href="#home">home</a> ]
+            [ <a href="#tools">tools</a> ]
+            [ <a href="#guestbook">guestbook</a> ]
+            [ <a href="#them">them/</a> ]
+            [ <a href="#void">void</a> ]
+        </div>
+        <div class="p-marquee"><span id="pMarquee">${marquee}</span></div>
+        <div class="p-content">
+            <div class="tool">
+                <h2><span class="sparkle">☆</span> SNOWFLAKE DECODER <span class="sparkle">☆</span></h2>
+                <div class="desc">turn any discord id into a timestamp!</div>
+                <div class="row"><label>discord id:</label><input type="text" id="sf-in"><button onclick="tryTool(event, 'sf')">DECODE!</button></div>
+                <div class="out" id="sf-out"></div>
+            </div>
+            <div class="tool">
+                <h2><span class="sparkle">☆</span> BASE64 ENCODER <span class="sparkle">☆</span></h2>
+                <div class="desc">encode or decode any text!</div>
+                <div class="row"><label>text:</label><input type="text" id="b64-in"></div>
+                <div class="row"><button onclick="tryTool(event, 'b64')">ENCODE!</button><button onclick="tryTool(event, 'b64')">DECODE!</button></div>
+                <div class="out" id="b64-out"></div>
+            </div>
+            <div class="tool">
+                <h2><span class="sparkle">☆</span> HASH TEXT <span class="sparkle">☆</span></h2>
+                <div class="desc">sha-1, sha-256, sha-384, sha-512!</div>
+                <div class="row"><label>text:</label><input type="text" id="hash-in"><button onclick="tryTool(event, 'hash')">HASH!</button></div>
+                <div class="out" id="hash-out"></div>
+            </div>
+            <div class="tool">
+                <h2><span class="sparkle">☆</span> PASSWORD GENERATOR <span class="sparkle">☆</span></h2>
+                <div class="desc">make a super secure password!</div>
+                <div class="row"><label>length:</label><input type="text" id="pwd-len" value="24" style="max-width:100px;flex:0 0 auto;"><button onclick="tryTool(event, 'pwd')">GENERATE!</button></div>
+                <div class="out" id="pwd-out"></div>
+            </div>
+            <div class="tool">
+                <h2><span class="sparkle">☆</span> IP LOOKUP <span class="sparkle">☆</span></h2>
+                <div class="desc">find out where any ip lives!</div>
+                <div class="row"><label>ip:</label><input type="text" id="ip-in"><button onclick="tryTool(event, 'ip')">LOOKUP!</button></div>
+                <div class="out" id="ip-out"></div>
+            </div>
+            <div class="tool">
+                <h2><span class="sparkle">☆</span> DNS LOOKUP <span class="sparkle">☆</span></h2>
+                <div class="desc">resolve any domain name!</div>
+                <div class="row">
+                    <label>domain:</label>
+                    <input type="text" id="dns-in">
+                    <select id="dns-type" style="max-width:100px;flex:0 0 auto;"><option>A</option><option>MX</option><option>NS</option><option>TXT</option></select>
+                    <button onclick="tryTool(event, 'dns')">RESOLVE!</button>
+                </div>
+                <div class="out" id="dns-out"></div>
+            </div>
+            <div class="tool">
+                <h2><span class="sparkle">☆</span> TOKEN DECODER <span class="sparkle">☆</span></h2>
+                <div class="desc">decode a discord token!</div>
+                <div class="row"><label>token:</label><input type="text" id="tok-in"><button onclick="tryTool(event, 'tok')">DECODE!</button></div>
+                <div class="out" id="tok-out"></div>
+            </div>
+            <div class="tool">
+                <h2><span class="sparkle">☆</span> WEBHOOK INSPECT <span class="sparkle">☆</span></h2>
+                <div class="desc">check any webhook url!</div>
+                <div class="row"><label>url:</label><input type="text" id="wh-in"><button onclick="tryTool(event, 'wh')">INSPECT!</button></div>
+                <div class="out" id="wh-out"></div>
+            </div>
+        </div>
+        <footer>
+            <div class="badge">netscape 4.0</div>
+            <div class="badge">800x600</div>
+            <div class="badge">best viewed in IE6</div>
+            <br><br>
+            © 2003 doomsday tools · made with microsoft frontpage · <a href="#home" style="color:#0000ee;cursor:none;">home</a> · <a href="#guestbook" style="color:#0000ee;cursor:none;">sign the guestbook</a>
+        </footer>
+    </div>`;
+}
+
+let lastMissing = '';
+function pickMissing() {
+    let msg;
+    do { msg = MISSING_MESSAGES[Math.floor(Math.random() * MISSING_MESSAGES.length)]; }
+    while (msg === lastMissing && MISSING_MESSAGES.length > 1);
+    lastMissing = msg;
+    return msg;
+}
+
+function tryTool(evt, kind) {
+    const x = evt ? evt.clientX : window.innerWidth / 2;
+    const y = evt ? evt.clientY : window.innerHeight / 2;
+    flashEye(x, y);
+    if (S.soundOn) heartbeatThump();
+
+    const tool = evt.target.closest('.tool');
+    const out  = tool.querySelector('.out');
+
+    // snowflake always works
+    if (kind === 'sf') {
+        const v = document.getElementById('sf-in').value.trim();
+        if (!v || !/^\d+$/.test(v)) {
+            out.innerHTML = '<span class="miss">[!] ' + pickMissing() + '</span>';
+            return;
+        }
+        const id = BigInt(v);
+        const ts = Number((id >> 22n) + 1420070400000n);
+        const d  = new Date(ts);
+        out.innerHTML = '<span class="ok">[+] timestamp   ' + d.toISOString() + '</span>\n' +
+                        '<span class="ok">[+] utc         ' + d.toUTCString() + '</span>\n' +
+                        '<span class="ok">[+] worker id   ' + Number((id & 0x3E0000n) >> 17n) + '</span>\n' +
+                        '<span class="ok">[+] process id  ' + Number((id & 0x1F000n) >> 12n) + '</span>\n' +
+                        '<span class="ok">[+] increment   ' + Number(id & 0xFFFn) + '</span>';
+        return;
+    }
+
+    // 2 in 10 chance the tool actually works
+    if (Math.random() < 0.2) {
+        // most tools just... don't. some return one weird output.
+        if (kind === 'ip') {
+            const v = document.getElementById('ip-in').value.trim();
+            if (!v) {
+                out.innerHTML = '<span class="ok">[+] you: ' + Math.floor(Math.random()*255) + '.' + Math.floor(Math.random()*255) + '.' + Math.floor(Math.random()*255) + '.1</span>';
+                return;
+            }
+        }
+        // dns with "localhost" returns a phone number
+        if (kind === 'dns') {
+            const v = document.getElementById('dns-in').value.trim().toLowerCase();
+            if (v === 'localhost' || v === '127.0.0.1') {
+                out.innerHTML = '<span class="ok">[+] +1-555-0114</span>';
+                return;
+            }
+        }
+        out.innerHTML = '<span class="ok">[+] no output</span>';
+        return;
+    }
+
+    out.innerHTML = '<span class="miss">[!] ' + pickMissing() + '</span>';
+    if (S.soundOn) whisper();
+
+    // tool border flash
+    tool.style.borderColor = '#8b0000';
+    setTimeout(() => { tool.style.borderColor = '#808080'; }, 400);
+}
+
+function wireTools() {
+    // marquee occasionally changes
+    const m = document.getElementById('pMarquee');
+    if (m) {
+        setInterval(() => {
+            if (Math.random() < 0.25) {
+                const prev = m.textContent;
+                m.textContent = "you're still here.";
+                setTimeout(() => { m.textContent = prev; }, 22000);
+            }
+        }, 90000);
+    }
+
+    // exit trap on the "sign the guestbook" link
+    const links = document.querySelectorAll('.portal a[href="#guestbook"]');
+    links.forEach(l => l.addEventListener('click', e => {
+        // let it through, the router will handle it
+    }));
+
+    // no/no trap fires after 45 seconds on this view
+    setTimeout(openTrap, 45000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// GUESTBOOK VIEW
+// ═══════════════════════════════════════════════════════════
+const HISTORICAL_ENTRIES = [
+    { handle: '@0_032', date: '2003-04-11', body: "they made me write this. i don't know what to say. tell them i'm okay." },
+    { handle: 'void',   date: '2003-04-14', body: "nice site. thanks for the tools." },
+    { handle: 'wired',  date: '2003-06-22', body: "i used the ip lookup on myself. it said i was somewhere else." },
+    { handle: 'guest',  date: '2004-02-08', body: "does the snowflake decoder work for anyone else" },
+    { handle: '0032',   date: '2005-09-30', body: "the room is empty. nobody checks the guestbook anymore." },
+    { handle: 'unknown',date: '2012-12-21', body: "nothing happened. i waited all day. nothing." },
+    { handle: 'them',   date: '2023-08-04', body: "you're reading this and i'm not here anymore." },
+];
+
+function todayEntry() {
+    const t = new Date();
+    const d = t.toISOString().slice(0, 10);
+    return { handle: '', date: d, body: "came by earlier. you weren't here.", today: true };
+}
+
+function guestbookHTML() {
+    const entries = [...HISTORICAL_ENTRIES, todayEntry()];
+    // check localStorage for user's own entries
+    let userEntries = [];
+    try { userEntries = JSON.parse(localStorage.getItem('dd_guestbook') || '[]'); } catch {}
+    // check if we should rename old entries to "mine"
+    const lastSignTs = parseInt(localStorage.getItem('dd_gb_last_sign') || '0', 10);
+    const now = Date.now();
+    userEntries = userEntries.map(e => {
+        if (now - lastSignTs > 86400000 && e.handle) {
+            return { ...e, handle: 'mine' };
+        }
+        return e;
+    });
+
+    const rows = entries.concat(userEntries).map(e => `
+        <div class="entry ${e.today ? 'today' : ''} ${e.date === '2003-04-11' ? 'oldest' : ''}">
+            <div class="e-meta">
+                <span class="e-handle">${e.handle || '[unnamed]'}</span>
+                ${e.date}
+            </div>
+            <div class="e-body">"${e.body}"</div>
+        </div>
+    `).join('');
+
+    return `
+        <div class="gb-page">
+            <h1 class="gb-title">guestbook</h1>
+            <div class="gb-sub">署名 · leave a mark</div>
+            ${rows}
+            <div class="sign-form">
+                <label>name (optional)</label>
+                <input type="text" id="gb-name" placeholder="leave it blank if you want">
+                <label>message</label>
+                <textarea id="gb-body" rows="3" placeholder="say something"></textarea>
+                <button onclick="signGuestbook(event)">SIGN</button>
+            </div>
+            <div class="center-nav"><a href="#home">← back</a></div>
+        </div>`;
+}
+
+function signGuestbook(evt) {
+    flashEye(evt.clientX, evt.clientY);
+    const name = document.getElementById('gb-name').value.trim();
+    const body = document.getElementById('gb-body').value.trim() || '...';
+    if (!body) return;
+    let userEntries = [];
+    try { userEntries = JSON.parse(localStorage.getItem('dd_guestbook') || '[]'); } catch {}
+    userEntries.push({ handle: name, date: new Date().toISOString().slice(0, 10), body });
+    localStorage.setItem('dd_guestbook', JSON.stringify(userEntries));
+    localStorage.setItem('dd_gb_last_sign', String(Date.now()));
+    document.getElementById('gb-body').value = '';
+    document.getElementById('gb-name').value = '';
+    // show confirmation, then reload after 1.5s (entry seems to disappear)
+    const btn = evt.target;
+    const origText = btn.textContent;
+    btn.textContent = 'signed.';
+    setTimeout(() => {
+        btn.textContent = origText;
+        renderView('guestbook');
+    }, 1500);
+}
+
+function wireGuestbook() {}
+
+// ═══════════════════════════════════════════════════════════
+// VOID
+// ═══════════════════════════════════════════════════════════
+function voidHTML() {
+    return `
+        <div class="void-page">
+            <div class="void-text">
+                <div>do not look behind you.</div>
+            </div>
+        </div>
+        <div class="center-nav"><a href="#home" style="color:#4a4442;">← leave</a></div>
+    `;
+}
+function maybeMoreVoid() {
+    // 15% of the time, after 20 seconds a second line appears
+    if (Math.random() < 0.15) {
+        setTimeout(() => {
+            const t = document.querySelector('.void-text');
+            if (t) t.innerHTML += '<div style="margin-top:20px;opacity:0.5;">you didn\'t.</div>';
+        }, 20000);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// UNCLAIMED
+// ═══════════════════════════════════════════════════════════
+function unclaimedHTML() {
+    return `
+        <div class="unclaimed-page">
+            <div class="u-line">this is what it looks like from here.</div>
+            <div class="u-sub">unclaimed · 無主</div>
+        </div>
+        <div class="center-nav"><a href="#home" style="color:#4a4442;">← back</a></div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOCATE
+// ═══════════════════════════════════════════════════════════
+function locateHTML() {
+    return `
+        <div class="locate-page">
+            <div class="l-title">LOCATE</div>
+            <div class="l-line">last seen:</div>
+            <div class="l-line"><span class="l-time" id="locTime"></span></div>
+        </div>
+        <div class="center-nav"><a href="#home" style="color:#4a4442;">← back</a></div>
+    `;
+}
+let locateInterval = null;
+function startLocateLoop() {
+    if (locateInterval) clearInterval(locateInterval);
+    const el = document.getElementById('locTime');
+    if (!el) return;
+    const update = () => {
+        const d = new Date();
+        el.textContent = d.toLocaleTimeString() + ' · ' + d.toLocaleDateString();
+    };
+    update();
+    locateInterval = setInterval(update, 1000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// THEM/
+// ═══════════════════════════════════════════════════════════
+function themHTML() {
+    return `
+        <div class="them-page">
+            <div class="file">
+                <div>drwxr-xr-x   2 void   void   4.0K  <span class="red">them/</span></div>
+                <div>drwxr-xr-x   3 void   void   4.0K  <span class="dim">../</span></div>
+                <div>----------   - void   void     --   <span class="dim">you.here</span></div>
+                <div>----------   - void   void     --   <span class="dim">me.here</span></div>
+                <div>----------   - void   void     --   <span class="red">gone</span></div>
+                <div>----------   - void   void     --   <span class="dim">lost.log</span></div>
+                <div>----------   - void   void     --   <span class="dim">who.dat</span></div>
+                <div>----------   - void   void     --   <span class="dim">remember.txt</span></div>
+                <div style="margin-top:40px"><span class="dim">no files can be opened.</span></div>
+                <div><span class="dim">no files can be removed.</span></div>
+                <div><span class="dim">this folder has been here since 2003.</span></div>
+                <div style="margin-top:40px"><span class="red">them/</span></div>
+                <div><span class="red">them/</span></div>
+                <div><span class="red">them/</span></div>
+                <div><span class="red">them/</span></div>
+            </div>
+        </div>
+        <div class="center-nav"><a href="#home" style="color:#4a4442;">← back</a></div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// 404
+// ═══════════════════════════════════════════════════════════
+function notFoundHTML() {
+    return `
+        <div class="p404">
+            <h1 class="n">404</h1>
+            <div class="l1">this page was here yesterday.</div>
+            <div class="l2">yesterday is not today.</div>
+        </div>
+        <div class="center-nav"><a href="#home" style="color:#4a4442;">← back</a></div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════
 // QUOTES
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 const QUOTES = [
     ['you shouldn\'t be here.', '— nobody'],
     ['the door was already open.', '— 04:11am'],
@@ -688,20 +2037,20 @@ const QUOTES = [
     ['smile for the camera.', '— void'],
     ['it\'s not your fault.', '— it is'],
     ['we will be okay.', '— are you sure'],
+    ['they missed you.', '— them'],
+    ['032 was here.', '— 032'],
 ];
-const qText = document.getElementById('quoteText');
-const qAttr = document.getElementById('quoteAttr');
-const qLine = document.getElementById('quoteLine');
 let qi = 0;
-
 function showQuote() {
+    const qText = document.getElementById('quoteText');
+    const qAttr = document.getElementById('quoteAttr');
+    if (!qText) return;
     const [text, attr] = QUOTES[qi];
     qText.innerHTML = '';
-    const words = text.split(' ');
-    words.forEach((w, i) => {
+    text.split(' ').forEach((w, i) => {
         const span = document.createElement('span');
         span.className = 'word';
-        span.textContent = w + (i < words.length - 1 ? ' ' : '');
+        span.textContent = w + (i < text.split(' ').length - 1 ? ' ' : '');
         span.style.animationDelay = (i * 120) + 'ms';
         qText.appendChild(span);
     });
@@ -709,93 +2058,91 @@ function showQuote() {
     qi = (qi + 1) % QUOTES.length;
 }
 setInterval(() => {
-    qLine.style.opacity = '0';
-    setTimeout(() => {
-        showQuote();
-        qLine.style.opacity = '1';
-    }, 900);
+    const ql = document.getElementById('quoteLine');
+    if (!ql) return;
+    ql.style.opacity = '0';
+    setTimeout(() => { showQuote(); ql.style.opacity = '1'; }, 900);
 }, 11000);
 
-// ═══════════════════════════════════════════════
-// CLOCK
-// ═══════════════════════════════════════════════
-const clock = document.getElementById('clock');
-const BOOT_TIME = Date.now();
-function tickClock() {
-    const elapsed = Math.floor((Date.now() - BOOT_TIME) / 1000);
-    const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
-    const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
-    const s = String(elapsed % 60).padStart(2, '0');
-    clock.textContent = h + ':' + m + ':' + s;
+// ═══════════════════════════════════════════════════════════
+// TRAP — "do you want to continue?" no / no
+// ═══════════════════════════════════════════════════════════
+const trap = document.getElementById('trap');
+const trapNo1 = document.getElementById('trapNo1');
+const trapNo2 = document.getElementById('trapNo2');
+let trapOpens = 0;
+function openTrap() {
+    if (trap.classList.contains('active')) return;
+    trap.classList.add('active');
+    trapOpens++;
+    // move one of the no buttons 3px each time
+    trapNo2.style.transform = `translateX(-${trapOpens * 3}px)`;
 }
-tickClock();
-setInterval(tickClock, 1000);
-
-// ═══════════════════════════════════════════════
-// HEX WATERMARK
-// ═══════════════════════════════════════════════
-const bg = document.getElementById('bgNums');
-let nums = '';
-const cols = Math.floor(window.innerWidth / 16);
-const rows = Math.floor(window.innerHeight / 22);
-for (let y = 0; y < rows; y++) {
-    let line = '';
-    for (let x = 0; x < cols; x++) line += Math.random().toString(16).slice(2, 6).padEnd(4, ' ') + ' ';
-    nums += line + '\n';
+function closeTrap() {
+    trap.classList.remove('active');
+    // reopen after 5s
+    setTimeout(() => {
+        if (location.hash === '#tools') openTrap();
+    }, 5000);
 }
-bg.textContent = nums;
+trapNo1.addEventListener('click', closeTrap);
+trapNo2.addEventListener('click', closeTrap);
 
-setInterval(() => {
-    const words = ['stay', 'help', 'wait', 'you', 'ok', 'here', 'smile', 'wake up'];
-    if (Math.random() < 0.18) {
-        const word = words[Math.floor(Math.random() * words.length)];
-        const pos = Math.floor(Math.random() * Math.max(1, nums.length - word.length));
-        bg.textContent = nums.slice(0, pos) + word + nums.slice(pos + word.length);
-        setTimeout(() => { bg.textContent = nums; }, 1400);
-    } else {
-        bg.textContent = Math.random().toString(16).slice(2, 6) + nums.slice(4);
-    }
-}, 400);
+// ═══════════════════════════════════════════════════════════
+// FADE BLACK — exit trap
+// ═══════════════════════════════════════════════════════════
+const fadeBlack = document.getElementById('fadeBlack');
+function exitTrap() {
+    fadeBlack.classList.add('active');
+    setTimeout(() => {
+        fadeBlack.classList.remove('active');
+    }, 1400);
+}
 
-// ═══════════════════════════════════════════════
-// CURSOR TRAIL
-// ═══════════════════════════════════════════════
-let lastTrail = 0;
-document.addEventListener('mousemove', e => {
-    const now = Date.now();
-    if (now - lastTrail < 70) return;
-    lastTrail = now;
-    const dot = document.createElement('div');
-    dot.className = 'trail';
-    const size = 5 + Math.random() * 7;
-    dot.style.width  = size + 'px';
-    dot.style.height = size + 'px';
-    dot.style.left = (e.clientX - size / 2) + 'px';
-    dot.style.top  = (e.clientY - size / 2) + 'px';
-    document.body.appendChild(dot);
-    requestAnimationFrame(() => {
-        dot.style.opacity = '0';
-        dot.style.transform = 'scale(0.2)';
-    });
-    setTimeout(() => dot.remove(), 720);
+// ═══════════════════════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('hashchange', () => {
+    S.hashCalls++;
+    const v = currentView();
+    updateHiddenText(v);
+    renderView(v);
+    if (v === 'locate') startLocateLoop();
+    if (v === 'void') maybeMoreVoid();
+    if (v === 'tools') setTimeout(openTrap, 45000);
 });
 
-// ═══════════════════════════════════════════════
+// initial render happens via runBoot/startReveal
+
+// ═══════════════════════════════════════════════════════════
 // DETERRENTS
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('selectstart', e => e.preventDefault());
 document.addEventListener('dragstart',  e => e.preventDefault());
 document.addEventListener('keydown', e => {
     const k = e.key.toLowerCase();
+    // let ctrl+a through so hidden text can be selected
+    if (e.ctrlKey && k === 'a') return true;
     if (e.key === 'F12') { e.preventDefault(); return false; }
     if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) { e.preventDefault(); return false; }
     if (e.ctrlKey && (k === 'u' || k === 's')) { e.preventDefault(); return false; }
 }, true);
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// HISTORY URL SWAP — change the url without navigating
+// ═══════════════════════════════════════════════════════════
+setTimeout(() => {
+    if (location.hash === '' || location.hash === '#home') {
+        try { history.replaceState(null, '', '#do-you-know-them'); } catch {}
+        setTimeout(() => {
+            try { history.replaceState(null, '', '#home'); } catch {}
+        }, 30000);
+    }
+}, 60000);
+
+// ═══════════════════════════════════════════════════════════
 // GO
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 runBoot();
 </script>
 
