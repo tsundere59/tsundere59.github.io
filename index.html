@@ -57,7 +57,7 @@
         50%      { opacity: 0.12; }
     }
 
-    /* ── custom cursor ───────────────────────────── */
+    /* custom cursor */
     #cursor {
         position: fixed;
         top: 0; left: 0;
@@ -70,29 +70,17 @@
         z-index: 10000;
         transform: translate(-50%, -50%);
         will-change: transform;
-        mix-blend-mode: normal;
     }
 
-    /* ── random eyes ─────────────────────────────── */
+    /* random eyes */
     .eye {
-        position: fixed;
         width: 22px;
         height: 12px;
         background: #000;
         border-radius: 50%;
-        z-index: 9500;
-        pointer-events: none;
         box-shadow: 0 0 6px rgba(0,0,0,0.9),
                     inset 0 0 4px rgba(20,20,20,0.8);
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.6);
-        transition: opacity 0.12s ease, transform 0.12s ease;
     }
-    .eye.show {
-        opacity: 0.92;
-        transform: translate(-50%, -50%) scale(1);
-    }
-    /* pair of eyes = two of these side by side */
     .eye-pair {
         position: fixed;
         z-index: 9500;
@@ -104,13 +92,8 @@
         transition: opacity 0.1s ease;
     }
     .eye-pair.show { opacity: 0.95; }
-    .eye-pair .eye {
-        position: static;
-        opacity: 1;
-        transform: none;
-    }
 
-    /* ── boot ───────────────────────────────────── */
+    /* boot */
     #boot {
         position: fixed;
         inset: 0;
@@ -150,7 +133,7 @@
         100% { transform: translateY(340px) rotate(-4deg); opacity: 0; filter: blur(3px); }
     }
 
-    /* ── collapse overlay ───────────────────────── */
+    /* collapse */
     #collapse {
         position: fixed;
         inset: 0;
@@ -170,7 +153,7 @@
         will-change: transform, opacity;
     }
 
-    /* ── main ───────────────────────────────────── */
+    /* main */
     #main {
         opacity: 0;
         transform: translateY(40px);
@@ -203,7 +186,6 @@
         100% { top: 100vh; opacity: 0; }
     }
 
-    /* trail */
     .trail {
         position: fixed;
         background: #ffb3c1;
@@ -216,7 +198,6 @@
         will-change: transform, opacity;
     }
 
-    /* hex watermark */
     .bg-nums {
         position: fixed; inset: 0;
         z-index: 0;
@@ -230,7 +211,6 @@
         font-family: 'Courier New', monospace;
     }
 
-    /* corners */
     .corner {
         position: fixed;
         z-index: 50;
@@ -259,9 +239,7 @@
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    /* NOTE: chains removed — that was the "black box" framing */
-
-    /* ── layout ─────────────────────────────────── */
+    /* layout */
     .wrap {
         position: relative;
         z-index: 2;
@@ -513,49 +491,30 @@ document.addEventListener('mousemove', e => {
 
 // ═══════════════════════════════════════════════
 // RANDOM EYES
-// flashes a pair of black eyes at a random
-// position every few seconds. no pupil, no
-// expression. just watching.
 // ═══════════════════════════════════════════════
 function spawnEyes() {
     const pair = document.createElement('div');
     pair.className = 'eye-pair';
-    const eye1 = document.createElement('div');
-    eye1.className = 'eye';
-    const eye2 = document.createElement('div');
-    eye2.className = 'eye';
-    pair.appendChild(eye1);
-    pair.appendChild(eye2);
-
-    // random position, keeping eyes away from very edges
+    pair.innerHTML = '<div class="eye"></div><div class="eye"></div>';
     const padding = 60;
     const x = padding + Math.random() * (window.innerWidth  - padding * 2);
     const y = padding + Math.random() * (window.innerHeight - padding * 2);
     pair.style.left = x + 'px';
     pair.style.top  = y + 'px';
-
-    // random slight rotation for unease
     const rot = (Math.random() * 20 - 10).toFixed(1);
     pair.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
-
     document.body.appendChild(pair);
-
     requestAnimationFrame(() => pair.classList.add('show'));
-
-    // visible for 90-250ms, then gone
     const life = 90 + Math.random() * 160;
     setTimeout(() => {
         pair.classList.remove('show');
         setTimeout(() => pair.remove(), 200);
     }, life);
 }
-
-// eyes on a randomized schedule — 4 to 12 seconds apart
 function scheduleEyes() {
     const delay = 4000 + Math.random() * 8000;
     setTimeout(() => {
         spawnEyes();
-        // occasionally spawn 2 in quick succession
         if (Math.random() < 0.3) setTimeout(spawnEyes, 180);
         scheduleEyes();
     }, delay);
@@ -585,7 +544,6 @@ async function typeLine(text, color) {
     span.className = 'line show ' + color;
     BOOT.appendChild(span);
     BOOT.appendChild(document.createTextNode('\n'));
-
     if (text.includes('<')) {
         span.innerHTML = text;
         await sleep(220);
@@ -598,6 +556,19 @@ async function typeLine(text, color) {
 }
 
 async function runBoot() {
+    // session guard — skip intro if already seen in this tab
+    if (sessionStorage.getItem('doomsday_intro')) {
+        BOOT.remove();
+        MAIN.classList.add('show');
+        document.querySelectorAll('[data-anim]').forEach(l => l.classList.add('show'));
+        document.querySelectorAll('.tile').forEach(t => t.classList.add('show'));
+        document.getElementById('wordmark').classList.add('show');
+        document.getElementById('quoteLine').classList.add('show');
+        document.getElementById('footer').classList.add('show');
+        showQuote();
+        return;
+    }
+
     const cur = document.createElement('span');
     cur.className = 'cursor';
     BOOT.appendChild(cur);
@@ -620,6 +591,7 @@ async function runBoot() {
         BOOT.remove();
         MAIN.classList.add('show');
         startReveal();
+        sessionStorage.setItem('doomsday_intro', '1');
     });
 }
 
@@ -689,7 +661,6 @@ function startReveal() {
     document.querySelectorAll('[data-anim]').forEach(label => {
         setTimeout(() => label.classList.add('show'), delay);
         delay += 240;
-
         const grid = label.nextElementSibling;
         if (grid) {
             grid.querySelectorAll('.tile').forEach((tile, i) => {
@@ -794,7 +765,6 @@ document.addEventListener('mousemove', e => {
     const now = Date.now();
     if (now - lastTrail < 70) return;
     lastTrail = now;
-
     const dot = document.createElement('div');
     dot.className = 'trail';
     const size = 5 + Math.random() * 7;
@@ -803,7 +773,6 @@ document.addEventListener('mousemove', e => {
     dot.style.left = (e.clientX - size / 2) + 'px';
     dot.style.top  = (e.clientY - size / 2) + 'px';
     document.body.appendChild(dot);
-
     requestAnimationFrame(() => {
         dot.style.opacity = '0';
         dot.style.transform = 'scale(0.2)';
@@ -832,47 +801,3 @@ runBoot();
 
 </body>
 </html>
-// ═══════════════════════════════════════════════
-// BOOT — only runs once per browser session
-// ═══════════════════════════════════════════════
-async function runBoot() {
-    // if we've already run the intro in this tab session, skip it
-    if (sessionStorage.getItem('doomsday_intro')) {
-        BOOT.remove();
-        MAIN.classList.add('show');
-        // instantly reveal the layout without the stagger
-        document.querySelectorAll('[data-anim]').forEach(l => l.classList.add('show'));
-        document.querySelectorAll('.tile').forEach(t => t.classList.add('show'));
-        document.getElementById('wordmark').classList.add('show');
-        document.getElementById('quoteLine').classList.add('show');
-        document.getElementById('footer').classList.add('show');
-        showQuote();
-        return;
-    }
-
-    const cur = document.createElement('span');
-    cur.className = 'cursor';
-    BOOT.appendChild(cur);
-
-    await sleep(500);
-    BOOT.innerHTML = '';
-    BOOT.appendChild(document.createTextNode('\n'));
-
-    for (const [text, color] of BOOT_LINES) {
-        await typeLine(text, color);
-        await sleep(220);
-    }
-
-    const endCursor = document.createElement('span');
-    endCursor.className = 'cursor';
-    BOOT.appendChild(endCursor);
-
-    await sleep(900);
-    collapseBoot(() => {
-        BOOT.remove();
-        MAIN.classList.add('show');
-        startReveal();
-        // mark as seen — next navigation in this tab skips the intro
-        sessionStorage.setItem('doomsday_intro', '1');
-    });
-}ds
