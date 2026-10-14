@@ -181,3 +181,52 @@ footer {
     .ascii { font-size: 7px; }
     .handle { font-size: 15px; }
 }
+/* ── glitch transition overlay ─────────────────── */
+#glitch {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 200;
+    pointer-events: none;
+    display: none;
+    overflow: hidden;
+}
+#glitch.active { display: block; }
+
+#glitch::before,
+#glitch::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #000;
+}
+
+#glitch .slice {
+    position: absolute;
+    left: 0; right: 0;
+    height: 3px;
+    background: #ff2e63;
+    box-shadow: 0 0 12px #ff2e63, 0 0 24px #c41e3a;
+    mix-blend-mode: screen;
+    opacity: 0.9;
+}
+
+#glitch .shard {
+    position: absolute;
+    background: #ff2e63;
+    opacity: 0.8;
+    mix-blend-mode: screen;
+}
+
+/* cursor trail — bigger, redder, sharper */
+.trail {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: #ff2e63;
+    z-index: 89;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(255,46,99,0.8), 0 0 16px rgba(200,20,60,0.4);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    will-change: transform, opacity;
+}
