@@ -3,103 +3,231 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>@0_032</title>
+<title>fiesta · @0_032</title>
 <link rel="stylesheet" href="style.css">
+<style>
+    body { overflow-x: hidden; }
+
+    /* ── background art layers ─────────────────────── */
+    .bg-art {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+    }
+    .bg-art img {
+        position: absolute;
+        opacity: 0.06;
+        filter: grayscale(100%) brightness(1.4) sepia(1) hue-rotate(-30deg) saturate(4);
+        user-select: none;
+    }
+    .bg-art .lain-1  { top: 6%;    left: -4%;   width: 340px; transform: rotate(-8deg); }
+    .bg-art .lain-2  { top: 55%;   right: -6%;  width: 380px; transform: rotate(6deg); }
+    .bg-art .lain-3  { bottom: -6%; left: 8%;   width: 320px; transform: rotate(-3deg); opacity: 0.04; }
+    .bg-art .lain-4  { top: 18%;   right: 12%;  width: 220px; transform: rotate(12deg); opacity: 0.05; }
+    .bg-art .lain-5  { bottom: 12%; right: 30%; width: 240px; transform: rotate(-15deg); opacity: 0.05; }
+
+    /* ── foreground ─────────────────────────────────── */
+    header, main, footer { position: relative; z-index: 1; }
+
+    header {
+        text-align: center;
+        padding: 70px 20px 30px;
+    }
+
+    .fiesta-title {
+        font-size: clamp(48px, 10vw, 110px);
+        font-weight: 900;
+        letter-spacing: 8px;
+        color: #c41e3a;
+        text-shadow:
+            0 0 20px rgba(196, 30, 58, 0.8),
+            0 0 40px rgba(196, 30, 58, 0.4),
+            3px 3px 0 #4a0010;
+        margin: 0;
+        font-family: 'Impact', 'SF Mono', monospace;
+        line-height: 1;
+    }
+
+    .jp-sub {
+        color: #ffb3c1;
+        font-size: 16px;
+        letter-spacing: 12px;
+        margin-top: 18px;
+        opacity: 0.9;
+        text-shadow: 0 0 8px rgba(255, 179, 193, 0.5);
+    }
+
+    .tagline {
+        color: #ff2e63;
+        font-style: italic;
+        font-size: 13px;
+        margin-top: 14px;
+        letter-spacing: 2px;
+        opacity: 0.75;
+    }
+
+    .handle {
+        color: #6a6a6a;
+        font-size: 12px;
+        margin-top: 26px;
+        letter-spacing: 4px;
+    }
+
+    /* ── tool grid ──────────────────────────────────── */
+    .grid-wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 40px 30px 80px;
+    }
+
+    .grid-title {
+        color: #8b0000;
+        font-size: 12px;
+        letter-spacing: 6px;
+        margin-bottom: 20px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .tool-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 14px;
+    }
+
+    .tool-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 26px 14px;
+        background: rgba(20, 20, 20, 0.7);
+        border: 1px solid #2a2a2a;
+        color: #d4d4d4;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        position: relative;
+        backdrop-filter: blur(2px);
+    }
+
+    .tool-tile::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, rgba(196,30,58,0.15), transparent 70%);
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .tool-tile:hover {
+        border-color: #c41e3a;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(196, 30, 58, 0.25);
+    }
+
+    .tool-tile:hover::before { opacity: 1; }
+
+    .tool-tile .jp {
+        color: #ffb3c1;
+        font-size: 11px;
+        letter-spacing: 3px;
+        margin-bottom: 8px;
+        transition: color 0.2s;
+    }
+
+    .tool-tile:hover .jp {
+        color: #ff2e63;
+        text-shadow: 0 0 10px rgba(255, 46, 99, 0.7);
+    }
+
+    .tool-tile .en {
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-align: center;
+    }
+
+    /* ── footer ─────────────────────────────────────── */
+    footer {
+        text-align: center;
+        padding: 30px 20px 50px;
+        border-top: 1px solid #1a1a1a;
+        font-size: 11px;
+        color: #3a3a3a;
+        letter-spacing: 3px;
+    }
+
+    @media (max-width: 600px) {
+        .bg-art .lain-1, .bg-art .lain-2, .bg-art .lain-3,
+        .bg-art .lain-4, .bg-art .lain-5 { opacity: 0.04; }
+        .fiesta-title { letter-spacing: 4px; }
+        .jp-sub { letter-spacing: 6px; font-size: 13px; }
+    }
+</style>
 </head>
 <body>
 <div class="scanline"></div>
-<div class="noise"></div>
+
+<!-- background art — swap the src for any lain / anime png you want -->
+<div class="bg-art">
+    <img class="lain-1" src="art/lain-1.png" alt="">
+    <img class="lain-2" src="art/lain-2.png" alt="">
+    <img class="lain-3" src="art/lain-3.png" alt="">
+    <img class="lain-4" src="art/lain-4.png" alt="">
+    <img class="lain-5" src="art/lain-5.png" alt="">
+</div>
 
 <header>
-    <pre class="ascii">
-  ███████╗██╗███████╗███████╗████████╗ █████╗
-  ██╔════╝██║██╔════╝██╔════╝╚══██╔══╝██╔══██╗
-  █████╗  ██║█████╗  █████╗     ██║   ███████║
-  ██╔══╝  ██║██╔══╝  ██╔══╝     ██║   ██╔══██║
-  ██║     ██║███████╗███████╗   ██║   ██║  ██║
-  ╚═╝     ╚═╝╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝
-    </pre>
+    <h1 class="fiesta-title">FIESTA</h1>
+    <p class="jp-sub">フ ィ エ ス タ</p>
     <p class="tagline">present day. present time.</p>
     <p class="handle">@0_032</p>
 </header>
 
 <main>
-    <section>
-        <h2>// 自己紹介</h2>
-        <p>builder. recon. cli tools. occasionally html.</p>
-    </section>
-
-    <section>
-        <h2>// 道具 · tools</h2>
-        <p class="hint">browser-runnable utilities.</p>
-        <div class="grid">
-            <a class="card" href="tools.html#snowflake">
+    <div class="grid-wrap">
+        <p class="grid-title">// 道具 · select a tool</p>
+        <div class="tool-grid">
+            <a class="tool-tile" href="tools.html#snowflake">
                 <span class="jp">雪片</span>
-                <span class="en">snowflake decoder</span>
+                <span class="en">snowflake</span>
             </a>
-            <a class="card" href="tools.html#base64">
+            <a class="tool-tile" href="tools.html#base64">
                 <span class="jp">符号化</span>
-                <span class="en">base64 enc / dec</span>
+                <span class="en">base64</span>
             </a>
-            <a class="card" href="tools.html#hash">
+            <a class="tool-tile" href="tools.html#hash">
                 <span class="jp">散列</span>
                 <span class="en">hash text</span>
             </a>
-            <a class="card" href="tools.html#ip">
-                <span class="jp">住所</span>
-                <span class="en">ip lookup</span>
-            </a>
-            <a class="card" href="tools.html#dns">
-                <span class="jp">名前解決</span>
-                <span class="en">dns lookup</span>
-            </a>
-            <a class="card" href="tools.html#pwd">
+            <a class="tool-tile" href="tools.html#pwd">
                 <span class="jp">暗号</span>
                 <span class="en">password gen</span>
             </a>
-        </div>
-    </section>
-
-    <section>
-        <h2>// 偵察 · osint</h2>
-        <p class="hint">recon on public data.</p>
-        <div class="grid">
-            <a class="card" href="tools.html#token">
+            <a class="tool-tile" href="tools.html#ip">
+                <span class="jp">住所</span>
+                <span class="en">ip lookup</span>
+            </a>
+            <a class="tool-tile" href="tools.html#dns">
+                <span class="jp">名前解決</span>
+                <span class="en">dns lookup</span>
+            </a>
+            <a class="tool-tile" href="tools.html#token">
                 <span class="jp">証票</span>
                 <span class="en">token decode</span>
             </a>
-            <a class="card" href="tools.html#webhook">
+            <a class="tool-tile" href="tools.html#webhook">
                 <span class="jp">送信</span>
-                <span class="en">webhook inspect</span>
-            </a>
-            <a class="card" href="tools.html#invite">
-                <span class="jp">招待</span>
-                <span class="en">invite intel</span>
+                <span class="en">webhook</span>
             </a>
         </div>
-    </section>
-
-    <section>
-        <h2>// 複製 · cloner</h2>
-        <p class="hint">export server structure to json. python-side, cli.</p>
-        <a class="card wide" href="https://github.com/0-032" target="_blank">
-            <span class="jp">複製</span>
-            <span class="en">fiesta cli · github</span>
-        </a>
-    </section>
-
-    <section>
-        <h2>// 連絡 · contact</h2>
-        <p>handle: <span class="accent">@0_032</span></p>
-        <p>signal: <span class="dim">on request</span></p>
-    </section>
+    </div>
 </main>
 
 <footer>
-    <p class="dim">present day. present time.</p>
-    <p class="dim">© <span id="year"></span> @0_032</p>
+    present day. present time. · fiesta v1.0
 </footer>
 
-<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
