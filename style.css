@@ -1,74 +1,26 @@
-/* ============================================================
-   grave.rest — lain overlay stylesheet
-   loaded by index.html AFTER its inline styles
-   ============================================================ */
+/* grave.rest — lain overlay */
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --red: #ff2460;
-  --blood: #a31331;
-  --pink: #ff9ec2;
-  --green: #83f0a4;
-  --ash: #7d6f85;
-  --line: #2e1f3d;
-  --black: #050407;
-}
-
-/* ============ sitting lain beside the menu options ============ */
+/* ============ sitting lain ============ */
 .lain-sit {
   position: fixed;
-  left: 6vw;
-  bottom: 8vh;
-  width: 180px;
+  left: 5vw;
+  bottom: 6vh;
+  width: 170px;
   height: 220px;
   pointer-events: none;
-  z-index: 15;
+  z-index: 150;
   opacity: 0;
-  animation: lainAppear 2s 1s both, lainBreathe 5s 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 14px rgba(255, 36, 96, 0.45));
+  animation: lainAppear 2s 1.2s both, lainBreathe 5s 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 16px rgba(255, 36, 96, 0.5));
 }
-@keyframes lainAppear { from { opacity: 0; transform: translateY(14px); } to { opacity: 0.85; transform: none; } }
+.lain-sit svg { width: 100%; height: 100%; }
+@keyframes lainAppear { from { opacity: 0; transform: translateY(16px); } to { opacity: 0.8; transform: none; } }
 @keyframes lainBreathe {
-  0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 14px rgba(255,36,96,.45)); }
-  50%      { opacity: 1;    filter: drop-shadow(0 0 26px rgba(255,36,96,.75)); }
-}
-.lain-sit::before {
-  content: "";
-  position: absolute; inset: 0;
-  background:
-    /* hair */
-    radial-gradient(ellipse 34% 30% at 50% 16%, var(--red) 0 58%, transparent 60%),
-    linear-gradient(var(--red), var(--blood)) top left / 12% 62% no-repeat,
-    linear-gradient(var(--red), var(--blood)) top right / 12% 62% no-repeat,
-    /* body */
-    radial-gradient(ellipse 26% 34% at 50% 44%, #2a1826 0 60%, transparent 62%),
-    /* legs hugged to chest */
-    radial-gradient(ellipse 30% 16% at 50% 74%, #2a1826 0 60%, transparent 62%),
-    /* knees */
-    radial-gradient(circle 9% at 36% 68%, #3a2030 0 98%, transparent 100%),
-    radial-gradient(circle 9% at 64% 68%, #3a2030 0 98%, transparent 100%);
-  background-repeat: no-repeat;
-  clip-path: polygon(28% 6%, 40% 0%, 60% 0%, 72% 6%, 76% 22%, 82% 60%, 74% 92%, 26% 92%, 18% 60%, 24% 22%);
-}
-.lain-sit::after {
-  content: "";
-  position: absolute;
-  left: 42%; top: 12%;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: #fff8e7;
-  box-shadow: inset 2px 0 0 #000, 0 0 10px rgba(255,248,231,.8);
-  animation: lainWatch 7s ease-in-out infinite;
-}
-@keyframes lainWatch {
-  0%, 20% { transform: translate(0, 0); }
-  30%, 55% { transform: translate(3px, 1px); }
-  65%, 90% { transform: translate(-2px, 0); }
-  100% { transform: translate(0, 0); }
+  0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 16px rgba(255,36,96,.5)); }
+  50%      { opacity: 1;   filter: drop-shadow(0 0 30px rgba(255,36,96,.85)); }
 }
 @media (max-width: 760px) {
-  .lain-sit { width: 110px; height: 140px; left: auto; right: 4vw; bottom: 12vh; opacity: 0.55; }
+  .lain-sit { width: 100px; height: 130px; left: auto; right: 4vw; bottom: 10vh; }
 }
 
 /* ============ wire lines behind everything ============ */
@@ -77,14 +29,14 @@ body::before {
   position: fixed; inset: 0;
   pointer-events: none;
   z-index: 5;
-  opacity: 0.5;
+  opacity: 0.45;
   background-image:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='600' viewBox='0 0 400 600'><g fill='none' stroke='%23a31331' stroke-width='1' stroke-opacity='0.5'><path d='M-20 80 Q 120 30 220 120 T 420 210'/><path d='M-20 280 Q 100 240 200 330 T 420 420'/><path d='M-20 480 Q 80 450 180 520 T 420 570'/></g></svg>");
   background-size: 400px 600px;
   background-repeat: repeat;
 }
 
-/* ============ giant faint 'lain' watermark on sub screens ============ */
+/* ============ giant lain watermark on sub screens ============ */
 .sub::after {
   content: "lain";
   position: fixed;
@@ -104,7 +56,7 @@ body::before {
   96% { opacity: 0.9; }
 }
 
-/* ============ menu options: green "connect" whisper on hover ============ */
+/* ============ menu hover whispers ============ */
 .opt { position: relative; }
 .opt:hover::after {
   content: "connect";
@@ -114,18 +66,14 @@ body::before {
   font-family: 'VT323', monospace;
   font-size: 1rem;
   letter-spacing: 0.3em;
-  color: var(--green);
+  color: #83f0a4;
   text-shadow: 0 0 10px rgba(131, 240, 164, 0.6);
-  animation: blink 1.2s steps(2) infinite;
+  animation: lainblink 1.2s steps(2) infinite;
 }
-@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+@keyframes lainblink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
-/* ============ lain touches across the site ============ */
-
-/* titles stutter like a failing signal */
-.sub-bar h2, #title .big, #menu .head {
-  animation: signalStutter 8s infinite;
-}
+/* ============ signal stutter on titles ============ */
+.sub-bar h2, #title .big, #menu .head { animation: signalStutter 8s infinite; }
 @keyframes signalStutter {
   0%, 90%, 96%, 100% { transform: translateX(0); }
   91% { transform: translateX(-2px); }
@@ -133,39 +81,24 @@ body::before {
   95% { transform: translateX(-1px); }
 }
 
-/* CONNECT TO THE WIRED and quotes hum green */
-#title .connect, .info-card .quote {
-  animation: hum 4s ease-in-out infinite;
-}
-@keyframes hum {
-  0%, 100% { text-shadow: 0 0 8px rgba(131,240,164,0.3); }
-  50%      { text-shadow: 0 0 22px rgba(131,240,164,0.7); }
-}
-
-/* tool index numbers glitch on hover */
-.toolrow:hover .idx {
-  animation: idxGlitch 0.4s steps(3);
-}
+/* ============ tool idx glitch on hover ============ */
+.toolrow:hover .idx { animation: idxGlitch 0.4s steps(3); }
 @keyframes idxGlitch {
   0% { transform: translate(0); }
-  33% { transform: translate(-2px, 1px); color: var(--green); }
+  33% { transform: translate(-2px, 1px); color: #83f0a4; }
   66% { transform: translate(2px, -1px); }
   100% { transform: translate(0); }
 }
 
-/* scrollbar: thin red wire */
+/* thin red wire scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--black); }
-::-webkit-scrollbar-thumb { background: var(--blood); }
-::-webkit-scrollbar-thumb:hover { background: var(--red); }
-* { scrollbar-width: thin; scrollbar-color: var(--blood) var(--black); }
+::-webkit-scrollbar-track { background: #050407; }
+::-webkit-scrollbar-thumb { background: #a31331; }
+::-webkit-scrollbar-thumb:hover { background: #ff2460; }
+* { scrollbar-width: thin; scrollbar-color: #a31331 #050407; }
 
 @media (prefers-reduced-motion: reduce) {
-  .lain-sit, .lain-sit::after,
-  .sub::after, .opt:hover::after,
+  .lain-sit, .sub::after, .opt:hover::after,
   .sub-bar h2, #title .big, #menu .head,
-  #title .connect, .info-card .quote,
-  .toolrow:hover .idx, body::before {
-    animation: none !important;
-  }
+  .toolrow:hover .idx, body::before { animation: none !important; }
 }
