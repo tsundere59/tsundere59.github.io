@@ -33,12 +33,10 @@
     overflow: hidden;
   }
 
-  /* ===================== CRT atmosphere ===================== */
   .tube { position: fixed; inset: 0; pointer-events: none; }
   .tube.lines { z-index: 200; background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.22) 3px 4px); }
   .tube.curve { z-index: 202; box-shadow: inset 0 0 180px 60px rgba(0,0,0,.8); }
 
-  /* ===================== screens ===================== */
   .screen {
     position: fixed; inset: 0;
     display: none;
@@ -51,7 +49,6 @@
   .screen.fade-in { animation: fadein 1.2s both; }
   @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 
-  /* ---- boot ---- */
   #boot {
     align-items: flex-start; justify-content: flex-start;
     font-family: 'VT323', monospace;
@@ -63,7 +60,6 @@
   #boot .err { color: var(--hot); }
   #boot.error-stage { color: var(--hot); }
 
-  /* ---- glitch break ---- */
   body.breaking { animation: shake .5s steps(8) infinite; }
   @keyframes shake {
     0% { transform: translate(0,0); } 25% { transform: translate(-6px,3px); }
@@ -88,7 +84,6 @@
   #static.on { opacity: .12; animation: staticjump .1s steps(3) infinite; }
   @keyframes staticjump { 0%{transform:translate(0,0)} 33%{transform:translate(-15px,8px)} 66%{transform:translate(12px,-10px)} 100%{transform:translate(0,0)} }
 
-  /* ---- title splash ---- */
   #title { text-align: center; }
   #title .big {
     font-family: 'VT323', monospace;
@@ -121,7 +116,6 @@
   }
   @keyframes pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
 
-  /* ---- menu ---- */
   #menu { text-align: center; }
   #menu .head {
     font-family: 'VT323', monospace;
@@ -151,7 +145,6 @@
   .opt.footer-line:hover::before { content: ""; }
   .opt.footer-line a { color: var(--flesh); text-decoration: none; border-bottom: 1px solid var(--blood); }
 
-  /* ---- sub screens ---- */
   .sub { align-items: stretch; justify-content: flex-start; padding: clamp(1.5rem, 5vw, 4rem); overflow-y: auto; }
   .sub-bar {
     display: flex; align-items: baseline; gap: 1.2rem;
@@ -171,7 +164,6 @@
   }
   .back:hover { color: var(--hot); border-color: var(--hot); }
 
-  /* tools list with categories */
   #tools .list { display: flex; flex-direction: column; }
   .cat {
     font-family: 'VT323', monospace;
@@ -200,7 +192,6 @@
   .toolrow .arrow { color: var(--bruise); }
   .toolrow:hover .arrow { color: var(--hot); }
 
-  /* tool detail */
   .detail-card {
     border: 1px solid var(--line);
     background: var(--pit);
@@ -227,7 +218,6 @@
   .btn.dim { color: var(--ash); border-color: var(--line); }
   .btn.dim:hover { background: var(--line); color: var(--bone); box-shadow: none; }
 
-  /* about / info */
   .info-card {
     border: 1px solid var(--line);
     background: var(--pit);
@@ -266,17 +256,14 @@
 <div id="glitchFlash" aria-hidden="true"></div>
 <div id="static" aria-hidden="true"></div>
 
-<!-- BOOT -->
 <div class="screen on" id="boot" aria-hidden="true"></div>
 
-<!-- TITLE -->
 <div class="screen" id="title">
   <div class="big">grave<span class="dot">.</span>rest</div>
   <div class="connect">CONNECT TO THE WIRED</div>
   <div class="enter">[ press anywhere to continue ]</div>
 </div>
 
-<!-- MENU -->
 <div class="screen" id="menu">
   <div class="head">grave<b>.</b>rest</div>
   <div class="opts">
@@ -288,13 +275,11 @@
   </div>
 </div>
 
-<!-- TOOLS -->
 <div class="screen sub" id="tools">
   <div class="sub-bar"><h2>TOOLS</h2><a class="back" href="#" data-back>← BACK</a></div>
   <div class="list" id="toolList"></div>
 </div>
 
-<!-- TOOL DETAIL -->
 <div class="screen sub" id="detail">
   <div class="sub-bar"><h2 id="detailTitle">TOOL</h2><a class="back" href="#" data-back-tools>← TOOLS</a></div>
   <div class="detail-card">
@@ -308,7 +293,6 @@
   </div>
 </div>
 
-<!-- ABOUT -->
 <div class="screen sub" id="about">
   <div class="sub-bar"><h2>ABOUT ME</h2><a class="back" href="#" data-back>← BACK</a></div>
   <div class="info-card">
@@ -318,7 +302,6 @@
   </div>
 </div>
 
-<!-- INFO -->
 <div class="screen sub" id="info">
   <div class="sub-bar"><h2>INFO</h2><a class="back" href="#" data-back>← BACK</a></div>
   <div class="info-card">
@@ -329,9 +312,6 @@
 </div>
 
 <script>
-/* ============================================================
-   SCREEN ROUTER
-   ============================================================ */
 const screens = ["boot", "title", "menu", "tools", "detail", "about", "info"];
 function show(id) {
   screens.forEach(s => {
@@ -343,9 +323,7 @@ function show(id) {
   document.body.style.overflowY = (id === "tools" || id === "detail" || id === "about" || id === "info") ? "auto" : "hidden";
 }
 
-/* ============================================================
-   PHASE 1 — BOOT → ERROR → BREAK
-   ============================================================ */
+/* BOOT -> ERROR -> BREAK */
 (function () {
   const boot = document.getElementById("boot");
   const ok = "<span class='err'>[OK]</span>";
@@ -376,7 +354,6 @@ function show(id) {
   })();
 })();
 
-/* screen break: shake, tears, static, flash — then title */
 function breakScreen() {
   const body = document.body;
   body.classList.add("breaking");
@@ -402,9 +379,7 @@ function breakScreen() {
   }, 1600);
 }
 
-/* ============================================================
-   PHASE 2 — TITLE → MENU
-   ============================================================ */
+/* TITLE -> MENU */
 (function () {
   const armed = () => document.getElementById("title").classList.contains("on");
   const go = () => { if (armed()) show("menu"); };
@@ -414,7 +389,7 @@ function breakScreen() {
   });
 })();
 
-/* menu → subs */
+/* nav */
 document.querySelectorAll(".opt[data-go]").forEach(b =>
   b.addEventListener("click", () => {
     const target = b.dataset.go;
@@ -431,11 +406,7 @@ document.addEventListener("keydown", e => {
       && !document.getElementById("boot").classList.contains("on")) show("menu");
 });
 
-/* ============================================================
-   TOOLS — EDIT HERE ONLY
-   Each category: [ NAME, [[tool, description, link], ...] ]
-   link: "#" = on-site tool, or a full URL
-   ============================================================ */
+/* ============ TOOLS — EDIT HERE ONLY ============ */
 const CATEGORIES = [
   ["DISCORD", [
     ["snow",       "decodes discord snowflakes into timestamps and worker ids.", "#"],
@@ -471,7 +442,7 @@ const CATEGORIES = [
     ["hash",       "md5, sha-1, sha-256, sha-512, computed locally.",            "#"],
     ["password",   "password generator, crypto-random, fully offline.",          "#"],
     ["uuid",       "uuid v4 and ulid factory.",                                  "#"],
-    ["timestamp2", "unix time ⇄ human time.",                                    "#"],
+    ["unix",       "unix time ⇄ human time.",                                    "#"],
     ["lorem",      "lorem ipsum generator.",                                     "#"],
     ["color",      "hex / rgb / hsl converter with live swatch.",                "#"],
     ["qr",         "qr code generator, no library, no upload.",                  "#"],
@@ -489,25 +460,27 @@ const CATEGORIES = [
   ]],
 ];
 
-/* render categories */
 const toolList = document.getElementById("toolList");
 let n = 0;
 toolList.innerHTML = CATEGORIES.map(([cat, tools]) =>
   '<div class="cat">' + cat + '<small>' + tools.length + ' tools</small></div>' +
-  tools.map(([nm, d, link]) =>
-    '<button class="toolrow" data-cat="' + cat + '" data-nm="' + nm + '" data-link="' + link + '">' +
+  tools.map(function (t) {
+    var nm = t[0], d = t[1], link = t[2];
+    return '<button class="toolrow" data-cat="' + cat + '" data-nm="' + nm + '">' +
       '<span class="idx">' + String(++n).padStart(2, "0") + '</span>' +
       '<span class="nm">' + nm + '</span>' +
       '<span class="arrow">→</span>' +
-    '</button>'
-  ).join("")
+      '</button>';
+  }).join("")
 ).join("");
 
 toolList.addEventListener("click", e => {
   const row = e.target.closest(".toolrow");
   if (!row) return;
-  const cat = row.dataset.cat, nm = row.dataset.nm, link = row.dataset.link;
-  const tool = CATEGORIES.find(([c]) => c === cat)[1].find(([tn]) => tn === nm);
+  const cat = row.dataset.cat, nm = row.dataset.nm;
+  const group = CATEGORIES.find(c => c[0] === cat);
+  const tool = group[1].find(t => t[0] === nm);
+  const link = tool[2];
   document.getElementById("detailTitle").textContent = nm.toUpperCase();
   document.getElementById("dName").textContent = nm;
   document.getElementById("dMeta").textContent =
