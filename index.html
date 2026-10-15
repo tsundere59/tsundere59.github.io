@@ -61,7 +61,6 @@
     text-align: left;
   }
   #boot .err { color: var(--hot); }
-  #boot.error-stage { color: stage; }
   #boot.error-stage { color: var(--hot); }
 
   /* ---- glitch break ---- */
@@ -301,7 +300,7 @@
   <div class="detail-card">
     <h3 id="dName"></h3>
     <div class="meta" id="dMeta"></div>
-    < flattened<div class="desc" id="dDesc"></div>
+    <div class="desc" id="dDesc"></div>
     <div class="actions">
       <a class="btn" id="dLink" href="#">RUN IT →</a>
       <a class="btn dim" href="#" data-back-tools>← back to tools</a>
@@ -357,7 +356,7 @@ function show(id) {
     "memory ...... selectively failing      " + ok,
     "wired link .. layer 07 handshake       " + ok,
     "protocol .... legacy schumann          " + ok,
-    "auth ........ verifying subject        " + skip + ok,
+    "auth ........ verifying subject        " + ok,
     "", "present day, present time. hahahaha.", "",
     "loading grave.rest .............. " + ok,
     "loading grave.rest .............. " + ok,
@@ -369,7 +368,7 @@ function show(id) {
   (function pump() {
     if (i < lines.length) {
       if (i >= lines.length - 3) boot.classList.add("error-stage");
-      boot.innerHTML = lines.slice(0, ++i)map(l => l).join("\n");
+      boot.innerHTML = lines.slice(0, ++i).join("\n");
       setTimeout(pump, i >= lines.length - 3 ? 420 : 130);
     } else {
       setTimeout(breakScreen, 900);
@@ -384,7 +383,7 @@ function breakScreen() {
   document.getElementById("glitchFlash").classList.add("on");
   document.getElementById("static").classList.add("on");
 
-  ["tear1","tear2","tear3"].forEach((id, idx) => {
+  ["tear1", "tear2", "tear3"].forEach((id, idx) => {
     const t = document.getElementById(id);
     const animate = () => {
       if (!body.classList.contains("breaking")) { t.style.display = "none"; return; }
@@ -472,7 +471,7 @@ const CATEGORIES = [
     ["hash",       "md5, sha-1, sha-256, sha-512, computed locally.",            "#"],
     ["password",   "password generator, crypto-random, fully offline.",          "#"],
     ["uuid",       "uuid v4 and ulid factory.",                                  "#"],
-    ["timestamp",  "unix time ⇄ human time.",                                    "#"],
+    ["timestamp2", "unix time ⇄ human time.",                                    "#"],
     ["lorem",      "lorem ipsum generator.",                                     "#"],
     ["color",      "hex / rgb / hsl converter with live swatch.",                "#"],
     ["qr",         "qr code generator, no library, no upload.",                  "#"],
@@ -493,24 +492,27 @@ const CATEGORIES = [
 /* render categories */
 const toolList = document.getElementById("toolList");
 let n = 0;
-toolList.innerHTML = CATEGORIES.map(([cat, tools]) => `
-  <div class="cat">${cat}<small>${tools.length} tools</small></div>
-  ${tools.map(([nm, d, link]) => `
-    <button class="toolrow" data-cat="${cat}" data-nm="${nm}" data-d="${d}" data-link="${link}">
-      <span class="idx">${String(++n).padStart(2, "0")}</span>
-      <span class="nm">${nm}</span>
-      <span class="arrow">→</span>
-    </button>`).join("")}`).join("");
+toolList.innerHTML = CATEGORIES.map(([cat, tools]) =>
+  '<div class="cat">' + cat + '<small>' + tools.length + ' tools</small></div>' +
+  tools.map(([nm, d, link]) =>
+    '<button class="toolrow" data-cat="' + cat + '" data-nm="' + nm + '" data-link="' + link + '">' +
+      '<span class="idx">' + String(++n).padStart(2, "0") + '</span>' +
+      '<span class="nm">' + nm + '</span>' +
+      '<span class="arrow">→</span>' +
+    '</button>'
+  ).join("")
+).join("");
 
 toolList.addEventListener("click", e => {
   const row = e.target.closest(".toolrow");
   if (!row) return;
-  const cat = row.dataset.cat, nm = row.dataset.nm, d = row.dataset.d, link = row.dataset.link;
+  const cat = row.dataset.cat, nm = row.dataset.nm, link = row.dataset.link;
+  const tool = CATEGORIES.find(([c]) => c === cat)[1].find(([tn]) => tn === nm);
   document.getElementById("detailTitle").textContent = nm.toUpperCase();
   document.getElementById("dName").textContent = nm;
   document.getElementById("dMeta").textContent =
     cat + " · layer 07 · client-side · " + (link === "#" ? "no data leaves this page" : "external link");
-  document.getElementById("dDesc").textContent = d;
+  document.getElementById("dDesc").textContent = tool[1];
   document.getElementById("dLink").href = link;
   show("detail");
 });
