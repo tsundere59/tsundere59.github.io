@@ -33,12 +33,42 @@
     overflow: hidden;
   }
 
-  /* CRT atmosphere */
+  /* ===================== lain background ===================== */
+  .bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .bg .grid-floor {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(rgba(163,19,49,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(163,19,49,.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 50% 60%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 60%, black 30%, transparent 75%);
+  }
+  .bg .lain {
+    position: absolute;
+    right: -6vw; bottom: -4vh;
+    width: clamp(280px, 42vw, 640px);
+    opacity: .13;
+    filter: drop-shadow(0 0 40px rgba(255,36,96,.25));
+  }
+  .bg .lain path { stroke: var(--hot); fill: none; stroke-width: 2; }
+  .bg .vignette-red {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 20% 10%, rgba(163,19,49,.10), transparent 55%);
+  }
+  .bg .noise {
+    position: absolute; inset: 0; opacity: .04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: drift .5s steps(4) infinite;
+  }
+  @keyframes drift { 0%{transform:translate(0,0)} 25%{transform:translate(-8px,4px)} 50%{transform:translate(6px,-6px)} 75%{transform:translate(-4px,-2px)} 100%{transform:translate(0,0)} }
+
+  /* ===================== CRT atmosphere ===================== */
   .tube { position: fixed; inset: 0; pointer-events: none; }
   .tube.lines { z-index: 200; background: repeating-linear-gradient(to bottom, transparent 0 3px, rgba(0,0,0,.22) 3px 4px); }
   .tube.curve { z-index: 202; box-shadow: inset 0 0 180px 60px rgba(0,0,0,.8); }
 
-  /* screens */
+  /* ===================== screens ===================== */
   .screen {
     position: fixed; inset: 0;
     display: none;
@@ -51,7 +81,7 @@
   .screen.fade-in { animation: fadein 1.2s both; }
   @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 
-  /* boot */
+  /* ---- boot ---- */
   #boot {
     align-items: flex-start; justify-content: flex-start;
     font-family: 'VT323', monospace;
@@ -63,7 +93,7 @@
   #boot .err { color: var(--hot); }
   #boot.error-stage { color: var(--hot); }
 
-  /* glitch break */
+  /* ---- glitch break ---- */
   body.breaking { animation: shake .5s steps(8) infinite; }
   @keyframes shake {
     0% { transform: translate(0,0); } 25% { transform: translate(-6px,3px); }
@@ -75,7 +105,10 @@
     background: rgba(255,36,96,.12);
     mix-blend-mode: screen; pointer-events: none; z-index: 210;
   }
-  #glitchFlash { position: fixed; inset: 0; z-index: 220; pointer-events: none; background: var(--hot); opacity: 0; }
+  #glitchFlash {
+    position: fixed; inset: 0; z-index: 220; pointer-events: none;
+    background: var(--hot); opacity: 0;
+  }
   #glitchFlash.on { animation: flash .12s steps(2) infinite; }
   @keyframes flash { 0% { opacity: .07; } 50% { opacity: .18; } 100% { opacity: .05; } }
   #static {
@@ -85,7 +118,7 @@
   #static.on { opacity: .12; animation: staticjump .1s steps(3) infinite; }
   @keyframes staticjump { 0%{transform:translate(0,0)} 33%{transform:translate(-15px,8px)} 66%{transform:translate(12px,-10px)} 100%{transform:translate(0,0)} }
 
-  /* title */
+  /* ---- title splash ---- */
   #title { text-align: center; }
   #title .big {
     font-family: 'VT323', monospace;
@@ -96,7 +129,10 @@
     animation: titleflicker 3.5s infinite;
   }
   #title .big .dot { color: var(--bone); text-shadow: none; }
-  @keyframes titleflicker { 0%, 90%, 94%, 100% { opacity: 1; } 91% { opacity: .4; } 93% { opacity: .75; } }
+  @keyframes titleflicker {
+    0%, 90%, 94%, 100% { opacity: 1; }
+    91% { opacity: .4; } 93% { opacity: .75; }
+  }
   #title .connect {
     margin-top: 1.6rem;
     font-family: 'VT323', monospace;
@@ -115,22 +151,22 @@
   }
   @keyframes pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
 
-  /* menu */
+  /* ---- menu ---- */
   #menu { text-align: center; }
   #menu .head {
     font-family: 'VT323', monospace;
     font-size: clamp(1.6rem, 4vw, 2.6rem);
-    color: var(--bone); letter-spacing: .1em; margin-bottom: 3rem;
+    color: var(--bone); letter-spacing: .1em; margin-bottom: 2.4rem;
   }
   #menu .head b { color: var(--hot); font-weight: 400; text-shadow: 0 0 22px rgba(255,36,96,.55); }
-  .opts { display: flex; flex-direction: column; gap: 1.6rem; }
+  .opts { display: flex; flex-direction: column; gap: 1.3rem; }
   .opt {
     font-family: 'VT323', monospace;
     font-size: clamp(1.5rem, 4.5vw, 2.4rem);
     letter-spacing: .25em;
     color: var(--ash);
     background: none; border: none; cursor: pointer;
-    padding: .2rem 1rem;
+    padding: .3rem 1rem;
     transition: color .15s, text-shadow .15s, letter-spacing .2s;
   }
   .opt:hover, .opt:focus-visible {
@@ -145,8 +181,8 @@
   .opt.footer-line:hover::before { content: ""; }
   .opt.footer-line a { color: var(--flesh); text-decoration: none; border-bottom: 1px solid var(--blood); }
 
-  /* sub screens */
-  .sub { align-items: stretch; justify-content: flex-start; padding: clamp(1.5rem, 5vw, 4rem); overflow-y: auto; }
+  /* ---- sub screens ---- */
+  .sub { align-items: stretch; justify-content: flex-start; padding: clamp(1.5rem, 5vw, 4rem); overflow-y: auto; max-width: 1100px; margin: 0 auto; }
   .sub-bar {
     display: flex; align-items: baseline; gap: 1.2rem;
     border-bottom: 1px solid var(--line); padding-bottom: 1rem; margin-bottom: 1.6rem;
@@ -160,13 +196,13 @@
     margin-left: auto;
     font-size: .78rem; letter-spacing: .2em;
     color: var(--ash); text-decoration: none;
-    border: 1px solid var(--line); padding: .4rem .9rem;
+    border: 1px solid var(--line); padding: .35rem .8rem;
     transition: all .15s;
   }
   .back:hover { color: var(--hot); border-color: var(--hot); }
 
-  /* tools list */
-  #tools .list { display: flex; flex-direction: column; max-width: 900px; width: 100%; margin: 0 auto; }
+  /* tools list with categories */
+  #tools .list { display: flex; flex-direction: column; }
   .cat {
     font-family: 'VT323', monospace;
     font-size: 1.3rem; letter-spacing: .2em;
@@ -177,89 +213,55 @@
   .cat::before { content: "▚ "; color: var(--blood); }
   .cat small { color: var(--bruise); font-size: .8rem; letter-spacing: .15em; margin-left: .8rem; }
   .toolrow {
-    display: grid; grid-template-columns: auto 1fr auto; gap: 1rem;
+    display: grid; grid-template-columns: 3rem 1fr auto; gap: 1rem;
     align-items: baseline;
-    padding: .65rem .5rem;
-    border: none; border-bottom: 1px solid var(--row);
+    padding: .7rem .8rem;
+    border-bottom: 1px solid var(--row);
     color: var(--ash);
     background: none;
     font-family: 'IBM Plex Mono', monospace; font-size: .88rem;
     cursor: pointer; text-align: left; width: 100%;
     transition: all .13s;
   }
-  .toolrow:hover, .toolrow:focus-visible { background: var(--row); color: var(--bone); padding-left: 1rem; outline: none; }
+  .toolrow:hover, .toolrow:focus-visible { background: var(--row); color: var(--bone); padding-left: 1.2rem; outline: none; }
   .toolrow .nm { color: var(--bone); }
   .toolrow:hover .nm { color: var(--hot); }
   .toolrow .idx { color: var(--blood); font-size: .72rem; }
   .toolrow .arrow { color: var(--bruise); }
   .toolrow:hover .arrow { color: var(--hot); }
 
-  /* ===== legacy tool UI (rendered by tools.js), styled lain ===== */
+  /* tool detail */
   .detail-card {
     border: 1px solid var(--line);
+    border-top: 2px solid var(--blood);
     background: var(--pit);
     padding: 2rem;
-    max-width: 900px; width: 100%; margin: 0 auto;
+    max-width: 640px; width: 100%; margin: 0 auto;
   }
-  #legacyStage { font-size: .9rem; }
-  #legacyStage .hint { color: var(--ash); font-size: .8rem; margin-bottom: 1rem; }
-  #legacyStage .row { display: flex; gap: .5rem; margin-bottom: .8rem; align-items: center; flex-wrap: wrap; }
-  #legacyStage .input {
-    flex: 1; min-width: 140px;
-    background: var(--black); border: 1px solid var(--line);
-    color: var(--bone); font-family: 'IBM Plex Mono', monospace;
-    font-size: .88rem; padding: .5rem .7rem; outline: none;
+  .detail-card h3 {
+    font-family: 'VT323', monospace;
+    font-size: 2.2rem; color: var(--hot);
+    text-shadow: 0 0 18px rgba(255,36,96,.4); margin-bottom: .4rem;
   }
-  #legacyStage .input:focus { border-color: var(--hot); }
-  #legacyStage .btn {
-    background: var(--blood); color: var(--bone);
-    border: 1px solid var(--hot); font-family: 'IBM Plex Mono', monospace;
-    font-size: .85rem; padding: .5rem 1rem; cursor: pointer;
+  .detail-card .meta { color: var(--blood); font-size: .72rem; letter-spacing: .2em; margin-bottom: 1.4rem; }
+  .detail-card .desc { color: var(--ash); line-height: 2; font-size: .9rem; margin-bottom: 1.6rem; }
+  .detail-card .actions { display: flex; gap: .8rem; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; text-decoration: none;
+    font-size: .8rem; letter-spacing: .15em;
+    color: var(--rot); border: 1px solid var(--rot);
+    padding: .5rem 1.2rem; background: none; cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
     transition: all .15s;
   }
-  #legacyStage .btn:hover { background: var(--hot); color: var(--black); }
-  #legacyStage .btn-ghost { background: transparent; color: var(--hot); }
-  #legacyStage .btn:disabled { opacity: .35; cursor: default; }
-  #legacyStage .out, #legacyStage .pane {
-    background: var(--black); border: 1px solid var(--line);
-    padding: .8rem 1rem; font-size: .82rem; color: var(--bone);
-    white-space: pre-wrap; word-break: break-word;
-    margin-top: .6rem; line-height: 1.6;
-  }
-  #legacyStage .label {
-    display: block; font-family: 'VT323', monospace;
-    font-size: 1rem; letter-spacing: .15em; text-transform: uppercase;
-    color: var(--flesh); margin: 1rem 0 .3rem;
-  }
-  #legacyStage .status { color: var(--ash); font-size: .8rem; }
-  #legacyStage .status.ok { color: var(--rot); }
-  #legacyStage .status.bad { color: var(--hot); }
-  #legacyStage .grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: .4rem; margin-top: .8rem;
-  }
-  #legacyStage .cell {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .4rem .6rem; background: var(--black);
-    border: 1px solid var(--line); font-size: .75rem;
-    color: var(--ash); text-decoration: none;
-  }
-  #legacyStage .cell .name { color: var(--bone); }
-  #legacyStage .cell .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); flex-shrink: 0; }
-  #legacyStage .cell.hit .dot { background: var(--hot); box-shadow: 0 0 6px var(--hot); }
-  #legacyStage .cell.miss .dot { background: var(--rot); box-shadow: 0 0 6px var(--rot); }
-  #legacyStage .cell.unk .dot { background: #ffd166; }
-  #legacyStage .kv { font-size: .85rem; line-height: 1.9; }
-  #legacyStage .kv .k { color: var(--hot); margin-right: .5rem; }
-  #legacyStage .kv .v { color: var(--bone); }
-  #legacyStage .m { color: var(--ash); }
-  #legacyStage textarea.input { width: 100%; min-height: 90px; resize: vertical; }
-  #legacyStage canvas.preview { max-width: 100%; display: block; border: 1px solid var(--line); margin-top: .8rem; }
-  #legacySidebar { display: none; }
+  .btn:hover { background: var(--rot); color: var(--black); box-shadow: 0 0 24px rgba(131,240,164,.4); }
+  .btn.dim { color: var(--ash); border-color: var(--line); }
+  .btn.dim:hover { background: var(--line); color: var(--bone); box-shadow: none; }
 
   /* about / info */
   .info-card {
     border: 1px solid var(--line);
+    border-top: 2px solid var(--blood);
     background: var(--pit);
     padding: 2.4rem; max-width: 560px; width: 100%; margin: 0 auto;
     text-align: center;
@@ -275,7 +277,7 @@
     transition: all .15s;
   }
   .info-card .handle:hover { color: var(--hot); text-shadow: 0 0 30px rgba(255,36,96,.6); }
-  .info-card p { color: var(--ash); font-size: .85rem; line-height: 2; margin-top: 1.4rem; }
+  .info-card p { color: var(--ash); font-size: .85rem; line-height: 2; margin-top: 1.4rem; max-width: 42ch; margin-left: auto; margin-right: auto; }
   .info-card .quote {
     margin-top: 2rem; padding-top: 1.6rem; border-top: 1px dashed var(--line);
     font-family: 'VT323', monospace; color: var(--bruise); font-size: 1.1rem; letter-spacing: .1em;
@@ -285,36 +287,22 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 </style>
-<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- LAIN — sitting in the wired, always here -->
-<div class="lain-sit" aria-hidden="true">
-  <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
-    <g fill="none" stroke="#ff2460" stroke-width="3" stroke-linecap="round">
-      <!-- hair -->
-      <path d="M100 40 C 60 40 48 80 52 120 C 54 150 46 190 40 230"/>
-      <path d="M100 40 C 140 40 152 80 148 120 C 146 150 154 190 160 230"/>
-      <path d="M72 60 C 64 100 62 150 58 200"/>
-      <path d="M128 60 C 136 100 138 150 142 200"/>
-      <!-- head -->
-      <path d="M74 82 C 74 60 86 50 100 50 C 114 50 126 60 126 82 L 124 112 C 124 132 113 144 100 144 C 87 144 76 132 76 112 Z"/>
-      <!-- eyes -->
-      <path d="M84 96 L 94 96"/>
-      <path d="M106 96 L 116 96"/>
-      <!-- mouth -->
-      <path d="M93 126 C 97 129 103 129 107 126"/>
-      <!-- body: sitting, knees up -->
-      <path d="M68 156 C 74 150 86 147 100 147 C 114 147 126 150 132 156 L 138 200"/>
-      <!-- legs hugged -->
-      <path d="M62 224 C 66 200 80 186 100 184 C 120 186 134 200 138 224"/>
-      <path d="M70 224 L 70 210 C 70 196 82 188 100 188 C 118 188 130 196 130 210 L 130 224"/>
-      <!-- arms wrapping knees -->
-      <path d="M66 170 C 70 196 80 210 92 216"/>
-      <path d="M134 170 C 130 196 120 210 108 216"/>
-    </g>
+<div class="bg" aria-hidden="true">
+  <div class="grid-floor"></div>
+  <div class="vignette-red"></div>
+  <svg class="lain" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+    <path d="M100 30 C 55 30 40 75 45 120 C 47 145 42 180 35 220 C 30 250 38 280 55 295"/>
+    <path d="M100 30 C 145 30 160 75 155 120 C 153 145 158 180 165 220 C 170 250 162 280 145 295"/>
+    <path d="M70 75 C 70 55 85 45 100 45 C 115 45 130 55 130 75 L 128 115 C 128 140 115 155 100 155 C 85 155 72 140 72 115 Z"/>
+    <path d="M80 95 C 84 92 92 92 95 95 M105 95 C 108 92 116 92 120 95"/>
+    <path d="M90 132 C 96 137 104 137 110 132"/>
+    <path d="M60 175 C 70 168 85 165 100 165 C 115 165 130 168 140 175 L 150 250 C 130 240 70 240 50 250 Z"/>
+    <path d="M85 168 L 100 185 L 115 168"/>
   </svg>
+  <div class="noise"></div>
 </div>
 
 <div class="tube lines" aria-hidden="true"></div>
@@ -343,7 +331,7 @@
     <button class="opt" data-go="about">ABOUT ME</button>
     <button class="opt" data-go="info">INFO</button>
     <button class="opt" data-go="game">GAME</button>
-    <div class="opt footer-line"><a href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">@0_032</a> · the wired is everywhere</div>
+    <div class="opt footer-line"><a href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">@0_032</a> on discord · <span style="color:var(--blood)">est. 2024</span></div>
   </div>
 </div>
 
@@ -353,16 +341,19 @@
   <div class="list" id="toolList"></div>
 </div>
 
-<!-- TOOL DETAIL — your real tools.js UI mounts into #legacyStage -->
+<!-- TOOL DETAIL -->
 <div class="screen sub" id="detail">
   <div class="sub-bar"><h2 id="detailTitle">TOOL</h2><a class="back" href="#" data-back-tools>← TOOLS</a></div>
   <div class="detail-card">
-    <div id="legacyStage"></div>
+    <h3 id="dName"></h3>
+    <div class="meta" id="dMeta"></div>
+    <div class="desc" id="dDesc"></div>
+    <div class="actions">
+      <a class="btn" id="dLink" href="#">RUN IT →</a>
+      <a class="btn dim" href="#" data-back-tools>← back to tools</a>
+    </div>
   </div>
 </div>
-
-<!-- hidden bridge targets required by tools.js -->
-<div id="legacySidebar" aria-hidden="true"></div>
 
 <!-- ABOUT -->
 <div class="screen sub" id="about">
@@ -384,21 +375,6 @@
   </div>
 </div>
 
-<!-- ===== bridge shim: lets tools.js run inside the lain site unchanged ===== -->
-<script>
-window.GRAVE = {
-  $: s => document.querySelector(s),
-  $$: s => [...document.querySelectorAll(s)],
-  sidebar: document.getElementById("legacySidebar"),
-  stage: document.getElementById("legacyStage"),
-  setCrumb: () => {},
-  closeSidebarOnMobile: () => {}
-};
-</script>
-
-<!-- your tools.js, untouched -->
-<script src="tools.js"></script>
-
 <script>
 /* ============================================================
    SCREEN ROUTER
@@ -415,7 +391,7 @@ function show(id) {
 }
 
 /* ============================================================
-   BOOT → ERROR → BREAK
+   PHASE 1 — BOOT → ERROR → BREAK
    ============================================================ */
 (function () {
   const boot = document.getElementById("boot");
@@ -429,7 +405,7 @@ function show(id) {
     "protocol .... legacy schumann          " + ok,
     "auth ........ verifying subject        " + ok,
     "", "present day, present time. hahahaha.", "",
-    "loading 34 tools ................ " + ok,
+    "loading grave.rest .............. " + ok,
     "loading grave.rest .............. " + ok,
     "loading grave.rest .............. " + fail,
     "", "FATAL: connection refused by the wired.",
@@ -447,11 +423,13 @@ function show(id) {
   })();
 })();
 
+/* screen break: shake, tears, static, flash — then title */
 function breakScreen() {
   const body = document.body;
   body.classList.add("breaking");
   document.getElementById("glitchFlash").classList.add("on");
   document.getElementById("static").classList.add("on");
+
   ["tear1", "tear2", "tear3"].forEach((id, idx) => {
     const t = document.getElementById(id);
     const animate = () => {
@@ -462,6 +440,7 @@ function breakScreen() {
     };
     setTimeout(animate, idx * 90);
   });
+
   setTimeout(() => {
     body.classList.remove("breaking");
     document.getElementById("glitchFlash").classList.remove("on");
@@ -470,7 +449,9 @@ function breakScreen() {
   }, 1600);
 }
 
-/* TITLE → MENU */
+/* ============================================================
+   PHASE 2 — TITLE → MENU
+   ============================================================ */
 (function () {
   const armed = () => document.getElementById("title").classList.contains("on");
   const go = () => { if (armed()) show("menu"); };
@@ -480,7 +461,7 @@ function breakScreen() {
   });
 })();
 
-/* NAV */
+/* menu → subs */
 document.querySelectorAll(".opt[data-go]").forEach(b =>
   b.addEventListener("click", () => {
     const target = b.dataset.go;
@@ -498,73 +479,88 @@ document.addEventListener("keydown", e => {
 });
 
 /* ============================================================
-   TOOL MENU — mirrors tools.js registry exactly.
-   [short name shown in lain menu, real label inside tools.js, category]
+   TOOLS — EDIT HERE ONLY
+   Each category: [ NAME, [[tool, description, link], ...] ]
+   link: "#" = on-site tool, or a full URL
    ============================================================ */
-const TOOLS = [
-  ["username",   "username matrix",      "identity"],
-  ["email",      "email intel",          "identity"],
-  ["phone",      "phone intel",          "identity"],
-  ["github",     "github deep dive",     "identity"],
-  ["reddit",     "reddit dossier",       "identity"],
-  ["gravatar",   "gravatar profile",     "identity"],
-  ["steam",      "steam resolver",       "identity"],
-  ["roblox",     "roblox lookup",        "identity"],
-  ["minecraft",  "minecraft uuid",       "identity"],
-  ["fusion",     "ip / domain fusion",   "network"],
-  ["dns",        "dns lookup",           "network"],
-  ["whois",      "whois (rdap)",         "network"],
-  ["ssl",        "ssl cert history",     "network"],
-  ["subdomain",  "subdomain enum",       "network"],
-  ["encode",     "encode / decode",      "text"],
-  ["cipher",     "cipher box",           "text"],
-  ["leet",       "leetspeak",            "text"],
-  ["zero-width", "invisible text",       "text"],
-  ["counter",    "char counter",         "text"],
-  ["hash",       "hash generator",       "utility"],
-  ["qr",         "qr generator",         "utility"],
-  ["password",   "password generator",   "utility"],
-  ["uuid",       "uuid / ulid",          "utility"],
-  ["timestamp",  "unix timestamp",       "utility"],
-  ["lorem",      "lorem ipsum",          "utility"],
-  ["color",      "color converter",      "utility"],
-  ["img-ascii",  "image → ascii",        "media"],
-  ["img-b64",    "image → base64",       "media"],
-  ["img-palette","palette from image",   "media"],
-  ["img-filter", "image filters",        "media"],
-  ["glitchtext", "glitch text",          "weirdcore"],
-  ["vhs",        "dead channel maker",   "weirdcore"],
-  ["cursed",     "cursed filter",        "weirdcore"],
-  ["linkcheck",  "dead link checker",    "weirdcore"],
+const CATEGORIES = [
+  ["DISCORD", [
+    ["snow",       "decodes discord snowflakes into timestamps and worker ids.", "#"],
+    ["invite",     "resolves invite codes to server, channel and age.",          "#"],
+    ["webhook",    "inspect and test webhooks without leaving the page.",        "#"],
+    ["timestamp",  "discord timestamp syntax builder.",                          "#"],
+  ]],
+  ["IDENTITY", [
+    ["username",   "checks a handle across every platform i could think of.",    "#"],
+    ["github",     "pulls apart a github profile: repos, languages, stars.",     "#"],
+    ["reddit",     "karma, age and account details for a reddit user.",          "#"],
+    ["steam",      "vanity name to steamid64 with profile details.",             "#"],
+    ["minecraft",  "minecraft name to uuid, skin and head render.",              "#"],
+    ["roblox",     "roblox user lookup with id and avatar.",                     "#"],
+    ["gravatar",   "email to gravatar profile dump.",                            "#"],
+  ]],
+  ["NETWORK", [
+    ["ip",         "geolocation, isp and asn for any ip or domain.",             "#"],
+    ["dns",        "every dns record type worth looking at.",                    "#"],
+    ["whois",      "registration data via rdap.",                                "#"],
+    ["ssl",        "certificate transparency history for a domain.",             "#"],
+    ["subdomain",  "subdomain enumeration from ct logs.",                        "#"],
+    ["linkcheck",  "paste a list of urls, find out what's still alive.",         "#"],
+  ]],
+  ["TEXT", [
+    ["encode",     "base64, hex, url, binary — every encoding at once.",         "#"],
+    ["cipher",     "caesar, atbash, vigenère, rot13.",                           "#"],
+    ["leet",       "leetspeak converter, basic and advanced.",                   "#"],
+    ["zerowidth",  "invisible characters — generate, encode, detect.",           "#"],
+    ["counter",    "chars, words, bytes, emoji — everything about text.",        "#"],
+  ]],
+  ["UTILITY", [
+    ["hash",       "md5, sha-1, sha-256, sha-512, computed locally.",            "#"],
+    ["password",   "password generator, crypto-random, fully offline.",          "#"],
+    ["uuid",       "uuid v4 and ulid factory.",                                  "#"],
+    ["timestamp2", "unix time ⇄ human time.",                                    "#"],
+    ["lorem",      "lorem ipsum generator.",                                     "#"],
+    ["color",      "hex / rgb / hsl converter with live swatch.",                "#"],
+    ["qr",         "qr code generator, no library, no upload.",                  "#"],
+  ]],
+  ["MEDIA", [
+    ["ascii",      "image to ascii art converter.",                              "#"],
+    ["b64img",     "image ⇄ base64 data url.",                                   "#"],
+    ["palette",    "extracts the dominant colors from any image.",               "#"],
+    ["filters",    "live image filters with png export.",                        "#"],
+  ]],
+  ["WEIRDCORE", [
+    ["glitchtext", "zalgo, flipped, small caps, aesthetic text.",                "#"],
+    ["vhs",        "makes any picture look taped off a dead channel.",           "#"],
+    ["cursed",     "adds eyes to your images. they watch.",                      "#"],
+  ]],
 ];
 
-const CAT_ORDER = ["identity", "network", "text", "utility", "media", "weirdcore"];
-const CAT_LABEL = { identity: "IDENTITY", network: "NETWORK", text: "TEXT", utility: "UTILITY", media: "MEDIA", weirdcore: "WEIRDCORE" };
-
+/* render categories */
 const toolList = document.getElementById("toolList");
 let n = 0;
-toolList.innerHTML = CAT_ORDER.map(cat => {
-  const tools = TOOLS.filter(t => t[2] === cat);
-  if (!tools.length) return "";
-  return '<div class="cat">' + CAT_LABEL[cat] + '<small>' + tools.length + ' tools</small></div>' +
-    tools.map(([short, label]) =>
-      '<button class="toolrow" data-label="' + label + '" data-short="' + short + '">' +
-        '<span class="idx">' + String(++n).padStart(2, "0") + '</span>' +
-        '<span class="nm">' + short + '</span>' +
-        '<span class="arrow">→</span>' +
-      '</button>').join("");
-}).join("");
+toolList.innerHTML = CATEGORIES.map(([cat, tools]) =>
+  '<div class="cat">' + cat + '<small>' + tools.length + ' tools</small></div>' +
+  tools.map(([nm, d, link]) =>
+    '<button class="toolrow" data-cat="' + cat + '" data-nm="' + nm + '" data-link="' + link + '">' +
+      '<span class="idx">' + String(++n).padStart(2, "0") + '</span>' +
+      '<span class="nm">' + nm + '</span>' +
+      '<span class="arrow">→</span>' +
+    '</button>'
+  ).join("")
+).join("");
 
-/* clicking a lain row mounts the REAL tool from tools.js into #legacyStage */
 toolList.addEventListener("click", e => {
   const row = e.target.closest(".toolrow");
   if (!row) return;
-  const label = row.dataset.label;
-  const link = [...document.querySelectorAll("#legacySidebar .tool-link")]
-    .find(a => a.textContent.trim() === label);
-  if (!link) return;
-  link.click();          // tools.js renders the tool into the stage
-  document.getElementById("detailTitle").textContent = row.dataset.short.toUpperCase();
+  const cat = row.dataset.cat, nm = row.dataset.nm, link = row.dataset.link;
+  const tool = CATEGORIES.find(([c]) => c === cat)[1].find(([tn]) => tn === nm);
+  document.getElementById("detailTitle").textContent = nm.toUpperCase();
+  document.getElementById("dName").textContent = nm;
+  document.getElementById("dMeta").textContent =
+    cat + " · layer 07 · client-side · " + (link === "#" ? "no data leaves this page" : "external link");
+  document.getElementById("dDesc").textContent = tool[1];
+  document.getElementById("dLink").href = link;
   show("detail");
 });
 </script>
