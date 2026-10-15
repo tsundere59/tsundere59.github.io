@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shikanoko Nokonoko Koshitantan</title>
+<link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Yusei+Magic&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="frame">
+  <div class="banner">
+    <div class="deer">🦌</div>
+    <span class="banner-title">Shikanoko Nokonoko Koshitantan</span>
+    <div class="deer">🦌</div>
+  </div>
+
+  <div class="subtitle">Shikanoko Nokonoko Koshitantan</div>
+
+  <nav class="nav">
+    <a href="#" data-open="tools">tools</a><span class="sep">🦌</span>
+    <a href="#" data-open="about">about</a><span class="sep">🦌</span>
+    <a href="#" data-open="links">links</a><span class="sep">🦌</span>
+    
+    <a href="#" data-open="graveyard">tools</a><span class="sep">🦌</span>
+    <a href="#" data-open="log">log</a><span class="sep">🦌</span>
+    <a href="#" data-open="now">links</a><span class="sep">🦌</span>
+    <a href="#" data-open="stats">links</a>
+  </nav>
+
+  <div class="layout">
+
+    <aside class="side">
+      <div class="box">
+        <span class="box-title">しかのこ</span>
+        <div class="box-text">
+          <span class="k">♪ のこ のこ</span><br>
+          <span class="k">♪ こし たん たん</span><br>
+          <span class="k">♪ しか のこ</span><br>
+          <span class="m">🦌 deer everywhere 🦌</span>
+        </div>
+      </div>
+      <div class="box">
+        <span class="box-title">♪ のこ ♪</span>
+        <div class="box-text" style="text-align:center">
+          <span class="k">しかのこ のこのこ</span><br>
+          <span class="m">こし たん たん</span>
+        </div>
+      </div>
+      <div class="box">
+        <span class="box-title">たん たん</span>
+        <div class="box-text">
+          <span class="k" id="visitor">------</span><br>
+          <span class="m">visitor</span>
+        </div>
+      </div>
+      <div class="box">
+        <span class="box-title">♪ time ♪</span>
+        <div class="box-text">
+          <span class="k" id="clock">--:--:--</span><br>
+          <span class="m">local</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="center">
+      <div class="content-box">
+        <h2>Shikanoko Nokonoko Koshitantan</h2>
+        <p class="center"><span class="red">🦌</span> のこ <span class="red">🦌</span> のこ <span class="red">🦌</span> こし <span class="red">🦌</span> たん <span class="red">🦌</span> たん <span class="red">🦌</span></p>
+        <p style="text-align:center;margin-top:14px">
+          <span class="pink" style="font-size:22px">Shikanoko Nokonoko Koshitantan</span>
+          <br>
+          <span style="color:#a08060;font-size:14px">deer deer deer deer</span>
+        </p>
+      </div>
+
+      <div class="marquee">
+        <span>🦌 Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ 🦌</span>
+      </div>
+
+      <div class="content-box">
+        <h2>のこ のこ</h2>
+        <p class="center" style="font-size:18px;line-height:2">しか 🦌 のこ 🦌 のこ 🦌 のこ 🦌 こし 🦌 たん 🦌 たん</p>
+        <p class="center" style="font-size:16px;color:#a08060">Shikanoko Nokonoko Koshitantan ♪</p>
+      </div>
+    </main>
+
+    <aside class="side">
+      <div class="box">
+        <span class="box-title">music</span>
+        <div class="box-text">
+          <span class="k">🦌 のこ</span><br>
+          <span class="k">🦌 のこ</span><br>
+          <span class="k">🦌 こし</span>
+        </div>
+      </div>
+      <div class="box">
+        <span class="box-title">たん たん</span>
+        <div class="box-text">
+          <span class="m">deer<br>deer<br>deer</span>
+        </div>
+      </div>
+      <div class="box">
+        <span class="box-title">♪</span>
+        <div class="box-text">
+          <span class="k">しかのこ</span>
+        </div>
+      </div>
+      <div class="box">
+        <span class="box-title">theme</span>
+        <div class="box-text">
+          <button id="themeToggle" style="background:#d97a3d;border:2px solid #d97a3d;color:#fff;font-family:inherit;font-size:14px;padding:4px 10px;cursor:pointer;border-radius:20px">tools</button>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <div class="statusbar">
+    <span><a href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">@0_032</a></span>
+    <span class="dim">🦌 Shikanoko Nokonoko Koshitantan 🦌</span>
+  </div>
+</div>
+
+<div class="overlay" id="ov-about"><div class="overlay-inner">
+  <button class="overlay-close" data-close>×</button>
+  <h2>about</h2>
+  <p>Shikanoko Nokonoko Koshitantan 🦌</p>
+</div></div>
+
+<div class="overlay" id="ov-links"><div class="overlay-inner">
+  <button class="overlay-close" data-close>×</button>
+  <h2>links</h2>
+  <p style="text-align:center;font-size:24px"><a href="https://discord.com/users/0_032" target="_blank" rel="noopener noreferrer">@0_032</a></p>
+</div></div>
+
+<div class="overlay" id="ov-graveyard"><div class="overlay-inner">
+  <button class="overlay-close" data-close>×</button>
+  <h2>tools</h2>
+  <p>Shikanoko Nokonoko Koshitantan 🦌</p>
+</div></div>
+
+<div class="overlay" id="ov-log"><div class="overlay-inner">
+  <button class="overlay-close" data-close>×</button>
+  <h2>log</h2>
+  <p>2026-10-15 — Shikanoko Nokonoko Koshitantan</p>
+</div></div>
+
+<div class="overlay" id="ov-now"><div class="overlay-inner">
+  <button class="overlay-close" data-close>×</button>
+  <h2>links</h2>
+  <p>Shikanoko Nokonoko Koshitantan 🦌</p>
+</div></div>
+
+<div class="overlay" id="ov-stats"><div class="overlay-inner">
+  <button class="overlay-close" data-close>×</button>
+  <h2>しかのこ</h2>
+  <p>visits: <span style="color:#d97a3d" id="stVisits">—</span></p>
+  <p>visitor: <span style="color:#d97a3d" id="stVisitor">—</span></p>
+  <p>session: <span style="color:#d97a3d" id="stSession">—</span></p>
+</div></div>
+
+<div class="tools-panel" id="toolsPanel">
+  <div class="tools-wrap">
+    <button class="overlay-close" data-close-tools>×</button>
+    <h2>Shikanoko Nokonoko Koshitantan</h2>
+    <div class="tools-body">
+      <aside id="sidebar" class="sidebar"></aside>
+      <main id="stage" class="stage">
+        <div id="crumb" class="crumb">しかのこ <span class="slash">/</span> のこ</div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>🦌 Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ 🦌 </span>
+    <span>🦌 Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ Shikanoko Nokonoko Koshitantan ♪ 🦌 </span>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="tools.js"></script>
+<button id="muteBtn" style="position:fixed;bottom:44px;left:14px;z-index:50;background:#d97a3d;color:#fff;border:2px solid #d97a3d;border-radius:20px;font-family:inherit;font-size:13px;padding:5px 12px;cursor:pointer">🔊 mute</button><button id="langBtn" style="position:fixed;bottom:44px;right:14px;z-index:50;background:#ff5c8a;color:#fff;border:2px solid #ff5c8a;border-radius:20px;font-family:inherit;font-size:13px;padding:5px 12px;cursor:pointer">🦌 english</button><audio id="bgm" loop><source src="bgm.mp3" type="audio/mpeg"></audio><script>document.addEventListener("click",function once(){var a=document.getElementById("bgm");if(a&&a.paused)a.play().catch(function(){});document.removeEventListener("click",once);});var mb=document.getElementById("muteBtn");var bgm=document.getElementById("bgm");var muted=false;mb.addEventListener("click",function(e){e.stopPropagation();muted=!muted;bgm.muted=muted;mb.textContent=muted?"🔇 unmute":"🔊 mute";});var lb=document.getElementById("langBtn");var lang="jp";lb.addEventListener("click",function(e){e.stopPropagation();var body=document.body;if(lang==="jp"){lang="en";body.classList.add("english");lb.textContent="🦌 しかのこ";document.querySelector(".banner-title").textContent="Shikanoko Nokonoko Koshitantan";document.querySelector(".subtitle").textContent="Shikanoko Nokonoko Koshitantan";document.querySelectorAll(".content-box h2").forEach(function(h){if(h.textContent.indexOf("しかのこ")>-1)h.textContent="Shikanoko Nokonoko Koshitantan";});document.querySelectorAll(".box-title").forEach(function(b){var t=b.textContent.trim();if(t==="しかのこ")b.textContent="shikanoko";if(t==="♪ のこ ♪")b.textContent="♪ nokonoko ♪";if(t==="たん たん")b.textContent="tan tan";if(t==="♪ time ♪")b.textContent="♪ time ♪";if(t==="しか")b.textContent="shika";});document.querySelectorAll(".nav a").forEach(function(a,i){var en=["tools","about","links","game","graveyard","log","now","stats"];a.textContent=en[i]||a.textContent;});}else{lang="jp";body.classList.remove("english");lb.textContent="🦌 english";document.querySelector(".banner-title").textContent="Shikanoko Nokonoko Koshitantan";document.querySelector(".subtitle").textContent="Shikanoko Nokonoko Koshitantan";document.querySelectorAll(".content-box h2").forEach(function(h){if(h.textContent.indexOf("Shikanoko")>-1)h.textContent="Shikanoko Nokonoko Koshitantan";});document.querySelectorAll(".nav a").forEach(function(a,i){var jp=["のこ","したん","たん","しか","のこ","こし","たん","たん"];a.textContent=jp[i]||a.textContent;});}});</script></body>
+</html>
+
+
+
+
+
