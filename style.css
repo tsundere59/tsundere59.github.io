@@ -344,4 +344,29 @@ body.light .marquee { background: linear-gradient(90deg, #241c18, #1a1410, #241c
 body.light .statusbar { color: #ff5c8a !important; border-top-color: #d97a3d !important; }
 body.light .ticker { background: #241c18 !important; border-top-color: #d97a3d !important; }
 body.light .ticker span { color: #ff5c8a !important; }
-body.light .ascii-figure { color
+body.light .ascii-figure { color: #ff5c8a !important; }
+body.light .overlay { background: rgba(26,20,16,0.97) !important; }
+body.light .overlay-inner { background: #241c18 !important; border-color: #d97a3d !important; }
+body.light .overlay h2 { color: #ff5c8a !important; }
+body.light .overlay p { color: #fdf6e3 !important; }
+body.light .tools-panel { background: rgba(26,20,16,0.98) !important; }
+body.light .tools-wrap { background: #241c18 !important; border-color: #d97a3d !important; }
+body.light .tools-wrap h2 { color: #ff5c8a !important; }
+body.light .tools-body { border-color: #d97a3d !important; background: #1a1410 !important; }
+body.light .sidebar { background: #1a1410 !important; border-right-color: #d97a3d !important; }
+body.light .cat-head { color: #ff5c8a !important; }
+body.light .tool-link { color: #fdf6e3 !important; }
+body.light .tool-link:hover, body.light .tool-link.active { color: #ff5c8a !important; }
+body.light .stage-inner { background: #241c18 !important; }
+body.light .input { background: #1a1410 !important; border-color: #d97a3d !important; color: #fdf6e3 !important; }
+body.light .out, body.light .pane, body.light .cell { background: #1a1410 !important; border-color: #3a2820 !important; color: #fdf6e3 !important; }
+body.light .out .k, body.light .kv .k, body.light .label { color: #ff5c8a !important; }
+body.light .out .v, body.light .kv .v { color: #fdf6e3 !important; }
+body.light .crumb { color: #a08060 !important; border-bottom-color: #3a2820 !important; }
+
+@media (max-width: 900px) {
+  html, body { height: auto; overflow: auto; }
+  .frame { height: auto; max-height: none; border-radius: 0; margin: 0; }
+  .layout { grid-template-columns: 1fr; overflow: visible; }
+  .side, .center { overflow: visible; }
+}
